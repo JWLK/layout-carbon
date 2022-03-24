@@ -18,9 +18,6 @@ const morgan = require('morgan')
 dotenv.config()
 
 /* Import Project Folder */
-//Sequlize
-const { sequelize } = require('./models')
-
 //Routes
 const apiRouter = require('./routes/api')
 
@@ -42,13 +39,49 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
 //Sequlize
-sequelize
-    .sync({ force: true })
-    .then(() => {
-        console.log('DB 연결 성공')
-    })
-    .catch(console.error)
+const { sequelize, User, Workspace, WorkspaceMember } = require('./models')
+const DB = async () => {
+    await sequelize
+        .sync({ force: true })
+        .then(() => {
+            console.log('DB 연결 성공')
+        })
+        .catch(console.error)
+    //User
+    await Workspace.bulkCreate([
+        //
+        {
+            id: 1,
+            name: 'Tutorial',
+            url: 'tutorial',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+    ])
+    await User.bulkCreate([
+        {
+            id: 1,
+            email: 'admin@admin.com',
+            nickname: 'ADMIN',
+            password:
+                '$2b$12$bss2W8Ak6rvvNUbNZ/2lHOuWqz.oVCBAFctyaRro7uczXDNTGKs3O',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        },
+    ])
+    await WorkspaceMember.bulkCreate([
+        {
+            id: 1,
+            loggedInAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            UserId: 1,
+            WorkspaceId: 1,
+        },
+    ])
+}
 
+DB()
 //Env Check
 const prod = process.env.NODE_ENV === 'production'
 if (prod) {

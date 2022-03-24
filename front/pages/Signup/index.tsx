@@ -7,7 +7,9 @@ import axios from 'axios'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
 
-import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from './styles'
+import { Success, Form, Error, InputWrapper, Input, LinkContainer, Header } from './styles'
+import { Login32, CheckmarkOutline32 } from '@carbon/icons-react'
+import { TextInput, ButtonSet, Button } from 'carbon-components-react'
 
 const Signup = () => {
     const { data: userData, error } = useSWR('/api/users', fetcher)
@@ -71,7 +73,7 @@ const Signup = () => {
     )
 
     if (userData === undefined) {
-        return <div>로딩중...</div>
+        return <div>Loading...</div>
     }
 
     /* Navigate Redirection */
@@ -83,66 +85,79 @@ const Signup = () => {
 
     return (
         <div id="container">
-            <Header>Sleact</Header>
+            <Header>
+                Singup
+                <LinkContainer>
+                    Already a member?&nbsp;
+                    <Link to="/login">Go to Login</Link>
+                </LinkContainer>
+            </Header>
             <Form onSubmit={onSubmit}>
-                <Label id="email-label">
-                    <span>이메일 주소</span>
+                <InputWrapper id="email-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="email"
                             id="email"
                             name="email"
                             value={email}
                             onChange={onChangeEmail}
+                            labelText="E-mail"
+                            placeholder=""
                         />
                     </div>
-                </Label>
-                <Label id="nickname-label">
-                    <span>닉네임</span>
+                </InputWrapper>
+                <InputWrapper id="nickname-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="text"
                             id="nickname"
                             name="nickname"
                             value={nickname}
                             onChange={onChangeNickname}
+                            labelText="Nick Name"
+                            placeholder=""
                         />
                     </div>
-                </Label>
-                <Label id="password-label">
-                    <span>비밀번호</span>
+                </InputWrapper>
+                <InputWrapper id="password-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="password"
                             id="password"
                             name="password"
                             value={password}
                             onChange={onChangePassword}
+                            labelText="Password"
+                            placeholder=""
                         />
                     </div>
-                </Label>
-                <Label id="password-check-label">
-                    <span>비밀번호 확인</span>
+                </InputWrapper>
+                <InputWrapper id="password-check-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="password"
                             id="password-check"
                             name="password-check"
                             value={passwordCheck}
                             onChange={onChangePasswordCheck}
+                            labelText="Password Check"
+                            placeholder=""
                         />
                     </div>
-                    {mismatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
-                    {!nickname && <Error>닉네임을 입력해주세요.</Error>}
+                    {mismatchError && <Error>Passwords do not match.</Error>}
+                    {!nickname && <Error>Please enter your nickname.</Error>}
                     {signUpError && <Error>{signUpError}</Error>}
-                </Label>
-                <Button type="submit">회원가입</Button>
-                {signUpSuccess && <Success>회원가입되었습니다! 로그인해주세요.</Success>}
+                </InputWrapper>
+                <ButtonSet style={{ marginBottom: '30px' }}>
+                    <Button kind="secondary" as={Link} to="/login" renderIcon={Login32}>
+                        Go to Login
+                    </Button>
+                    <Button type="submit" renderIcon={CheckmarkOutline32}>
+                        Complete
+                    </Button>
+                </ButtonSet>
+                {signUpSuccess && <Success>You are registered! Please Login.</Success>}
             </Form>
-            <LinkContainer>
-                이미 회원이신가요?&nbsp;
-                <Link to="/login">로그인 하러가기</Link>
-            </LinkContainer>
         </div>
     )
 }

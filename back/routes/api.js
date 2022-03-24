@@ -34,7 +34,6 @@ router.post('/users', isNotLoggedIn, async (req, res, next) => {
             password: hashedPassword,
         })
         const tutorialWorkspace = await Workspace.findOne({ where: { id: 1 } })
-        // console.log(tutorialWorkspace)
         // const channel = await Channel.findOne({ where: { id: 1 } })
         await tutorialWorkspace.addMembers(user)
         // await channel.addMembers(user)

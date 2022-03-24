@@ -6,9 +6,9 @@ import useInput from '@hooks/useInput'
 import axios from 'axios'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
-import { Error, Form, Header, Input, Label, LinkContainer } from '@pages/Signup/styles'
-import { ButtonSet, Button } from 'carbon-components-react'
-import { UserAccess32 } from '@carbon/icons-react'
+import { Error, Form, Header, InputWrapper, LinkContainer } from '@pages/Signup/styles'
+import { UserAccess32, UserIdentification32, Login32 } from '@carbon/icons-react'
+import { TextInput, ButtonSet, Button } from 'carbon-components-react'
 
 const Login = () => {
     const { data: userData, error, mutate } = useSWR('/api/users', fetcher)
@@ -43,7 +43,7 @@ const Login = () => {
     )
 
     if (userData === undefined) {
-        return <div>로딩중...</div>
+        return <div>Loading...</div>
     }
 
     /* Navigate Redirection */
@@ -55,39 +55,46 @@ const Login = () => {
 
     return (
         <div id="container">
-            <Header>Carbon</Header>
+            <Header>Login</Header>
             <Form onSubmit={onSubmit}>
-                <Label id="email-label">
-                    <span>이메일 주소</span>
+                <InputWrapper id="email-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="email"
                             id="email"
                             name="email"
                             value={email}
                             onChange={onChangeEmail}
+                            labelText="E-mail"
+                            placeholder=""
                         />
                     </div>
-                </Label>
-                <Label id="password-label">
-                    <span>비밀번호</span>
+                </InputWrapper>
+                <InputWrapper id="password-label">
                     <div>
-                        <Input
+                        <TextInput
                             type="password"
                             id="password"
                             name="password"
                             value={password}
                             onChange={onChangePassword}
+                            labelText="Password"
+                            placeholder=""
                         />
                     </div>
-                    {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
-                </Label>
+                    {logInError && <Error>Email and password combinations do not match.</Error>}
+                </InputWrapper>
                 <ButtonSet>
-                    <Button as={Link} to="/signup" renderIcon={UserAccess32} isSelected={true}>
-                        회원가입
+                    <Button
+                        kind="secondary"
+                        as={Link}
+                        to="/signup"
+                        renderIcon={UserIdentification32}
+                    >
+                        Signup
                     </Button>
-                    <Button type="submit" renderIcon={UserAccess32}>
-                        로그인
+                    <Button type="submit" renderIcon={Login32}>
+                        Login
                     </Button>
                 </ButtonSet>
             </Form>

@@ -23,17 +23,22 @@ module.exports = (sequelize, DataTypes) => {
         {
             //DataTypes -> STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
             email: {
-                type: DataTypes.STRING(30),
+                type: DataTypes.STRING(50),
                 allowNull: false, // 필수
                 unique: true, // 고유한 값
             },
             nickname: {
-                type: DataTypes.STRING(30),
+                type: DataTypes.STRING(50),
                 allowNull: false, // 필수
             },
             password: {
                 type: DataTypes.STRING(100),
                 allowNull: false, // 필수
+            },
+            security: {
+                type: DataTypes.INTEGER(30),
+                allowNull: false, // 필수
+                defaultValue: 0,
             },
         },
         {

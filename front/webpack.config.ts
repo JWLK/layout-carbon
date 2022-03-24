@@ -12,7 +12,7 @@ interface Configuration extends WebpackConfiguration {
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const config: Configuration = {
-    name: 'sleact',
+    name: 'Carbon',
     mode: isDevelopment ? 'development' : 'production',
     devtool: !isDevelopment ? 'hidden-source-map' : 'inline-source-map',
     resolve: {
@@ -40,10 +40,10 @@ const config: Configuration = {
                     presets: [
                         [
                             '@babel/preset-env',
-                            {
-                                targets: { browsers: ['IE 10'] },
-                                debug: isDevelopment,
-                            },
+                            // {
+                            //     targets: { browsers: ['IE 10'] },
+                            //     debug: isDevelopment,
+                            // },
                         ],
                         '@babel/preset-react',
                         '@babel/preset-typescript',

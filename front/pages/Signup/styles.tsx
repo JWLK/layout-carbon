@@ -1,7 +1,10 @@
 import styled from '@emotion/styled'
 
 export const Header = styled.header`
-    text-align: center;
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 100px;
+    margin-bottom: 50px;
     font-family: Slack-Larsseit, Helvetica Neue, Helvetica, Segoe UI, Tahoma, Arial, sans-serif;
     font-weight: 700;
     font-size: 48px;
@@ -9,6 +12,9 @@ export const Header = styled.header`
     letter-spacing: -0.75px;
     margin-top: 50px;
     margin-bottom: 50px;
+    & p {
+        margin-top: 10px;
+    }
 `
 
 export const Form = styled.form`
@@ -17,17 +23,8 @@ export const Form = styled.form`
     max-width: 400px;
 `
 
-export const Label = styled.label`
-    margin-bottom: 16px;
-    & > span {
-        display: block;
-        text-align: left;
-        padding-bottom: 8px;
-        font-size: 15px;
-        cursor: pointer;
-        line-height: 1.46666667;
-        font-weight: 700;
-    }
+export const InputWrapper = styled.div`
+    margin-bottom: 30px;
 `
 
 export const Input = styled.input`

@@ -8,7 +8,7 @@ import axios from 'axios'
 import SWRDevtools from '@jjordy/swr-devtools'
 
 import App from '@layouts/App'
-import './global.css'
+import './global.scss'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL =

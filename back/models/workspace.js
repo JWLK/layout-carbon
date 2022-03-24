@@ -1,7 +1,7 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-    class User extends Model {
+    class Workspace extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -9,41 +9,38 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            models.User.hasMany(models.Workspace, {
-                as: 'Owned',
+            models.Workspace.belongsTo(models.User, {
+                as: 'Owner',
                 foreignKey: 'OwnerId',
             })
-            models.User.belongsToMany(models.Workspace, {
+            models.Workspace.belongsToMany(models.User, {
                 through: models.WorkspaceMember,
-                as: 'Workspaces',
+                as: 'Members',
             })
         }
     }
-    User.init(
+    Workspace.init(
         {
             //DataTypes -> STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-            email: {
+            name: {
                 type: DataTypes.STRING(30),
                 allowNull: false, // 필수
                 unique: true, // 고유한 값
             },
-            nickname: {
+            url: {
                 type: DataTypes.STRING(30),
                 allowNull: false, // 필수
-            },
-            password: {
-                type: DataTypes.STRING(100),
-                allowNull: false, // 필수
+                unique: true, // 고유한 값
             },
         },
         {
             sequelize,
-            modelName: 'User',
-            tableName: 'users',
+            modelName: 'Workspace',
+            tableName: 'workspaces',
             paranoid: true,
             charset: 'utf8',
             collate: 'utf8_general_ci', // 한글 저장
         },
     )
-    return User
+    return Workspace
 }

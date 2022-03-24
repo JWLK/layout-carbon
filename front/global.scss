@@ -7,7 +7,7 @@ body {
     overflow: initial !important;
 }
 body {
-    font-family: 'NanumSquare', Helvetica, sans-serif;
+    font-family: 'NanumSquare', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;
@@ -22,4 +22,12 @@ a {
 
 * {
     box-sizing: border-box;
+}
+
+input[type='password'] {
+    font-family: Helvetica;
+
+    &::placeholder {
+        font-family: 'NanumSquare', sans-serif;
+    }
 }

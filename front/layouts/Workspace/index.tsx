@@ -26,7 +26,15 @@ import { IChannel, IUser } from '@typings/db'
 import axios from 'axios'
 import useSWR from 'swr'
 
-import { Fade32, Search20, Notification20, AppSwitcher20, User20 } from '@carbon/icons-react'
+import {
+    Fade32,
+    OpenPanelLeft20,
+    OpenPanelFilledLeft20,
+    Search20,
+    Notification20,
+    AppSwitcher20,
+    User20,
+} from '@carbon/icons-react'
 import {
     Header,
     HeaderName,
@@ -38,6 +46,9 @@ import {
     SideNavItem,
     SideNavMenu,
     SideNavMenuItem,
+    Grid,
+    Row,
+    Column,
 } from 'carbon-components-react'
 
 const Workspace = () => {
@@ -169,12 +180,24 @@ const Workspace = () => {
         <div>
             <Header aria-label="CARBON Platform Name">
                 <SkipToContent />
-                <HeaderMenuButton
-                    aria-label="Open menu"
-                    isCollapsible
-                    onClick={onClickSideNavExpand}
-                    isActive={sideNavExpanded}
-                />
+
+                {sideNavExpanded ? (
+                    <HeaderGlobalAction
+                        aria-label="Close menu"
+                        onClick={onClickSideNavExpand}
+                        isActive={sideNavExpanded}
+                    >
+                        <OpenPanelFilledLeft20 />
+                    </HeaderGlobalAction>
+                ) : (
+                    <HeaderGlobalAction
+                        aria-label="Open menu"
+                        onClick={onClickSideNavExpand}
+                        isActive={sideNavExpanded}
+                    >
+                        <OpenPanelLeft20 />
+                    </HeaderGlobalAction>
+                )}
                 <HeaderName prefix="CARBON">
                     <Link to="/">[Platform]</Link>
                 </HeaderName>
@@ -197,6 +220,17 @@ const Workspace = () => {
                 <SideMenuRight show={showUserMenu} onLogOut={onLogOut} />
                 <SideMenuLeft show={sideNavExpanded} />
             </Header>
+            <div style={{ display: 'flex', flex: 1 }}>
+                <div
+                    style={{
+                        flex: 1,
+                        marginTop: '3rem',
+                        paddingLeft: sideNavExpanded ? '16rem' : '3rem',
+                    }}
+                >
+                    TEST
+                </div>
+            </div>
         </div>
     )
 }

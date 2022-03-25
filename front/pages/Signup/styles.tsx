@@ -2,16 +2,12 @@ import styled from '@emotion/styled'
 
 export const Header = styled.header`
     width: 400px;
-    margin: 0 auto;
-    margin-top: 100px;
-    margin-bottom: 50px;
+    margin: 150px auto 50px auto;
     font-family: Slack-Larsseit, Helvetica Neue, Helvetica, Segoe UI, Tahoma, Arial, sans-serif;
     font-weight: 700;
     font-size: 48px;
     line-height: 46px;
     letter-spacing: -0.75px;
-    margin-top: 50px;
-    margin-bottom: 50px;
     & p {
         margin-top: 10px;
     }
@@ -93,12 +89,12 @@ export const Success = styled.div`
 
 export const LinkContainer = styled.p`
     font-size: 13px;
-    color: #616061;
+    color: #8d8d8d;
     margin: 0 auto 8px;
     width: 400px;
     max-width: 400px;
     & a {
-        color: #1264a3;
+        color: #78a9ff;
         text-decoration: none;
         font-weight: 700;
         &:hover {

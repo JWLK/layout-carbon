@@ -7,7 +7,7 @@ import axios from 'axios'
 import useSWR from 'swr'
 import fetcher from '@utils/fetcher'
 import { Error, Form, Header, InputWrapper, LinkContainer } from '@pages/Signup/styles'
-import { UserAccess32, UserIdentification32, Login32 } from '@carbon/icons-react'
+import { UserIdentification32, Login32 } from '@carbon/icons-react'
 import { TextInput, ButtonSet, Button } from 'carbon-components-react'
 
 const Login = () => {

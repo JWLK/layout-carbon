@@ -12,7 +12,7 @@ import './global.scss'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL =
-    process.env.NODE_ENV === 'production' ? 'https://production.com' : 'http://localhost:3090'
+    process.env.NODE_ENV === 'production' ? 'https://production.com' : 'http://localhost:3000'
 console.log('env', process.env.NODE_ENV === 'production')
 render(
     <BrowserRouter>

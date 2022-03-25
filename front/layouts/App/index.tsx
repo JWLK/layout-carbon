@@ -19,7 +19,11 @@ const App = () => {
             <Route path="/*" element={<Navigate replace to="/login" />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/workspace/*" element={<Workspace />} />
+            <Route
+                path="/workspace/*"
+                element={<Navigate replace to="/workspace/sleact/channel/일반" />}
+            />
+            <Route path="/workspace/:workspace/*" element={<Workspace />} />
         </Routes>
     )
 }

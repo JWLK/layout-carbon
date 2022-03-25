@@ -1,9 +1,10 @@
 @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
-@import 'carbon-components/scss/globals/scss/styles.scss';
-@import '@carbon/themes/scss/themes';
+
 // Use the gray 90 theme
+@import '@carbon/themes/scss/themes';
 $carbon--theme: $carbon--theme--g100;
 @include carbon--theme();
+@import 'carbon-components/scss/globals/scss/styles.scss';
 
 html,
 body {
@@ -25,7 +26,8 @@ a {
     color: inherit;
     text-decoration: none;
 }
-nav ul {
+nav,
+ul {
     list-style-type: none;
 }
 

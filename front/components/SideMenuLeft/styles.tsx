@@ -19,6 +19,13 @@ export const SideNavItemBlack = styled(SideNavItem)`
     }
     & span {
         color: #c6c6c6 !important;
+        display: flex;
+        align-items: center;
+    }
+    & span > svg {
+        width: 10px;
+        height: auto;
+        margin-right: 0.25rem;
     }
 
     button:hover,

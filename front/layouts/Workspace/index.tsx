@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Navigate, Link, LinkProps, NavLink, NavLinkProps } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
@@ -12,7 +12,8 @@ import SideMenuRight from '@components/SideMenuRight'
 // import ChannelList from '@components/ChannelList'
 // import DMList from '@components/DMList'
 //Pages
-// const Channel = loadable(() => import('@pages/Channel'))
+const ContentsLayout = loadable(() => import('@pages/ContentsLayout'))
+const Channel = loadable(() => import('@pages/Channel'))
 // const DirectMessage = loadable(() => import('@pages/DirectMessage'))
 
 //Hooks & Util & Type
@@ -51,6 +52,7 @@ import {
 } from 'carbon-components-react'
 
 import { Wrapper, Contents } from './styles'
+import Dashboard from '@pages/Dashboard'
 
 const Workspace = () => {
     /*Size Check*/
@@ -190,7 +192,6 @@ const Workspace = () => {
         <>
             <Header aria-label="CARBON Platform Namerud">
                 <SkipToContent />
-
                 {sideNavExpanded ? (
                     <HeaderGlobalAction
                         aria-label="Close menu"
@@ -232,66 +233,11 @@ const Workspace = () => {
             </Header>
             <Wrapper>
                 <Contents expand={sideNavExpanded}>
-                    <Grid fullWidth style={{ border: '1px solid #ddd', padding: '1rem 2rem' }}>
-                        <Row>
-                            <Column
-                                sm={1}
-                                md={2}
-                                lg={3}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 1
-                            </Column>
-                            <Column
-                                sm={1}
-                                md={2}
-                                lg={3}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 2
-                            </Column>
-                            <Column
-                                sm={1}
-                                md={2}
-                                lg={3}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 3
-                            </Column>
-                            <Column
-                                sm={1}
-                                md={2}
-                                lg={3}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 4
-                            </Column>
-                            <Column
-                                sm={1}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 1
-                            </Column>
-                            <Column
-                                sm={1}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 2
-                            </Column>
-                            <Column
-                                sm={1}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 3
-                            </Column>
-                            <Column
-                                sm={1}
-                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
-                            >
-                                Column 4
-                            </Column>
-                        </Row>
-                    </Grid>
+                    <Routes>
+                        <Route path="/contentslayout/" element={<ContentsLayout />} />
+                        <Route path="/dashboard/" element={<Dashboard />} />
+                        <Route path="/channel/:channel" element={<Channel />} />
+                    </Routes>
                 </Contents>
             </Wrapper>
         </>

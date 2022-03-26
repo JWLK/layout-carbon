@@ -23,7 +23,7 @@ import {
     SideNavLink,
     SideNavMenu,
     SideNavMenuItem,
-    SwitcherDivider,
+    SideNavDivider,
     Button,
     Modal,
     Tooltip,
@@ -90,39 +90,46 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
         <>
             <SideNavBlack aria-label="Side navigation" isRail expanded={show}>
                 <SideNavItemBlack>
-                    <SideNavLink<NavLinkProps>
-                        element={NavLink}
-                        to={`/workspace/${workspace}/channel/`}
-                        renderIcon={Workspace32}
-                        large
-                    >
-                        DashBoard
-                    </SideNavLink>
-                    <SwitcherDivider />
-                    <SideNavMenu title="Channel" renderIcon={Collaborate32} large defaultExpanded>
-                        {channelData?.map((channel) => {
-                            return (
-                                <SideNavMenuItem<NavLinkProps>
-                                    key={channel.name}
-                                    element={NavLink}
-                                    to={`/workspace/${workspace}/channel/${encodeURI(
-                                        channel.name,
-                                    )}`}
-                                >
-                                    <span># {channel.name}</span>
-                                </SideNavMenuItem>
-                            )
-                        })}
-                    </SideNavMenu>
-                    <SideNavLink
-                        role="button"
-                        onClick={onClickAddChannel}
-                        renderIcon={AddFilled32}
-                        large
-                    >
-                        Add Channel
-                    </SideNavLink>
-                    <SwitcherDivider />
+                    <ul>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={Workspace32}
+                            large
+                            to={`/workspace/${workspace}/channel/`}
+                        >
+                            DashBoard
+                        </SideNavLink>
+                        <SideNavDivider />
+                        <SideNavMenu
+                            title="Channel"
+                            renderIcon={Collaborate32}
+                            large
+                            defaultExpanded
+                        >
+                            {channelData?.map((channel) => {
+                                return (
+                                    <SideNavMenuItem<NavLinkProps>
+                                        key={channel.name}
+                                        element={NavLink}
+                                        to={`/workspace/${workspace}/channel/${encodeURI(
+                                            channel.name,
+                                        )}`}
+                                    >
+                                        <span># {channel.name}</span>
+                                    </SideNavMenuItem>
+                                )
+                            })}
+                        </SideNavMenu>
+                        <SideNavLink
+                            role="button"
+                            onClick={onClickAddChannel}
+                            renderIcon={AddFilled32}
+                            large
+                        >
+                            Add Channel
+                        </SideNavLink>
+                        <SideNavDivider />
+                    </ul>
                 </SideNavItemBlack>
             </SideNavBlack>
 
@@ -135,13 +142,13 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                 onRequestClose={onCloseModal}
                 onRequestSubmit={onCreateChannel}
             >
-                <p style={{ marginBottom: '2rem' }}>
+                <div style={{ marginBottom: '2rem' }}>
                     Create channels to communicate related topics within the current project
                     workspace.
                     <Tooltip tooltipBodyId="tooltip-body">
                         <p id="tooltip-body">Create a simple topic in the form of a hashtag.</p>
                     </Tooltip>
-                </p>
+                </div>
                 <TextInput
                     data-modal-primary-focus
                     id="channel"

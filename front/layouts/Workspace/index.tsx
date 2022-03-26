@@ -7,8 +7,6 @@ import loadable from '@loadable/component'
 //Components
 import SideMenuLeft from '@components/SideMenuLeft'
 import SideMenuRight from '@components/SideMenuRight'
-// import Menu from '@components/Menu'
-// import Modal from '@components/Modal'
 // import CreateChannelModal from '@components/CreateChannelModal'
 // import InviteWorkspaceModal from '@components/InviteWorkspaceModal'
 // import ChannelList from '@components/ChannelList'
@@ -20,6 +18,7 @@ import SideMenuRight from '@components/SideMenuRight'
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
 import useSocket from '@hooks/useSocket'
+import { useViewport } from '@hooks/useViewport'
 import fetcher from '@utils/fetcher'
 import { IChannel, IUser } from '@typings/db'
 //Request
@@ -51,7 +50,12 @@ import {
     Column,
 } from 'carbon-components-react'
 
+import { Wrapper, Contents } from './styles'
+
 const Workspace = () => {
+    /*Size Check*/
+    const { width } = useViewport()
+
     /* Parameter */
     const { workspace } = useParams<{ workspace?: string }>()
 
@@ -114,6 +118,13 @@ const Workspace = () => {
 
     /* Loading useEffect */
     useEffect(() => {
+        if (width < 1056 && sideNavExpanded === true) {
+            setSideNavExpand(false)
+        } else if (width >= 1056 && sideNavExpanded === false) {
+            setSideNavExpand(true)
+        }
+    }, [width])
+    useEffect(() => {
         if (channelData && userData && socket) {
             socket.emit('login', { id: userData.id, channels: channelData.map((v) => v.id) })
             // console.log('login socket', socket);
@@ -169,7 +180,6 @@ const Workspace = () => {
 
     /* Navigate Redirection */
     // console.log('param-workspace : ' + workspace);
-
     if (userData === false) {
         return <Navigate replace to="/login" />
     } else if (userData != undefined && !userData.Workspaces.find((v) => v.url === workspace)) {
@@ -177,8 +187,8 @@ const Workspace = () => {
     }
 
     return (
-        <div>
-            <Header aria-label="CARBON Platform Name">
+        <>
+            <Header aria-label="CARBON Platform Namerud">
                 <SkipToContent />
 
                 {sideNavExpanded ? (
@@ -198,9 +208,9 @@ const Workspace = () => {
                         <OpenPanelLeft20 />
                     </HeaderGlobalAction>
                 )}
-                <HeaderName prefix="CARBON">
-                    <Link to="/">[Platform]</Link>
-                </HeaderName>
+                {/* <Link to="/"> */}
+                <HeaderName prefix="CARBON">[Platform]</HeaderName>
+                {/* </Link> */}
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />
@@ -220,18 +230,71 @@ const Workspace = () => {
                 <SideMenuRight show={showUserMenu} onLogOut={onLogOut} />
                 <SideMenuLeft show={sideNavExpanded} />
             </Header>
-            <div style={{ display: 'flex', flex: 1 }}>
-                <div
-                    style={{
-                        flex: 1,
-                        marginTop: '3rem',
-                        paddingLeft: sideNavExpanded ? '16rem' : '3rem',
-                    }}
-                >
-                    TEST
-                </div>
-            </div>
-        </div>
+            <Wrapper>
+                <Contents expand={sideNavExpanded}>
+                    <Grid fullWidth style={{ border: '1px solid #ddd', padding: '1rem 2rem' }}>
+                        <Row>
+                            <Column
+                                sm={1}
+                                md={2}
+                                lg={3}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 1
+                            </Column>
+                            <Column
+                                sm={1}
+                                md={2}
+                                lg={3}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 2
+                            </Column>
+                            <Column
+                                sm={1}
+                                md={2}
+                                lg={3}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 3
+                            </Column>
+                            <Column
+                                sm={1}
+                                md={2}
+                                lg={3}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 4
+                            </Column>
+                            <Column
+                                sm={1}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 1
+                            </Column>
+                            <Column
+                                sm={1}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 2
+                            </Column>
+                            <Column
+                                sm={1}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 3
+                            </Column>
+                            <Column
+                                sm={1}
+                                style={{ border: '1px solid #222', padding: '2rem 1rem' }}
+                            >
+                                Column 4
+                            </Column>
+                        </Row>
+                    </Grid>
+                </Contents>
+            </Wrapper>
+        </>
     )
 }
 

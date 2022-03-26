@@ -126,6 +126,7 @@ const Workspace = () => {
             setSideNavExpand(true)
         }
     }, [width])
+
     useEffect(() => {
         if (channelData && userData && socket) {
             socket.emit('login', { id: userData.id, channels: channelData.map((v) => v.id) })

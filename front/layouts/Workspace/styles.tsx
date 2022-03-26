@@ -13,4 +13,12 @@ export const Contents = styled.div<{ expand: boolean }>`
         `
         padding-left: 16rem;
     `};
+
+    @media (max-width: 671px) {
+        ${({ expand }) =>
+            expand &&
+            `
+            padding-left: 3rem;
+        `};
+    }
 `

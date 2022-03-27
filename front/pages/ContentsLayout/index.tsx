@@ -26,14 +26,47 @@ const ContetnsLayout = () => {
                 <SectionDivider />
 
                 <Section>
+                    <h3> Input Box</h3>
+                    <h4> Form Example</h4>
+                    <Row>
+                        {tileMenus.map((tileMenu) => (
+                            <Column>
+                                <AspectRatio ratio="16x9">{tileMenu}</AspectRatio>
+                            </Column>
+                        ))}
+                    </Row>
+                </Section>
+
+                <SectionDivider />
+
+                <Section>
                     <h3> Tile Menu</h3>
+                    <h4> 16 x 9</h4>
                     <Row as="article">
                         {tileMenus.map((tileMenu) => (
                             <Column>
                                 <ClickableTile>
-                                    <AspectRatio as="section" ratio="16x9">
-                                        {tileMenu}
-                                    </AspectRatio>
+                                    <AspectRatio ratio="16x9">{tileMenu}</AspectRatio>
+                                </ClickableTile>
+                            </Column>
+                        ))}
+                    </Row>
+                    <h4> 4 x 3</h4>
+                    <Row as="article">
+                        {tileMenus.map((tileMenu) => (
+                            <Column>
+                                <ClickableTile>
+                                    <AspectRatio ratio="4x3">{tileMenu}</AspectRatio>
+                                </ClickableTile>
+                            </Column>
+                        ))}
+                    </Row>
+                    <h4> 1 x 1</h4>
+                    <Row as="article">
+                        {tileMenus.map((tileMenu) => (
+                            <Column>
+                                <ClickableTile>
+                                    <AspectRatio ratio="1x1">{tileMenu}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}

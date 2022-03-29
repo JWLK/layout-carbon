@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Link, Routes, Route, Navigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
 //Components
 import SideMenuLeft from '@components/SideMenuLeft'
 import SideMenuRight from '@components/SideMenuRight'
-// import CreateChannelModal from '@components/CreateChannelModal'
 // import InviteWorkspaceModal from '@components/InviteWorkspaceModal'
-// import ChannelList from '@components/ChannelList'
-// import DMList from '@components/DMList'
+
 //Pages
 const ContentsLayout = loadable(() => import('@pages/ContentsLayout'))
 const Channel = loadable(() => import('@pages/Channel'))
-// const DirectMessage = loadable(() => import('@pages/DirectMessage'))
+const DirectMessage = loadable(() => import('@pages/DirectMessage'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
@@ -210,9 +208,9 @@ const Workspace = () => {
                         <OpenPanelLeft20 />
                     </HeaderGlobalAction>
                 )}
-                {/* <Link to="/"> */}
-                <HeaderName prefix="CARBON">[Platform]</HeaderName>
-                {/* </Link> */}
+                <Link to="/">
+                    <HeaderName prefix="CARBON">[Platform]</HeaderName>
+                </Link>
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />
@@ -238,6 +236,7 @@ const Workspace = () => {
                         <Route path="/contentslayout/" element={<ContentsLayout />} />
                         <Route path="/dashboard/" element={<Dashboard />} />
                         <Route path="/channel/:channel" element={<Channel />} />
+                        <Route path="/dm/:id" element={<DirectMessage />} />
                     </Routes>
                 </Contents>
             </Wrapper>

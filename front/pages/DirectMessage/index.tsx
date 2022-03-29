@@ -1,46 +1,36 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
-import { Navigate } from 'react-router-dom'
+import gravatar from 'gravatar'
 import { Scrollbars } from 'react-custom-scrollbars-2'
-import { toast, ToastContainer } from 'react-toastify'
-
-import ChatBox from '@components/ChatBox'
-import ChatList from '@components/ChatList'
-// import InviteChannelModal from '@components/InviteChannelModal'
-
-import useInput from '@hooks/useInput'
-import useSocket from '@hooks/useSocket'
-import makeSection from '@utils/makeSection'
-import { IChannel, IChat, IUser } from '@typings/db'
-import fetcher from '@utils/fetcher'
-
+import { toast } from 'react-toastify'
 import axios from 'axios'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
+import useInput from '@hooks/useInput'
+import useSocket from '@hooks/useSocket'
+import fetcher from '@utils/fetcher'
+import makeSection from '@utils/makeSection'
+import { IDM } from '@typings/db'
 
-import { PageTypeWide, Header, Container, DragOver } from '@pages/Channel/styles'
-import { UserFollow32 } from '@carbon/icons-react'
-import { Button } from 'carbon-components-react'
+import ChatBox from '@components/ChatBox'
+import ChatList from '@components/ChatList'
+
+import { Header, Container } from '@pages/DirectMessage/styles'
+import { PageTypeWide, DragOver } from '@pages/Channel/styles'
 
 const PAGE_SIZE = 20
-const Channel = () => {
-    const { workspace, channel } = useParams<{ workspace: string; channel: string }>()
+const DirectMessage = () => {
+    const { workspace, id } = useParams<{ workspace: string; id: string }>()
     const [socket] = useSocket(workspace)
-    const { data: userData } = useSWR<IUser>('/api/users', fetcher)
-    const { data: channelsData } = useSWR<IChannel[]>(
-        `/api/workspaces/${workspace}/channels`,
-        fetcher,
-    )
-    const channelData = channelsData?.find((v) => v.name === channel)
+    const { data: myData } = useSWR('/api/users', fetcher)
+    const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher)
     const {
         data: chatData,
         mutate: mutateChat,
         setSize,
-    } = useSWRInfinite<IChat[]>(
+    } = useSWRInfinite<IDM[]>(
         (index) =>
-            `/api/workspaces/${workspace}/channels/${channel}/chats?perPage=${PAGE_SIZE}&page=${
-                index + 1
-            }`,
+            `/api/workspaces/${workspace}/dms/${id}/chats?perPage=${PAGE_SIZE}&page=${index + 1}`,
         fetcher,
         {
             onSuccess(data) {
@@ -52,40 +42,31 @@ const Channel = () => {
             },
         },
     )
-    const { data: channelMembersData } = useSWR<IUser[]>(
-        userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
-        fetcher,
-    )
     const [chat, onChangeChat, setChat] = useInput('')
-    const [showInviteChannelModal, setShowInviteChannelModal] = useState(false)
     const scrollbarRef = useRef<Scrollbars>(null)
     const [dragOver, setDragOver] = useState(false)
 
     const isEmpty = chatData?.[0]?.length === 0
     const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE)
 
-    const onCloseModal = useCallback(() => {
-        setShowInviteChannelModal(false)
-    }, [])
-
     const onSubmitForm = useCallback(
         (e) => {
             e.preventDefault()
-            if (chat?.trim() && chatData && channelData && userData) {
+            if (chat?.trim() && chatData) {
                 const savedChat = chat
                 mutateChat((prevChatData) => {
                     prevChatData?.[0].unshift({
                         id: (chatData[0][0]?.id || 0) + 1,
                         content: savedChat,
-                        UserId: userData.id,
-                        User: userData,
+                        SenderId: myData.id,
+                        Sender: myData,
+                        ReceiverId: userData.id,
+                        Receiver: userData,
                         createdAt: new Date(),
-                        ChannelId: channelData.id,
-                        Channel: channelData,
                     })
                     return prevChatData
                 }, false).then(() => {
-                    localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString())
+                    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString())
                     setChat('')
                     if (scrollbarRef.current) {
                         console.log('scrollToBottom!', scrollbarRef.current?.getValues())
@@ -93,23 +74,18 @@ const Channel = () => {
                     }
                 })
                 axios
-                    .post(`/api/workspaces/${workspace}/channels/${channel}/chats`, {
-                        content: savedChat,
+                    .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
+                        content: chat,
                     })
                     .catch(console.error)
             }
         },
-        [chat, workspace, channel, channelData, userData, chatData, mutateChat, setChat],
+        [chat, workspace, id, myData, userData, chatData, mutateChat, setChat],
     )
 
     const onMessage = useCallback(
-        (data: IChat) => {
-            if (
-                data.Channel.name === channel &&
-                (data.content.startsWith('uploads\\') ||
-                    data.content.startsWith('uploads/') ||
-                    data.UserId !== userData?.id)
-            ) {
+        (data: IDM) => {
+            if (data.SenderId === Number(id) && myData.id !== Number(id)) {
                 mutateChat((chatData) => {
                     chatData?.[0].unshift(data)
                     return chatData
@@ -137,23 +113,19 @@ const Channel = () => {
                 })
             }
         },
-        [channel, userData, mutateChat],
+        [id, myData, mutateChat],
     )
 
     useEffect(() => {
-        socket?.on('message', onMessage)
+        socket?.on('dm', onMessage)
         return () => {
-            socket?.off('message', onMessage)
+            socket?.off('dm', onMessage)
         }
     }, [socket, onMessage])
 
     useEffect(() => {
-        localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString())
-    }, [workspace, channel])
-
-    const onClickInviteChannel = useCallback(() => {
-        setShowInviteChannelModal(true)
-    }, [])
+        localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString())
+    }, [workspace, id])
 
     const onDrop = useCallback(
         (e) => {
@@ -164,28 +136,26 @@ const Channel = () => {
                 // Use DataTransferItemList interface to access the file(s)
                 for (let i = 0; i < e.dataTransfer.items.length; i++) {
                     // If dropped items aren't files, reject them
-                    console.log(e.dataTransfer.items[i])
                     if (e.dataTransfer.items[i].kind === 'file') {
                         const file = e.dataTransfer.items[i].getAsFile()
-                        console.log(e, '.... file[' + i + '].name = ' + file.name)
+                        console.log('... file[' + i + '].name = ' + file.name)
                         formData.append('image', file)
                     }
                 }
             } else {
                 // Use DataTransfer interface to access the file(s)
                 for (let i = 0; i < e.dataTransfer.files.length; i++) {
-                    console.log(e, '... file[' + i + '].name = ' + e.dataTransfer.files[i].name)
+                    console.log('... file[' + i + '].name = ' + e.dataTransfer.files[i].name)
                     formData.append('image', e.dataTransfer.files[i])
                 }
             }
-            axios
-                .post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData)
-                .then(() => {
-                    setDragOver(false)
-                    localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString())
-                })
+            axios.post(`/api/workspaces/${workspace}/dms/${id}/images`, formData).then(() => {
+                setDragOver(false)
+                localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString())
+                mutateChat()
+            })
         },
-        [workspace, channel],
+        [workspace, id, mutateChat],
     )
 
     const onDragOver = useCallback((e) => {
@@ -194,36 +164,21 @@ const Channel = () => {
         setDragOver(true)
     }, [])
 
-    if (channelsData && !channelData) {
-        return <Navigate replace to="/workspace/sleact/channel/일반" />
+    if (!userData || !myData) {
+        return null
     }
 
-    const chatSections = makeSection(chatData ? ([] as IChat[]).concat(...chatData).reverse() : [])
+    const chatSections = makeSection(chatData ? ([] as IDM[]).concat(...chatData).reverse() : [])
 
     return (
         <PageTypeWide>
             <Container onDrop={onDrop} onDragOver={onDragOver}>
                 <Header>
-                    <span>#{channel}</span>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flex: 1,
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <span style={{ padding: '0 10px' }}>
-                            User : {channelMembersData?.length}
-                        </span>
-                        <Button
-                            onClick={onClickInviteChannel}
-                            kind="ghost"
-                            renderIcon={UserFollow32}
-                            hasIconOnly
-                            type="button"
-                        />
-                    </div>
+                    <img
+                        src={gravatar.url(userData.email, { s: '24px', d: 'retro' })}
+                        alt={userData.nickname}
+                    />
+                    <span>{userData.nickname}</span>
                 </Header>
                 <ChatList
                     scrollbarRef={scrollbarRef}
@@ -236,19 +191,13 @@ const Channel = () => {
                     onSubmitForm={onSubmitForm}
                     chat={chat}
                     onChangeChat={onChangeChat}
-                    placeholder={`Message #${channel}`}
-                    data={channelMembersData}
+                    placeholder={`Message ${userData.nickname}`}
+                    data={[]}
                 />
-                {/* <InviteChannelModal
-                show={showInviteChannelModal}
-                onCloseModal={onCloseModal}
-                setShowInviteChannelModal={setShowInviteChannelModal}
-            /> */}
-                <ToastContainer position="bottom-center" />
                 {dragOver && <DragOver>업로드!</DragOver>}
             </Container>
         </PageTypeWide>
     )
 }
 
-export default Channel
+export default DirectMessage

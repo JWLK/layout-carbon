@@ -1,5 +1,4 @@
 import React from 'react'
-import { css } from '@emotion/react'
 import { Fade32 } from '@carbon/icons-react'
 import {
     Grid,
@@ -7,6 +6,7 @@ import {
     Column,
     UnorderedList,
     ListItem,
+    Tile,
     ClickableTile,
     AspectRatio,
 } from 'carbon-components-react'
@@ -14,10 +14,25 @@ import {
 import { PageTypeWide, Header, Section, SectionDivider } from './styles'
 
 const ContetnsLayout = () => {
+    const contentsItmems = [
+        'CNT - 1',
+        'CNT - 2',
+        'CNT - 3',
+        'CNT - 4',
+        'CNT - 5',
+        'CNT - 6',
+        'CNT - 7',
+        'CNT - 8',
+        'CNT - 9',
+        'CNT - 10',
+        'CNT - 11',
+        'CNT - 12',
+        'CNT - 13',
+    ]
     const tileMenus = ['Column - 1', 'Column - 2', 'Column - 3', 'Column - 4']
     return (
         <PageTypeWide>
-            <Grid className={`${PageTypeWide}`} fullWidth narrow>
+            <Grid fullWidth>
                 <Header>
                     Contents Layout
                     <p>Quick Access Menu & Infographics</p>
@@ -27,11 +42,14 @@ const ContetnsLayout = () => {
 
                 <Section>
                     <h3> Input Box</h3>
-                    <h4> Form Example</h4>
-                    <Row>
-                        {tileMenus.map((tileMenu) => (
-                            <Column>
-                                <AspectRatio ratio="16x9">{tileMenu}</AspectRatio>
+                    <h4>Tile Grid - 1/2/3</h4>
+                    <Row as="article" narrow>
+                        {contentsItmems.map((t) => (
+                            //  sm=4/4 md=4/8 lg= 4/12
+                            <Column sm={4} md={4} lg={4}>
+                                <Tile>
+                                    <AspectRatio ratio="16x9">{t}</AspectRatio>
+                                </Tile>
                             </Column>
                         ))}
                     </Row>
@@ -40,13 +58,24 @@ const ContetnsLayout = () => {
                 <SectionDivider />
 
                 <Section>
-                    <h3> Tile Menu</h3>
+                    <h3> Tile Ratio</h3>
                     <h4> 16 x 9</h4>
                     <Row as="article">
                         {tileMenus.map((tileMenu) => (
                             <Column>
                                 <ClickableTile>
                                     <AspectRatio ratio="16x9">{tileMenu}</AspectRatio>
+                                </ClickableTile>
+                            </Column>
+                        ))}
+                    </Row>
+
+                    <h4> 1 x 1</h4>
+                    <Row as="article">
+                        {tileMenus.map((tileMenu) => (
+                            <Column>
+                                <ClickableTile>
+                                    <AspectRatio ratio="1x1">{tileMenu}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}
@@ -61,12 +90,13 @@ const ContetnsLayout = () => {
                             </Column>
                         ))}
                     </Row>
-                    <h4> 1 x 1</h4>
+
+                    <h4> 1 x 2</h4>
                     <Row as="article">
                         {tileMenus.map((tileMenu) => (
                             <Column>
                                 <ClickableTile>
-                                    <AspectRatio ratio="1x1">{tileMenu}</AspectRatio>
+                                    <AspectRatio ratio="1x2">{tileMenu}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}

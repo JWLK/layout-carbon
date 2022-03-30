@@ -6,9 +6,15 @@ export const PageTypeWide = styled.div`
 export const Container = styled.div`
     display: flex;
     flex-wrap: wrap;
-    height: calc(100vh - 150px);
     flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 150px);
     position: relative;
+    > header,
+    div {
+        max-width: 1000px;
+    }
 `
 
 export const Header = styled.header`
@@ -20,6 +26,9 @@ export const Header = styled.header`
     align-items: center;
     background: #222;
     margin-bottom: 10px;
+    & img {
+        margin-right: 10px;
+    }
 `
 
 export const DragOver = styled.div`

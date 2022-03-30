@@ -220,6 +220,8 @@ const Channel = () => {
                             onClick={onClickInviteChannel}
                             kind="ghost"
                             renderIcon={UserFollow32}
+                            iconDescription="Add User This Channel"
+                            tooltipAlignment="end"
                             hasIconOnly
                             type="button"
                         />

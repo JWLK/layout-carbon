@@ -15,8 +15,7 @@ import { IDM } from '@typings/db'
 import ChatBox from '@components/ChatBox'
 import ChatList from '@components/ChatList'
 
-import { Header, Container } from '@pages/DirectMessage/styles'
-import { PageTypeWide, DragOver } from '@pages/Channel/styles'
+import { PageTypeWide, Header, Container, DragOver } from '@pages/Channel/styles'
 
 const PAGE_SIZE = 20
 const DirectMessage = () => {

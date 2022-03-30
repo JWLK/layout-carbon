@@ -208,9 +208,7 @@ const Workspace = () => {
                         <OpenPanelLeft20 />
                     </HeaderGlobalAction>
                 )}
-                <Link to="/">
-                    <HeaderName prefix="CARBON">[Platform]</HeaderName>
-                </Link>
+                <HeaderName prefix="CARBON">[Platform]</HeaderName>
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />

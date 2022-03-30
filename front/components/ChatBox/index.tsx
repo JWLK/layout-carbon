@@ -91,7 +91,12 @@ const ChatBox: FC<Props> = ({ onSubmitForm, chat, onChangeChat, placeholder, dat
                                 />
                             </MentionsTextarea>
                         </Column>
-                        <Column sm={1} md={1} lg={1}>
+                        <Column
+                            sm={1}
+                            md={1}
+                            lg={1}
+                            style={{ display: 'flex', justifyContent: 'flex-end' }}
+                        >
                             <Button
                                 style={{ alignItems: 'strech' }}
                                 type="submit"

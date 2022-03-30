@@ -46,7 +46,7 @@ const ContetnsLayout = () => {
                     <Row as="article" narrow>
                         {contentsItmems.map((t) => (
                             //  sm=4/4 md=4/8 lg= 4/12
-                            <Column sm={4} md={4} lg={4}>
+                            <Column key={t} sm={4} md={4} lg={4}>
                                 <Tile>
                                     <AspectRatio ratio="16x9">{t}</AspectRatio>
                                 </Tile>
@@ -61,10 +61,10 @@ const ContetnsLayout = () => {
                     <h3> Tile Ratio</h3>
                     <h4> 16 x 9</h4>
                     <Row as="article">
-                        {tileMenus.map((tileMenu) => (
-                            <Column>
+                        {tileMenus.map((t) => (
+                            <Column key={t}>
                                 <ClickableTile>
-                                    <AspectRatio ratio="16x9">{tileMenu}</AspectRatio>
+                                    <AspectRatio ratio="16x9">{t}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}
@@ -72,20 +72,20 @@ const ContetnsLayout = () => {
 
                     <h4> 1 x 1</h4>
                     <Row as="article">
-                        {tileMenus.map((tileMenu) => (
-                            <Column>
+                        {tileMenus.map((t) => (
+                            <Column key={t}>
                                 <ClickableTile>
-                                    <AspectRatio ratio="1x1">{tileMenu}</AspectRatio>
+                                    <AspectRatio ratio="1x1">{t}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}
                     </Row>
                     <h4> 4 x 3</h4>
                     <Row as="article">
-                        {tileMenus.map((tileMenu) => (
-                            <Column>
+                        {tileMenus.map((t) => (
+                            <Column key={t}>
                                 <ClickableTile>
-                                    <AspectRatio ratio="4x3">{tileMenu}</AspectRatio>
+                                    <AspectRatio ratio="4x3">{t}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}
@@ -93,10 +93,10 @@ const ContetnsLayout = () => {
 
                     <h4> 1 x 2</h4>
                     <Row as="article">
-                        {tileMenus.map((tileMenu) => (
-                            <Column>
+                        {tileMenus.map((t) => (
+                            <Column key={t}>
                                 <ClickableTile>
-                                    <AspectRatio ratio="1x2">{tileMenu}</AspectRatio>
+                                    <AspectRatio ratio="1x2">{t}</AspectRatio>
                                 </ClickableTile>
                             </Column>
                         ))}
@@ -130,11 +130,6 @@ const ContetnsLayout = () => {
                                 </ListItem>
                                 <ListItem>
                                     <span>Span</span>
-                                </ListItem>
-                                <ListItem>
-                                    <span>
-                                        <text>text</text>
-                                    </span>
                                 </ListItem>
                             </UnorderedList>
                         </Column>

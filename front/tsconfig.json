@@ -12,13 +12,13 @@
         "resolveJsonModule": true,
         "baseUrl": ".",
         "paths": {
-            "@hooks/*": ["hooks/*"],
             "@components/*": ["components/*"],
+            "@hooks/*": ["hooks/*"],
             "@layouts/*": ["layouts/*"],
             "@pages/*": ["pages/*"],
-            "@utils/*": ["utils/*"],
+            "@resource/*": ["resource/*"],
             "@typings/*": ["typings/*"],
-            "@resource/*": ["resource/*"]
+            "@utils/*": ["utils/*"]
         }
     }
 }

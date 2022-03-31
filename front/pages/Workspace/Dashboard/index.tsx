@@ -1,60 +1,38 @@
 import React from 'react'
 
-import { Fade32 } from '@carbon/icons-react'
-import { Grid, Row, Column } from 'carbon-components-react'
+import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
+import {} from './styles'
 
-import { PageTypeWide, Header, Section, SectionDivider } from './styles'
+import { Fade32 } from '@carbon/icons-react'
+import { Grid, Row, Column, Tile, AspectRatio, Button, TextInput } from 'carbon-components-react'
 
 const Dashboard = () => {
     return (
         <PageTypeWide>
-            <Header>
-                DashBoard
-                <p>Quick Access Menu & Infographics</p>
-            </Header>
-            <SectionDivider />
-            <Section>
-                <Grid fullWidth style={{ border: '1px solid #ddd' }}>
-                    <Row>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 1
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 2
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 3
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 4
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 5
+            <Grid fullWidth>
+                <Header>
+                    DashBoard
+                    <p>Quick Access Menu & Infographics</p>
+                </Header>
+                <SectionDivider />
+                <Section>
+                    <h3>Worksapce</h3>
+                    <Button renderIcon={Fade32}> Add Workspace</Button>
+                </Section>
+                <Grid fullWidth>
+                    <Row as="article" narrow>
+                        <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                            <TextInput
+                                helperText="Optional helper text"
+                                id="test2"
+                                invalidText="A valid value is required"
+                                labelText="Text input label"
+                                placeholder="Placeholder text"
+                            />
                         </Column>
                     </Row>
                 </Grid>
-            </Section>
-            <Section>
-                <Grid fullWidth style={{ border: '1px solid #ddd' }}>
-                    <Row>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 1
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 2
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 3
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 4
-                        </Column>
-                        <Column sm={1} md={2} lg={3} style={{ border: '1px solid #222' }}>
-                            Contnents Column 5
-                        </Column>
-                    </Row>
-                </Grid>
-            </Section>
+            </Grid>
         </PageTypeWide>
     )
 }

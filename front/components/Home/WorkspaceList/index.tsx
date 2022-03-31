@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
-import { useViewport } from '@hooks/useViewport'
 import fetcher from '@utils/fetcher'
 import { IChannel, IUser } from '@typings/db'
 //Request
@@ -25,7 +24,6 @@ const WorkspaceList = () => {
     if (userData === false) {
         return <Navigate replace to="/login" />
     }
-    console.log(userData?.Workspaces)
 
     return (
         <Grid fullWidth>
@@ -51,7 +49,7 @@ const WorkspaceList = () => {
 
                                 <Button
                                     as={Link}
-                                    to={`/workspace/${ws.url}/dashboard`}
+                                    to={`/workspace/${ws.url}/`}
                                     kind="tertiary"
                                     renderIcon={Launch32}
                                 >

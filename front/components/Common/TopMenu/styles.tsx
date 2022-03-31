@@ -6,9 +6,9 @@ export const TopMenuWrapper = styled.ul`
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 
     & li a {
-        width: 10rem;
+        width: 13rem;
     }
-    & > a {
+    & > button {
         margin-left: -48px;
         height: 44px;
         min-height: 43px;
@@ -19,6 +19,7 @@ export const TopMenuWrapper = styled.ul`
     }
 
     & [aria-current]:not([aria-current='false']) {
+        color: #fff;
         border-bottom: 0px solid rgba(255, 255, 255, 0.8);
         :hover {
             border-bottom: 0px solid rgba(255, 255, 255, 0.8);

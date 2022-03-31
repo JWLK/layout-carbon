@@ -15,11 +15,12 @@ const ContentsLayout = loadable(() => import('@pages/Common/ContentsLayout'))
 const Dashboard = loadable(() => import('@pages/Workspace/Dashboard'))
 const Channel = loadable(() => import('@pages/Workspace/Channel'))
 const DirectMessage = loadable(() => import('@pages/Workspace/DirectMessage'))
+const Project = loadable(() => import('@pages/Workspace/Project'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
 import useSocket from '@hooks/useSocket'
-import { useViewport } from '@hooks/useViewport'
+import { useGlobal } from '@hooks/useGlobal'
 import fetcher from '@utils/fetcher'
 import { IChannel, IUser } from '@typings/db'
 //Request
@@ -51,7 +52,7 @@ import {
 
 const Workspace = () => {
     /*Size Check*/
-    const { width } = useViewport()
+    const { siteTitle, width } = useGlobal()
 
     /* Parameter */
     const { workspace } = useParams<{ workspace?: string }>()
@@ -176,12 +177,23 @@ const Workspace = () => {
         [newWorkspace, newUrl, revalidateUser, setNewWorkspace, setNewUrl],
     )
 
+    /* Open LocalStorage */
+    if (localStorage.getItem('workspace-open') === null) {
+        localStorage.setItem('workspace-open', JSON.stringify([workspace]))
+    } else {
+        var tabList = JSON.parse(localStorage.getItem('workspace-open')!)
+        if (!tabList.includes(workspace)) {
+            tabList.push(workspace?.toString())
+            localStorage.setItem('workspace-open', JSON.stringify(tabList))
+        }
+    }
+
     /* Navigate Redirection */
     // console.log('param-workspace : ' + workspace);
     if (userData === false) {
         return <Navigate replace to="/login" />
     } else if (userData != undefined && !userData.Workspaces.find((v) => v.url === workspace)) {
-        return <Navigate replace to="/workspace" />
+        return <Navigate replace to="/home" />
     }
 
     return (
@@ -206,7 +218,7 @@ const Workspace = () => {
                     </HeaderGlobalAction>
                 )}
                 <Logo>
-                    <Link to={`/workspace/${workspace}/dashboard`}>CARBON[Platform]</Link>
+                    <Link to={`/workspace/${workspace}/`}>{siteTitle} [Platform]</Link>
                 </Logo>
                 <TopMenu />
                 <HeaderGlobalBar>
@@ -232,7 +244,8 @@ const Workspace = () => {
                 <Contents expand={sideNavExpanded}>
                     <Routes>
                         <Route path="/contentslayout/" element={<ContentsLayout />} />
-                        <Route path="/dashboard/" element={<Dashboard />} />
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/project" element={<Project />} />
                         <Route path="/channel/:channel" element={<Channel />} />
                         <Route path="/dm/:id" element={<DirectMessage />} />
                     </Routes>

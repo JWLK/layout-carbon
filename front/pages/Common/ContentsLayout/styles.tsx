@@ -29,7 +29,7 @@ export const Header = styled.header`
 `
 export const Section = styled.div`
     width: 100%;
-    margin: 1rem auto;
+    margin: 1rem 1.5rem;
 
     & h3 {
         margin: 0.5rem auto;

@@ -50,7 +50,7 @@ const Login = () => {
     // console.log(error, userData);
     if (!error && userData) {
         console.log('Login Success', userData)
-        return <Navigate replace to="/home/manage" />
+        return <Navigate replace to="/home/manage/" />
     }
 
     return (

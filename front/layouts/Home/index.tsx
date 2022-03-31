@@ -8,11 +8,11 @@ import loadable from '@loadable/component'
 import TopMenu from '@components/Common/TopMenu'
 import SideMenuRight from '@components/Common/SideMenuRight'
 //Pages
-const ManageWorkspace = loadable(() => import('@pages/Home/ManageWorkspace'))
+const ManageWorkspace = loadable(() => import('@pages/Home/Manage'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
-import { useViewport } from '@hooks/useViewport'
+import { useGlobal } from '@hooks/useGlobal'
 import fetcher from '@utils/fetcher'
 import { IChannel, IUser } from '@typings/db'
 //Request
@@ -33,9 +33,7 @@ import {
 } from 'carbon-components-react'
 
 const Home = () => {
-    /*Size Check*/
-    const { width } = useViewport()
-
+    const { siteTitle } = useGlobal()
     /* Parameter */
     const { workspace } = useParams<{ workspace?: string }>()
 
@@ -107,7 +105,7 @@ const Home = () => {
                     <Carbon24 />
                 </HeaderGlobalAction>
                 <Logo>
-                    <Link to={`/home`}>CARBON[Platform]</Link>
+                    <Link to={`/home/manage/`}>{siteTitle} [Platform]</Link>
                 </Logo>
                 <TopMenu />
                 <HeaderGlobalBar>
@@ -131,7 +129,7 @@ const Home = () => {
             <Wrapper>
                 <Contents mobile={false}>
                     <Routes>
-                        <Route path="/*" element={<Navigate replace to="/home/manage" />} />
+                        <Route path="/*" element={<Navigate replace to="/home/manage/" />} />
                         <Route path="/manage/" element={<ManageWorkspace />} />
                     </Routes>
                 </Contents>

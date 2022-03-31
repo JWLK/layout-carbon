@@ -201,55 +201,57 @@ const Channel = () => {
     const chatSections = makeSection(chatData ? ([] as IChat[]).concat(...chatData).reverse() : [])
 
     return (
-        <PageTypeWide>
-            <Container onDrop={onDrop} onDragOver={onDragOver}>
-                <Header>
-                    <span>#{channel}</span>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flex: 1,
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <span style={{ padding: '0 10px' }}>
-                            User : {channelMembersData?.length}
-                        </span>
-                        <Button
-                            onClick={onClickInviteChannel}
-                            kind="ghost"
-                            renderIcon={UserFollow32}
-                            iconDescription="Add User This Channel"
-                            tooltipAlignment="end"
-                            hasIconOnly
-                            type="button"
-                        />
-                    </div>
-                </Header>
-                <ChatList
-                    scrollbarRef={scrollbarRef}
-                    isReachingEnd={isReachingEnd}
-                    isEmpty={isEmpty}
-                    chatSections={chatSections}
-                    setSize={setSize}
-                />
-                <ChatBox
-                    onSubmitForm={onSubmitForm}
-                    chat={chat}
-                    onChangeChat={onChangeChat}
-                    placeholder={`Message #${channel}`}
-                    data={channelMembersData}
-                />
-                {/* <InviteChannelModal
+        <>
+            <PageTypeWide>
+                <Container onDrop={onDrop} onDragOver={onDragOver}>
+                    <Header>
+                        <span>#{channel}</span>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flex: 1,
+                                justifyContent: 'flex-end',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <span style={{ padding: '0 10px' }}>
+                                User : {channelMembersData?.length}
+                            </span>
+                            <Button
+                                onClick={onClickInviteChannel}
+                                kind="ghost"
+                                renderIcon={UserFollow32}
+                                iconDescription="Add User This Channel"
+                                tooltipAlignment="end"
+                                hasIconOnly
+                                type="button"
+                            />
+                        </div>
+                    </Header>
+                    <ChatList
+                        scrollbarRef={scrollbarRef}
+                        isReachingEnd={isReachingEnd}
+                        isEmpty={isEmpty}
+                        chatSections={chatSections}
+                        setSize={setSize}
+                    />
+                    <ChatBox
+                        onSubmitForm={onSubmitForm}
+                        chat={chat}
+                        onChangeChat={onChangeChat}
+                        placeholder={`Message #${channel}`}
+                        data={channelMembersData}
+                    />
+                    {/* <InviteChannelModal
                 show={showInviteChannelModal}
                 onCloseModal={onCloseModal}
                 setShowInviteChannelModal={setShowInviteChannelModal}
             /> */}
-                <ToastContainer position="bottom-center" />
-                {dragOver && <DragOver>업로드!</DragOver>}
-            </Container>
-        </PageTypeWide>
+                    <ToastContainer position="bottom-center" />
+                    {dragOver && <DragOver>업로드!</DragOver>}
+                </Container>
+            </PageTypeWide>
+        </>
     )
 }
 

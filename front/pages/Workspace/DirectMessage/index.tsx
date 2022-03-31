@@ -12,10 +12,10 @@ import fetcher from '@utils/fetcher'
 import makeSection from '@utils/makeSection'
 import { IDM } from '@typings/db'
 
-import ChatBox from '@components/ChatBox'
-import ChatList from '@components/ChatList'
+import ChatBox from '@components/Workspace/ChatBox'
+import ChatList from '@components/Workspace/ChatList'
 
-import { PageTypeWide, Header, Container, DragOver } from '@pages/Channel/styles'
+import { PageTypeWide, Header, Container, DragOver } from '@pages/Workspace/Channel/styles'
 
 const PAGE_SIZE = 20
 const DirectMessage = () => {

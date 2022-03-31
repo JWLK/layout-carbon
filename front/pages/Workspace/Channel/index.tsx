@@ -4,8 +4,8 @@ import { Navigate } from 'react-router-dom'
 import { Scrollbars } from 'react-custom-scrollbars-2'
 import { toast, ToastContainer } from 'react-toastify'
 
-import ChatBox from '@components/ChatBox'
-import ChatList from '@components/ChatList'
+import ChatBox from '@components/Workspace/ChatBox'
+import ChatList from '@components/Workspace/ChatList'
 // import InviteChannelModal from '@components/InviteChannelModal'
 
 import useInput from '@hooks/useInput'
@@ -18,7 +18,7 @@ import axios from 'axios'
 import useSWR from 'swr'
 import useSWRInfinite from 'swr/infinite'
 
-import { PageTypeWide, Header, Container, DragOver } from '@pages/Channel/styles'
+import { PageTypeWide, Header, Container, DragOver } from '@pages/Workspace/Channel/styles'
 import { UserFollow32 } from '@carbon/icons-react'
 import { Button } from 'carbon-components-react'
 

@@ -1,8 +1,8 @@
 import React, { FC, RefObject, useCallback } from 'react'
 import { Scrollbars } from 'react-custom-scrollbars-2'
 import { IChat, IDM } from '@typings/db'
-import Chat from '@components/Chat'
-import { ChatZone, Section, StickyHeader } from '@components/ChatList/styles'
+import Chat from '@components/Workspace/Chat'
+import { ChatZone, Section, StickyHeader } from '@components/Workspace/ChatList/styles'
 
 interface Props {
     scrollbarRef: RefObject<Scrollbars>

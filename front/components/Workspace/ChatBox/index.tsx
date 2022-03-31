@@ -13,7 +13,7 @@ import {
     SendButton,
     Toolbox,
     EachMention,
-} from '@components/ChatBox/styles'
+} from '@components/Workspace/ChatBox/styles'
 
 interface Props {
     onSubmitForm: (e: any) => void

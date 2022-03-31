@@ -6,21 +6,26 @@ import { IUser } from '@typings/db'
 //Request
 import useSWR from 'swr'
 //CSS
-import { ProfileMenu } from './styles'
+import { HeaderPanelTransparent, ProfileMenu } from './styles'
 import { HeaderPanel, Switcher, SwitcherItem, SwitcherDivider } from 'carbon-components-react'
 
 interface Props {
     show: boolean
     onLogOut: () => void
+    transparent: boolean
 }
 
-const SideMenuRight: FC<Props> = ({ show, onLogOut }) => {
+const SideMenuRight: FC<Props> = ({ show, onLogOut, transparent }) => {
     /* SWR */
     const { data: userData } = useSWR<IUser | false>('/api/users', fetcher)
     return (
         <>
             {userData && (
-                <HeaderPanel aria-label="Header Panel" expanded={show}>
+                <HeaderPanelTransparent
+                    aria-label="Header Panel"
+                    expanded={show}
+                    transparent={transparent}
+                >
                     <ProfileMenu>
                         <img
                             src={gravatar.url(userData.email, {
@@ -40,7 +45,7 @@ const SideMenuRight: FC<Props> = ({ show, onLogOut }) => {
                             LOGOUT
                         </SwitcherItem>
                     </Switcher>
-                </HeaderPanel>
+                </HeaderPanelTransparent>
             )}
         </>
     )

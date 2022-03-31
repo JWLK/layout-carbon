@@ -1,4 +1,13 @@
 import styled from '@emotion/styled'
+import { HeaderPanel } from 'carbon-components-react'
+
+export const HeaderPanelTransparent = styled(HeaderPanel)<{ transparent: boolean }>`
+    ${({ transparent }) =>
+        transparent &&
+        `
+        background: rgba(0, 0, 0, 0.1);
+    `};
+`
 
 export const ProfileMenu = styled.div`
     display: flex;

@@ -1,18 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Link, Routes, Route, Navigate } from 'react-router-dom'
+import { Link, NavLinkProps, NavLink, Routes, Route, Navigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
 //Components
-import SideMenuLeft from '@components/SideMenuLeft'
-import SideMenuRight from '@components/SideMenuRight'
+import SideMenuRight from '@components/Home/SideMenuRight'
+import SideMenuLeft from '@components/Workspace/SideMenuLeft'
 // import InviteWorkspaceModal from '@components/InviteWorkspaceModal'
 
 //Pages
-const ContentsLayout = loadable(() => import('@pages/ContentsLayout'))
-const Channel = loadable(() => import('@pages/Channel'))
-const DirectMessage = loadable(() => import('@pages/DirectMessage'))
+const ContentsLayout = loadable(() => import('@pages/Common/ContentsLayout'))
+const Dashboard = loadable(() => import('@pages/Workspace/Dashboard'))
+const Channel = loadable(() => import('@pages/Workspace/Channel'))
+const DirectMessage = loadable(() => import('@pages/Workspace/DirectMessage'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
@@ -24,6 +25,9 @@ import { IChannel, IUser } from '@typings/db'
 import axios from 'axios'
 import useSWR from 'swr'
 
+//Css
+import { Logo, Wrapper, Contents } from './styles'
+//Carbon
 import {
     Fade32,
     OpenPanelLeft20,
@@ -35,22 +39,14 @@ import {
 } from '@carbon/icons-react'
 import {
     Header,
-    HeaderName,
     SkipToContent,
     HeaderMenuButton,
+    HeaderNavigation,
+    HeaderMenu,
+    HeaderMenuItem,
     HeaderGlobalAction,
     HeaderGlobalBar,
-    SideNav,
-    SideNavItem,
-    SideNavMenu,
-    SideNavMenuItem,
-    Grid,
-    Row,
-    Column,
 } from 'carbon-components-react'
-
-import { Wrapper, Contents } from './styles'
-import Dashboard from '@pages/Dashboard'
 
 const Workspace = () => {
     /*Size Check*/
@@ -189,7 +185,7 @@ const Workspace = () => {
 
     return (
         <>
-            <Header aria-label="CARBON Platform Namerud">
+            <Header aria-label="CARBON Platform">
                 <SkipToContent />
                 {sideNavExpanded ? (
                     <HeaderGlobalAction
@@ -208,7 +204,25 @@ const Workspace = () => {
                         <OpenPanelLeft20 />
                     </HeaderGlobalAction>
                 )}
-                <HeaderName prefix="CARBON">[Platform]</HeaderName>
+                <Logo>
+                    <Link to={`/workspace/${workspace}/dashboard`}>CARBON[Platform]</Link>
+                </Logo>
+                <HeaderNavigation aria-label="Workspace">
+                    <HeaderMenuItem<NavLinkProps> element={NavLink} to="/home">
+                        HOME
+                    </HeaderMenuItem>
+                    <HeaderMenuItem href="#">Link 2</HeaderMenuItem>
+                    <HeaderMenuItem href="#">Link 3</HeaderMenuItem>
+
+                    <HeaderMenu aria-label="Link 4" menuLinkName="Link 4" isCurrentPage>
+                        <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
+
+                        <HeaderMenuItem href="#" isCurrentPage>
+                            Sub-link
+                        </HeaderMenuItem>
+                        <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
+                    </HeaderMenu>
+                </HeaderNavigation>
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />
@@ -225,7 +239,7 @@ const Workspace = () => {
                         <User20 />
                     </HeaderGlobalAction>
                 </HeaderGlobalBar>
-                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} />
+                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} transparent={false} />
                 <SideMenuLeft show={sideNavExpanded} />
             </Header>
             <Wrapper>

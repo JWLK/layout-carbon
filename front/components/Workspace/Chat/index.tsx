@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import dayjs from 'dayjs'
 import gravatar from 'gravatar'
 import regexifyString from 'regexify-string'
-import { ChatWrapper } from '@components/Chat/styles'
+import { ChatWrapper } from '@components/Workspace/Chat/styles'
 import { IChat, IDM, IUser } from '@typings/db'
 
 interface Props {

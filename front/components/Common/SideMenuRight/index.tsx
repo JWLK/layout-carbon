@@ -12,20 +12,16 @@ import { HeaderPanel, Switcher, SwitcherItem, SwitcherDivider } from 'carbon-com
 interface Props {
     show: boolean
     onLogOut: () => void
-    transparent: boolean
+    trans: string
 }
 
-const SideMenuRight: FC<Props> = ({ show, onLogOut, transparent }) => {
+const SideMenuRight: FC<Props> = ({ show, onLogOut, trans }) => {
     /* SWR */
     const { data: userData } = useSWR<IUser | false>('/api/users', fetcher)
     return (
         <>
             {userData && (
-                <HeaderPanelTransparent
-                    aria-label="Header Panel"
-                    expanded={show}
-                    transparent={transparent}
-                >
+                <HeaderPanelTransparent aria-label="Header Panel" expanded={show} trans={trans}>
                     <ProfileMenu>
                         <img
                             src={gravatar.url(userData.email, {

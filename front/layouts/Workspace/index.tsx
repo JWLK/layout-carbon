@@ -5,7 +5,8 @@ import { toast, ToastContainer } from 'react-toastify'
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
 //Components
-import SideMenuRight from '@components/Home/SideMenuRight'
+import TopMenu from '@components/Common/TopMenu'
+import SideMenuRight from '@components/Common/SideMenuRight'
 import SideMenuLeft from '@components/Workspace/SideMenuLeft'
 // import InviteWorkspaceModal from '@components/InviteWorkspaceModal'
 
@@ -207,22 +208,7 @@ const Workspace = () => {
                 <Logo>
                     <Link to={`/workspace/${workspace}/dashboard`}>CARBON[Platform]</Link>
                 </Logo>
-                <HeaderNavigation aria-label="Workspace">
-                    <HeaderMenuItem<NavLinkProps> element={NavLink} to="/home">
-                        HOME
-                    </HeaderMenuItem>
-                    <HeaderMenuItem href="#">Link 2</HeaderMenuItem>
-                    <HeaderMenuItem href="#">Link 3</HeaderMenuItem>
-
-                    <HeaderMenu aria-label="Link 4" menuLinkName="Link 4" isCurrentPage>
-                        <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-
-                        <HeaderMenuItem href="#" isCurrentPage>
-                            Sub-link
-                        </HeaderMenuItem>
-                        <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
-                    </HeaderMenu>
-                </HeaderNavigation>
+                <TopMenu />
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />
@@ -239,7 +225,7 @@ const Workspace = () => {
                         <User20 />
                     </HeaderGlobalAction>
                 </HeaderGlobalBar>
-                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} transparent={false} />
+                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} trans="false" />
                 <SideMenuLeft show={sideNavExpanded} />
             </Header>
             <Wrapper>

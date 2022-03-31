@@ -5,9 +5,9 @@ import { toast, ToastContainer } from 'react-toastify'
 import gravatar from 'gravatar'
 import loadable from '@loadable/component'
 //Components
-import SideMenuRight from '@components/Home/SideMenuRight'
+import TopMenu from '@components/Common/TopMenu'
+import SideMenuRight from '@components/Common/SideMenuRight'
 //Pages
-const CreateWorkspace = loadable(() => import('@pages/Home/CreateWorkspace'))
 const ManageWorkspace = loadable(() => import('@pages/Home/ManageWorkspace'))
 
 //Hooks & Util & Type
@@ -109,17 +109,7 @@ const Home = () => {
                 <Logo>
                     <Link to={`/home`}>CARBON[Platform]</Link>
                 </Logo>
-                <HeaderNavigation aria-label="Workspace">
-                    <HeaderMenuItem<NavLinkProps> element={NavLink} to="/home" target="_blank">
-                        HOME
-                    </HeaderMenuItem>
-
-                    <HeaderMenu aria-label="Link 4" menuLinkName="Link 4">
-                        <HeaderMenuItem href="#">Sub-link 1</HeaderMenuItem>
-                        <HeaderMenuItem href="#">Sub-link</HeaderMenuItem>
-                        <HeaderMenuItem href="#">Sub-link 3</HeaderMenuItem>
-                    </HeaderMenu>
-                </HeaderNavigation>
+                <TopMenu />
                 <HeaderGlobalBar>
                     <HeaderGlobalAction aria-label="Search" onClick={() => {}}>
                         <Search20 />
@@ -136,13 +126,12 @@ const Home = () => {
                         <User20 />
                     </HeaderGlobalAction>
                 </HeaderGlobalBar>
-                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} transparent={true} />
+                <SideMenuRight show={showUserMenu} onLogOut={onLogOut} trans="true" />
             </Header>
             <Wrapper>
                 <Contents mobile={false}>
                     <Routes>
                         <Route path="/*" element={<Navigate replace to="/home/manage" />} />
-                        <Route path="/create/" element={<CreateWorkspace />} />
                         <Route path="/manage/" element={<ManageWorkspace />} />
                     </Routes>
                 </Contents>

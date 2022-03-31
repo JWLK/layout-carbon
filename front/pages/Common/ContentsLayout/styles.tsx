@@ -36,7 +36,7 @@ export const Section = styled.div`
     }
 
     & article > div {
-        margin: 0.5rem auto;
+        margin-block: 0.5rem;
     }
 `
 

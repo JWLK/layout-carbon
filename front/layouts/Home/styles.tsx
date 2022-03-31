@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
     display: flex;
     flex: 1;
     height: auto;
+    min-height: 100vh;
     background: rgb(36, 53, 58);
     background: linear-gradient(
         240deg,

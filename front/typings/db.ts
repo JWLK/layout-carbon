@@ -43,4 +43,6 @@ export interface IWorkspace {
     name: string
     url: string // 주소 창에 보이는 주소
     OwnerId: number // 워크스페이스 만든 사람 아이디
+    createdAt: Date
+    updatedAt: Date
 }

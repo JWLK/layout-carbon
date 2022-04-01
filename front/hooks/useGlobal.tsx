@@ -9,7 +9,7 @@ const GlobalContext = createContext<IGlobal>({
     width: window.innerWidth,
 })
 export const GlobalProvider: FC = ({ children }) => {
-    const siteTitle = 'CARBON'
+    const siteTitle = 'EVO TOWER'
     const [width, setWidth] = useState(window.innerWidth)
     const handleResize = () => setWidth(window.innerWidth)
     useEffect(() => {

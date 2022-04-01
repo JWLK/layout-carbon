@@ -84,36 +84,6 @@ const Workspace = () => {
         setShowUserMenu((prev) => !prev)
     }, [])
 
-    /*Modal Control*/
-    const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false)
-    const [showCreateChannelModal, setShowCreateChannelModal] = useState(false)
-    const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false)
-    const [showWorkspaceModal, setShowWorkspaceModal] = useState(false)
-
-    const onCloseModal = useCallback(() => {
-        setShowCreateWorkspaceModal(false)
-        setShowCreateChannelModal(false)
-        setShowInviteWorkspaceModal(false)
-    }, [])
-
-    /*Workspace*/
-    const onClickCreateWorkspace = useCallback(() => {
-        setShowCreateWorkspaceModal(true)
-    }, [])
-    const toggleWorkspaceModal = useCallback(() => {
-        setShowWorkspaceModal((prev) => !prev)
-    }, [])
-
-    /*Channel*/
-    const onClickAddChannel = useCallback(() => {
-        setShowCreateChannelModal(true)
-    }, [])
-
-    /*Invite*/
-    const onClickInviteWorkspace = useCallback(() => {
-        setShowInviteWorkspaceModal(true)
-    }, [])
-
     /* Loading useEffect */
     useEffect(() => {
         if (width < 1056 && sideNavExpanded === true) {
@@ -148,34 +118,6 @@ const Workspace = () => {
                 toast.error(error.response?.data, { position: 'bottom-center' })
             })
     }, [revalidateUser])
-
-    const onCreateWorkspace = useCallback(
-        (e) => {
-            e.preventDefault()
-            if (!newWorkspace || !newWorkspace.trim()) {
-                return
-            }
-            if (!newUrl || !newUrl.trim()) {
-                return
-            }
-            axios
-                .post('/api/workspaces', {
-                    workspace: newWorkspace,
-                    url: newUrl,
-                })
-                .then(() => {
-                    revalidateUser()
-                    setShowCreateWorkspaceModal(false)
-                    setNewWorkspace('')
-                    setNewUrl('')
-                })
-                .catch((error) => {
-                    console.dir(error)
-                    toast.error(error.response?.data, { position: 'bottom-center' })
-                })
-        },
-        [newWorkspace, newUrl, revalidateUser, setNewWorkspace, setNewUrl],
-    )
 
     /* Open LocalStorage */
     if (localStorage.getItem('workspace-open') === null) {
@@ -245,7 +187,7 @@ const Workspace = () => {
                     <Routes>
                         <Route path="/contentslayout/" element={<ContentsLayout />} />
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/project" element={<Project />} />
+                        <Route path="/project/" element={<Project />} />
                         <Route path="/channel/:channel" element={<Channel />} />
                         <Route path="/dm/:id" element={<DirectMessage />} />
                     </Routes>

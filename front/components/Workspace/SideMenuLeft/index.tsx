@@ -43,9 +43,9 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         </SideNavLink>
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
-                            renderIcon={Dashboard32}
+                            renderIcon={Fade32}
                             large
-                            to={`/workspace/${workspace}/project`}
+                            to={`/workspace/${workspace}/project/`}
                         >
                             Project
                         </SideNavLink>

@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 
 import ChatBox from '@components/Workspace/ChatBox'
 import ChatList from '@components/Workspace/ChatList'
-// import InviteChannelModal from '@components/InviteChannelModal'
+import InviteChannelModal from '@components/Workspace/InviteChannelModal'
 
 import useInput from '@hooks/useInput'
 import useSocket from '@hooks/useSocket'
@@ -63,6 +63,10 @@ const Channel = () => {
 
     const isEmpty = chatData?.[0]?.length === 0
     const isReachingEnd = isEmpty || (chatData && chatData[chatData.length - 1]?.length < PAGE_SIZE)
+
+    const onClickInviteChannel = useCallback(() => {
+        setShowInviteChannelModal(true)
+    }, [])
 
     const onCloseModal = useCallback(() => {
         setShowInviteChannelModal(false)
@@ -151,10 +155,6 @@ const Channel = () => {
         localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString())
     }, [workspace, channel])
 
-    const onClickInviteChannel = useCallback(() => {
-        setShowInviteChannelModal(true)
-    }, [])
-
     const onDrop = useCallback(
         (e) => {
             e.preventDefault()
@@ -242,15 +242,16 @@ const Channel = () => {
                         placeholder={`Message #${channel}`}
                         data={channelMembersData}
                     />
-                    {/* <InviteChannelModal
-                show={showInviteChannelModal}
-                onCloseModal={onCloseModal}
-                setShowInviteChannelModal={setShowInviteChannelModal}
-            /> */}
                     <ToastContainer position="bottom-center" />
                     {dragOver && <DragOver>업로드!</DragOver>}
                 </Container>
             </PageTypeWide>
+
+            <InviteChannelModal
+                show={showInviteChannelModal}
+                onCloseModal={onCloseModal}
+                setShowInviteChannelModal={setShowInviteChannelModal}
+            />
         </>
     )
 }

@@ -16,7 +16,6 @@ export const Container = styled.div`
         max-width: 1000px;
     }
 `
-
 export const Header = styled.header`
     height: 64px;
     display: flex;

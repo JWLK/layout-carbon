@@ -29,14 +29,14 @@ export const Header = styled.header`
 `
 export const Section = styled.div`
     width: 100%;
-    margin: 1rem 1.5rem;
+    margin: 1rem 0rem;
 
     & h3 {
-        margin: 0.5rem auto;
+        margin: 1.5rem 0;
     }
 
-    & article > div {
-        margin-block: 0.5rem;
+    & article {
+        margin: 1.5rem 0;
     }
 `
 

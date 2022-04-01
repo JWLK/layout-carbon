@@ -46,7 +46,7 @@ const TopMenu = () => {
         if (stateTabList.length != 0) {
             navigate(`/workspace/${stateTabList[0]}/`)
         } else {
-            navigate('/home')
+            navigate('/home/manage/')
         }
     }
 
@@ -64,27 +64,27 @@ const TopMenu = () => {
                 </div>
             </HeaderMenuItem>
             {userData?.Workspaces.map((ws) => {
-                return stateTabList?.includes(ws.url) ? (
-                    <TopMenuWrapper key={ws.id}>
-                        <HeaderMenuItem<NavLinkProps>
-                            element={NavLink}
-                            to={`/workspace/${ws.url}/`}
-                            // target="_blank"
-                        >
-                            {ws.name}
-                        </HeaderMenuItem>
-                        <Button
-                            onClick={() => onCloseTab(ws)}
-                            kind="ghost"
-                            renderIcon={Close16}
-                            tooltipPosition="bottom"
-                            tooltipAlignment="end"
-                            iconDescription={`Close ${ws.name}`}
-                            hasIconOnly
-                        />
-                    </TopMenuWrapper>
-                ) : (
-                    <></>
+                return (
+                    stateTabList?.includes(ws.url) && (
+                        <TopMenuWrapper key={ws.id}>
+                            <HeaderMenuItem<NavLinkProps>
+                                element={NavLink}
+                                to={`/workspace/${ws.url}`}
+                                // target="_blank"
+                            >
+                                {ws.name}
+                            </HeaderMenuItem>
+                            <Button
+                                onClick={() => onCloseTab(ws)}
+                                kind="ghost"
+                                renderIcon={Close16}
+                                tooltipPosition="bottom"
+                                tooltipAlignment="end"
+                                iconDescription={`Close ${ws.name}`}
+                                hasIconOnly
+                            />
+                        </TopMenuWrapper>
+                    )
                 )
             })}
         </HeaderNavigation>

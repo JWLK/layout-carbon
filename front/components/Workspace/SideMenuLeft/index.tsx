@@ -48,7 +48,7 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                             large
                             to={`/workspace/${workspace}/initwallvalue/`}
                         >
-                            01. Initial Wall Value
+                            01.Initial Wall Value
                         </SideNavLink>
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
@@ -56,7 +56,7 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                             large
                             to={`/workspace/${workspace}/wallbodysection/`}
                         >
-                            02. Wall Body Section
+                            02.Wall Body Section
                         </SideNavLink>
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>

@@ -72,7 +72,7 @@ const Dashboard = () => {
     //turnbineOption Dropdown Option
     const [turnbineOption, setTurbineOption] = useState(items[2])
     useEffect(() => {
-        console.log(turnbineOption)
+        // console.log(turnbineOption)
     }, [turnbineOption])
 
     //project-info-edit Toggle Option
@@ -200,7 +200,7 @@ const Dashboard = () => {
                             console.log('change')
                         }}
                     >
-                        <Switch name="step-calc-1" text="Default Wall Value" />
+                        <Switch name="step-calc-1" text="Initial Wall Value" />
                         <Switch name="step-calc-2" text="Wall Body Section " />
                         <Switch name="step-calc-3" text="Flanges" />
                         <Switch name="step-calc-4" text="Door Opening" />

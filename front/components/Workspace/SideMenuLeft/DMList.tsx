@@ -29,7 +29,7 @@ const DMList = () => {
 
     /* useEffect */
     useEffect(() => {
-        console.log('DMList - Change Workspace : ', workspace)
+        // console.log('DMList - Change Workspace : ', workspace)
         setOnlineList([])
     }, [workspace])
 
@@ -37,9 +37,9 @@ const DMList = () => {
         socket?.on('onlineList', (data: number[]) => {
             setOnlineList(data)
         })
-        console.log('DMList - Soket ON', socket?.hasListeners('dm'), socket)
+        // console.log('DMList - Soket ON', socket?.hasListeners('dm'), socket)
         return () => {
-            console.log('DMList - Soket OFF', socket?.hasListeners('dm'))
+            // console.log('DMList - Soket OFF', socket?.hasListeners('dm'))
             socket?.off('onlineList')
         }
     }, [socket])

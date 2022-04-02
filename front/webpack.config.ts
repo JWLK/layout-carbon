@@ -25,6 +25,7 @@ const config: Configuration = {
             '@utils': path.resolve(__dirname, 'utils'),
             '@typings': path.resolve(__dirname, 'typings'),
             '@resource': path.resolve(__dirname, 'resource'),
+            '@objects': path.resolve(__dirname, 'objects'),
         },
     },
     entry: {
@@ -83,7 +84,7 @@ const config: Configuration = {
     },
     devServer: {
         historyApiFallback: true,
-        port: 3000,
+        port: 3090,
         devMiddleware: { publicPath: '/dist/' },
         static: { directory: path.resolve(__dirname) },
         proxy: {

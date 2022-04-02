@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
 
-import { Fade32, Template32, Dashboard32 } from '@carbon/icons-react'
+import { Fade32, Template32, Dashboard32, DotMark32 } from '@carbon/icons-react'
 import { SideNavLink, SideNavMenu, SideNavMenuItem, SideNavDivider } from 'carbon-components-react'
 import { SideNavBlack, SideNavItemBlack } from './styles'
 import ChannelList from './ChannelList'
@@ -25,14 +25,14 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
             <SideNavBlack aria-label="Side navigation" isRail expanded={show}>
                 <SideNavItemBlack>
                     <ul>
-                        <SideNavLink<NavLinkProps>
+                        {/* <SideNavLink<NavLinkProps>
                             element={NavLink}
                             renderIcon={Template32}
                             large
                             to={`/workspace/${workspace}/contentslayout/`}
                         >
                             Contents Layout
-                        </SideNavLink>
+                        </SideNavLink> */}
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
                             renderIcon={Dashboard32}
@@ -41,6 +41,24 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         >
                             DashBoard
                         </SideNavLink>
+                        <SideNavDivider />
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/initwallvalue/`}
+                        >
+                            01. Initial Wall Value
+                        </SideNavLink>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/wallbodysection/`}
+                        >
+                            02. Wall Body Section
+                        </SideNavLink>
+                        <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
                             renderIcon={Fade32}

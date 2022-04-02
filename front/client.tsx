@@ -5,23 +5,23 @@ import React from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import axios from 'axios'
-import SWRDevtools from '@jjordy/swr-devtools'
+import { SWRDevTools } from 'swr-devtools'
 
 import App from '@layouts/App'
 import './global.scss'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL =
-    process.env.NODE_ENV === 'production' ? 'https://production.com' : 'http://localhost:3000'
+    process.env.NODE_ENV === 'production' ? 'https://production.com' : 'http://localhost:3090'
 console.log('env', process.env.NODE_ENV === 'production')
 render(
     <BrowserRouter>
         {process.env.NODE_ENV === 'production' ? (
             <App />
         ) : (
-            <SWRDevtools>
+            <SWRDevTools>
                 <App />
-            </SWRDevtools>
+            </SWRDevTools>
         )}
     </BrowserRouter>,
     document.querySelector('#app'),

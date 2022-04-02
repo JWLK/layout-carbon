@@ -18,7 +18,8 @@
             "@pages/*": ["pages/*"],
             "@resource/*": ["resource/*"],
             "@typings/*": ["typings/*"],
-            "@utils/*": ["utils/*"]
+            "@utils/*": ["utils/*"],
+            "@objects/*": ["objects/*"]
         }
     }
 }

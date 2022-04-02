@@ -21,7 +21,7 @@ const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
         sockets[workspace] = io(`${backUrl}/ws-${workspace}`, {
             transports: ['websocket'],
         })
-        console.info('create socket', workspace, sockets[workspace])
+        // console.info('create socket', workspace, sockets[workspace])
     }
 
     return [sockets[workspace], disconnect]

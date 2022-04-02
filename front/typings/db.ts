@@ -46,3 +46,20 @@ export interface IWorkspace {
     createdAt: Date
     updatedAt: Date
 }
+
+export interface ObjPoint {
+    x: number
+    y: number
+}
+
+export interface ObjSquare {
+    top: number
+    bottom: number
+    height: number
+}
+
+export interface ObjData {
+    id: string
+    zero: ObjPoint
+    draw: ObjSquare
+}

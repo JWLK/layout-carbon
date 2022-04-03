@@ -47,7 +47,7 @@ const Parts: FC<Props> = ({ zero, draw }) => {
             </>,
         )
         partSum += elements[`sec-${i}`]
-        console.log(partSum)
+        // console.log(partSum)
     }
 
     return <>{array}</>

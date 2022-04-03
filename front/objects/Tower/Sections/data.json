@@ -1,37 +1,4 @@
 {
-    "Object001": [
-        {
-            "id": "Section1",
-            "zero": { "x": 6000, "y": 1000 },
-            "draw": { "top": 6850, "bottom": 6850, "height": 20145 }
-        }
-    ],
-    "Object002": [
-        {
-            "id": "Section1",
-            "zero": { "x": 6000, "y": 1000 },
-            "draw": { "top": 5850, "bottom": 6850, "height": 20145 }
-        }
-    ],
-    "Object003": [
-        {
-            "id": "Section1",
-            "zero": { "x": 6000, "y": 1000 },
-            "draw": { "top": 4850, "bottom": 6850, "height": 20145 }
-        }
-    ],
-    "Object004": [
-        {
-            "id": "Section1",
-            "zero": { "x": 6000, "y": 1000 },
-            "draw": { "top": 3850, "bottom": 6850, "height": 20145 }
-        }
-    ],
-    "Object005": [
-        {
-            "id": "Section1",
-            "zero": { "x": 6000, "y": 1000 },
-            "draw": { "top": 6850, "bottom": 6850, "height": 20145 }
-        }
-    ]
+    "zero": { "x": 6000, "y": 1000 },
+    "draw": { "top": 6850, "bottom": 6850, "height": 20145 }
 }

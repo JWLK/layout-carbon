@@ -1,34 +1,31 @@
 import React, { FC, useMemo } from 'react'
 import Wall from '@objects/Tools/WallTypeA'
-import Corner from '@objects/Tools/CornerTypeA'
-import Spliter from '@objects/Tools/SpliterTypeA'
 import TextDistance from '@objects/Tools/TextDistanceTypeA'
 
 import { ObjPoint, ObjSquare } from 'typings/db'
 
 interface Props {
-    id: string
-    zero: ObjPoint
+    base: ObjPoint
     draw: ObjSquare
 }
 
 const WALL_THICKNESS = 10
 
-const RenderLine: FC<Props> = ({ id, zero, draw }) => {
+const RenderLine: FC<Props> = ({ base, draw }) => {
     // console.log(point)
     var point: ObjPoint[] = []
     var p1: ObjPoint = { x: 0, y: 0 },
         p2: ObjPoint = { x: 0, y: 0 },
         p3: ObjPoint = { x: 0, y: 0 },
         p4: ObjPoint = { x: 0, y: 0 }
-    p1.x = zero.x - draw.top / 2
-    p1.y = zero.y + draw.height
-    p2.x = zero.x + draw.top / 2
-    p2.y = zero.y + draw.height
-    p3.x = zero.x + draw.bottom / 2
-    p3.y = zero.y + 0
-    p4.x = zero.x - draw.bottom / 2
-    p4.y = zero.y + 0
+    p1.x = base.x - draw.top / 2
+    p1.y = base.y + draw.height
+    p2.x = base.x + draw.top / 2
+    p2.y = base.y + draw.height
+    p3.x = base.x + draw.bottom / 2
+    p3.y = base.y + 0
+    p4.x = base.x - draw.bottom / 2
+    p4.y = base.y + 0
 
     point.push(p1, p2, p3, p4)
 
@@ -44,14 +41,6 @@ const RenderLine: FC<Props> = ({ id, zero, draw }) => {
 
     return (
         <g>
-            {/* {point.map((coord) => (
-                <Corner
-                    key={`corner-${coord.x},${coord.y}`}
-                    at={coord}
-                    thickness={WALL_THICKNESS}
-                />
-            ))} */}
-            <Spliter zero={zero} draw={draw} />
             {walls.map(([a, b]) => (
                 <Wall
                     key={`wall-${a.x},${a.y}-${b.x},${b.y}`}
@@ -61,7 +50,7 @@ const RenderLine: FC<Props> = ({ id, zero, draw }) => {
                 />
             ))}
             {walls.map(([a, b]) => (
-                <TextDistance corner1={a} corner2={b} fontSize={350} />
+                <TextDistance draw={draw} corner1={a} corner2={b} fontSize={350} />
             ))}
         </g>
     )

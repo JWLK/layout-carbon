@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 
 import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
 
@@ -25,14 +25,34 @@ import {
 } from 'carbon-components-react'
 
 //Tower Element
-import { ViewScale, ViewMargin, ViewSize, ViewBox } from '@objects/Base/AxisBase'
+import { ViewBox, ViewCenter } from '@objects/Base/AxisBase'
 import AxisX from '@objects/Base/AxisX'
 import AxisY from '@objects/Base/AxisY'
 
 import Sections from '@objects/Tower/Sections'
-import Objects from '@objects/Tower/Sections/data.json'
 
 const InitWallValue = () => {
+    const sectionData = [{ top: 3000, bottom: 6000, height: 2000 }]
+
+    /* State */
+    //Set Tower Number of Section
+    const [sectionNumber, setSectionNumber] = useState('Sec-9')
+    const onChangeSectionNumber = useCallback(
+        (value) => {
+            setSectionNumber(value)
+            // console.log(value)
+        },
+        [sectionNumber, setSectionNumber],
+    )
+    //Set Tower Type Option
+    const [typeOption, setTypeOption] = useState('Type-a')
+    const onChangeTypeOption = useCallback(
+        (value) => {
+            setTypeOption(value)
+            // console.log(value)
+        },
+        [typeOption, setTypeOption],
+    )
     return (
         <>
             <PageTypeWide>
@@ -51,22 +71,13 @@ const InitWallValue = () => {
                     </Row>
                     <SectionDivider />
                     <Section>
-                        <h3>First</h3>
+                        <h3>Section Type </h3>
                         <Row as="article" narrow>
                             <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                                 <Tile>
                                     <AspectRatio>
                                         <svg viewBox={ViewBox} fill="#fff">
-                                            <Sections Type={1} Object={Objects.Object001} />
-                                            <AxisX />
-                                            <AxisY />
-                                        </svg>
-                                    </AspectRatio>
-                                </Tile>
-                                <Tile>
-                                    <AspectRatio>
-                                        <svg viewBox={ViewBox} fill="#fff">
-                                            <Sections Type={2} Object={Objects.Object002} />
+                                            <Sections base={ViewCenter} draws={sectionData} />
                                             <AxisX />
                                             <AxisY />
                                         </svg>
@@ -86,23 +97,36 @@ const InitWallValue = () => {
                                         />
                                         <br />
                                         <RadioButtonGroup
+                                            legendText="Select Number of Section"
+                                            name="tower-section"
+                                            defaultSelected="Sec-9"
+                                            orientation="vertical"
+                                            onChange={onChangeSectionNumber}
+                                        >
+                                            <RadioButton labelText="9" value="Sec-9" id="Sec-9" />
+                                            <RadioButton labelText="6" value="Sec-6" id="Sec-6" />
+                                        </RadioButtonGroup>
+                                        <br />
+                                        <RadioButtonGroup
                                             legendText="Select Slope Type"
                                             name="tower-slope"
-                                            defaultSelected="type-a"
+                                            defaultSelected="Type-a"
                                             orientation="vertical"
+                                            valueSelected={typeOption}
+                                            onChange={onChangeTypeOption}
                                         >
                                             <RadioButton
                                                 labelText="Type A"
-                                                value="type-a"
+                                                value="Type-a"
                                                 id="type-a"
                                             />
                                             <RadioButton
-                                                labelText="Company B"
+                                                labelText="Type B"
                                                 value="Type-b"
                                                 id="type-b"
                                             />
                                             <RadioButton
-                                                labelText="Company C"
+                                                labelText="Type C"
                                                 value="Type-c"
                                                 id="type-c"
                                             />

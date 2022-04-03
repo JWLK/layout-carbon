@@ -1,8 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import Wall from '@objects/Tools/WallTypeA'
-import Corner from '@objects/Tools/CornerTypeA'
-import Spliter from '@objects/Tools/SpliterTypeB'
-import TextDistance from '@objects/Tools/TextDistanceTypeA'
+import Spliter from '@objects/Tools/SpliterTypeBackup'
+import TextDistance from '@objects/Tools/TextDistanceTypeBackup'
 
 import { ObjPoint, ObjSquare } from 'typings/db'
 

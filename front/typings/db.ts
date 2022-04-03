@@ -59,7 +59,6 @@ export interface ObjSquare {
 }
 
 export interface ObjData {
-    id: string
     zero: ObjPoint
     draw: ObjSquare
 }

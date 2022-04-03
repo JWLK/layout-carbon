@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react'
+import React, { FC, useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'react-toastify'
 
@@ -11,7 +11,14 @@ import axios from 'axios'
 import useSWR from 'swr'
 
 //Css
-import { Modal, Tooltip, TextInput } from 'carbon-components-react'
+import {
+    Modal,
+    Tooltip,
+    TextInput,
+    RadioButtonGroup,
+    RadioButton,
+    Dropdown,
+} from 'carbon-components-react'
 
 interface Props {
     show: boolean
@@ -67,6 +74,29 @@ const CreateWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowCreateWork
         [newWorkspace, newUrl],
     )
 
+    /* Default Value */
+    const items = [
+        {
+            id: 'option-0',
+            text: 'Option 0',
+        },
+        {
+            id: 'option-1',
+            text: 'Option 1',
+        },
+        {
+            id: 'option-2',
+            text: 'Option 2',
+        },
+    ]
+
+    /* State */
+    //turnbineOption Dropdown Option
+    const [turnbineOption, setTurbineOption] = useState(items[2])
+    useEffect(() => {
+        // console.log(turnbineOption)
+    }, [turnbineOption])
+
     return (
         <Modal
             modalHeading="Add Workspace"
@@ -102,6 +132,25 @@ const CreateWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowCreateWork
                 onChange={onChangeNewUrl}
                 disabled
             />
+            <Dropdown
+                titleText="Default Turbine Size"
+                id="default-turbine-size"
+                label="Dropdown menu options"
+                items={items}
+                itemToString={(item) => (item ? item.text : '')}
+                onChange={({ selectedItem }) => setTurbineOption(selectedItem!)}
+                selectedItem={turnbineOption}
+            />
+            <br />
+            <RadioButtonGroup
+                legendText="Tower Manufacturer"
+                name="tower-manufacturer"
+                defaultSelected="cmp-a"
+            >
+                <RadioButton labelText="Company A" value="cmp-a" id="cmp-a" />
+                <RadioButton labelText="Company B" value="cmp-b" id="cmp-b" />
+                <RadioButton labelText="Company C" value="cmp-c" id="cmp-c" />
+            </RadioButtonGroup>
         </Modal>
     )
 }

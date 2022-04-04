@@ -7,13 +7,18 @@ import { ObjPoint, ObjSquare } from 'typings/db'
 interface Props {
     base: ObjPoint
     draw: ObjSquare
+    guideX: number
 }
 
 const WALL_THICKNESS = 10
 
-const RenderLine: FC<Props> = ({ base, draw }) => {
+const RenderLine: FC<Props> = ({ base, draw, guideX }) => {
     // console.log(point)
     var point: ObjPoint[] = []
+
+    // p1------p2
+    // |        |
+    // p4------p3
     var p1: ObjPoint = { x: 0, y: 0 },
         p2: ObjPoint = { x: 0, y: 0 },
         p3: ObjPoint = { x: 0, y: 0 },
@@ -49,9 +54,7 @@ const RenderLine: FC<Props> = ({ base, draw }) => {
                     thickness={WALL_THICKNESS}
                 />
             ))}
-            {walls.map(([a, b]) => (
-                <TextDistance draw={draw} corner1={a} corner2={b} fontSize={350} />
-            ))}
+            <TextDistance corner1={p2} corner2={p3} guideX={guideX} fontSize={500} />
         </g>
     )
 }

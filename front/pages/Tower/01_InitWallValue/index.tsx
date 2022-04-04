@@ -32,7 +32,17 @@ import AxisY from '@objects/Base/AxisY'
 import Sections from '@objects/Tower/Sections'
 
 const InitWallValue = () => {
-    const sectionData = [{ top: 3000, bottom: 6000, height: 2000 }]
+    const sectionData = [
+        { top: 6200, bottom: 6500, height: 2100 },
+        { top: 6000, bottom: 6200, height: 2100 },
+        { top: 5600, bottom: 6000, height: 2100 },
+        { top: 5400, bottom: 5600, height: 2100 },
+        { top: 5200, bottom: 5400, height: 2250 },
+        { top: 5000, bottom: 5200, height: 2250 },
+        { top: 4800, bottom: 5000, height: 2250 },
+        { top: 4600, bottom: 4800, height: 2250 },
+        { top: 4000, bottom: 4600, height: 2335 },
+    ]
 
     /* State */
     //Set Tower Number of Section
@@ -77,7 +87,11 @@ const InitWallValue = () => {
                                 <Tile>
                                     <AspectRatio>
                                         <svg viewBox={ViewBox} fill="#fff">
-                                            <Sections base={ViewCenter} draws={sectionData} />
+                                            <Sections
+                                                base={ViewCenter}
+                                                draws={sectionData}
+                                                margin={100}
+                                            />
                                             <AxisX />
                                             <AxisY />
                                         </svg>

@@ -28,14 +28,17 @@ const ManageWorkspace = () => {
         <>
             <PageTypeWide>
                 <Grid fullWidth style={{ maxWidth: '2560px' }}>
-                    <Row>
-                        <Column>
-                            <Header>
-                                Welcome To {siteTitle}
-                                <p>Make your own workspace</p>
-                            </Header>
-                        </Column>
-                    </Row>
+                    <Section>
+                        <Row>
+                            <Column>
+                                <Header>
+                                    Welcome To {siteTitle}
+                                    <p>Make your own workspace</p>
+                                </Header>
+                            </Column>
+                        </Row>
+                    </Section>
+
                     <SectionDivider />
 
                     <Section>

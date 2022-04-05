@@ -89,22 +89,24 @@ const Dashboard = () => {
         <>
             <PageTypeWide>
                 <Grid fullWidth>
-                    <Row>
-                        <Column sm={2} md={6} lg={10}>
-                            <Header>
-                                DashBoard
-                                <p>Quick Access Menu & Infographics</p>
-                            </Header>
-                        </Column>
-                        <Column sm={2} md={2} lg={2}>
-                            <br />
-                            <br />
-                            <br />
-                            <Button onClick={onClickAddMember} renderIcon={ShareKnowledge32}>
-                                Invite Workspace Memeber
-                            </Button>
-                        </Column>
-                    </Row>
+                    <Section>
+                        <Row>
+                            <Column sm={2} md={6} lg={10}>
+                                <Header>
+                                    DashBoard
+                                    <p>Quick Access Menu & Infographics</p>
+                                </Header>
+                            </Column>
+                            <Column sm={2} md={2} lg={2}>
+                                <br />
+                                <br />
+                                <br />
+                                <Button onClick={onClickAddMember} renderIcon={ShareKnowledge32}>
+                                    Invite Workspace Memeber
+                                </Button>
+                            </Column>
+                        </Row>
+                    </Section>
                     <Accordion style={{ marginBlock: '2rem' }} align="start" size="lg">
                         <AccordionItem title="Project Info" open>
                             <Section>

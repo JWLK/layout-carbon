@@ -1,104 +1,59 @@
-import React, { FC, useMemo } from 'react'
-import { ViewScale, ViewMargin, ViewSize } from '@objects/Base/AxisBase'
+import React, { FC } from 'react'
+import { MX, MY } from '@objects/Base/AxisBase'
 
 import { ObjPoint, ObjSquare } from 'typings/db'
 
 interface Props {
-    zero: ObjPoint
-    draw: ObjSquare
-}
-const elements: { [key: string]: number } = {
-    'sec-1': 2450,
-    'sec-2': 2250,
-    'sec-3': 2250,
-    'sec-4': 2250,
-    'sec-5': 2250,
-    'sec-6': 2100,
-    'sec-7': 2100,
-    'sec-8': 2100,
-    'sec-9': 2100,
+    corner1: ObjPoint
+    corner2: ObjPoint
+    guideX: number
+    fontSize: number
+    text: number
 }
 
-const Parts: FC<Props> = ({ zero, draw }) => {
-    var array = []
-    var partCurrent = 0
-    var partNext = 0
-    var partSum = elements[`sec-1`]
-    for (var i = 1; i <= Object.keys(elements).length; i++) {
-        partCurrent = elements[`sec-${i}`]
-        partNext = elements[`sec-${i + 1}`]
-        array.push(
-            <>
-                <line
-                    x1={ViewMargin + zero.x - (draw.top + draw.bottom) * 0.4}
-                    y1={ViewScale - zero.y - partSum}
-                    x2={ViewMargin + zero.x + (draw.top + draw.bottom) * 0.4}
-                    y2={ViewScale - zero.y - partSum}
-                    stroke="white"
-                    strokeWidth={10}
-                    strokeDasharray={'500 400'}
-                />
-                <text
-                    x={ViewMargin + zero.x + (draw.top + draw.bottom) * 0.43}
-                    y={ViewScale - zero.y - partSum + partCurrent / 2}
-                    fill="white"
-                    fontSize="350"
-                >
-                    {partCurrent}
-                </text>
-                ,
-            </>,
-        )
-        partSum += elements[`sec-${i}`]
-        // console.log(partSum)
-    }
+const Spliter: FC<Props> = ({ corner1, corner2, guideX, fontSize, text }) => {
+    // Bottom Loggest Point of section = guide(x)
+    const PointX1 = MX + (corner1.x > corner2.x ? corner1.x : corner2.x) // top : short
+    const PointX2 = MX + (corner1.x < corner2.x ? corner1.x : corner2.x) // bottom : long
+    const PointY1 = MY - corner1.y
+    const PointY2 = MY - corner2.y
 
-    return <>{array}</>
-}
+    const VeticalColor = '#2ee2fe'
+    const VeticalLineOffset = -1000
+    const VeticalTextOffset = VeticalLineOffset - 300
+    const HorizentalColor = '#ffff2f'
+    const HorizentalLineOffset = -100
 
-const DashY: FC<Props> = ({ zero, draw }) => {
-    var array = []
-    for (var i = 0; i < draw.height; i += 2300) {
-        array.push(
-            <>
-                <line
-                    x1={ViewMargin + zero.x - (draw.top + draw.bottom) * 0.4}
-                    y1={ViewScale - zero.y - i}
-                    x2={ViewMargin + zero.x + (draw.top + draw.bottom) * 0.4}
-                    y2={ViewScale - zero.y - i}
-                    stroke="white"
-                    strokeWidth={10}
-                    strokeDasharray={'500 400'}
-                />
-                <text
-                    x={ViewMargin + zero.x + (draw.top + draw.bottom) * 0.43}
-                    y={ViewScale - zero.y - i + 130}
-                    fill="white"
-                    fontSize="350"
-                >
-                    {i / 1}
-                </text>
-                ,
-            </>,
-        )
-    }
-    return <>{array}</>
-}
+    const VeticalLinePointX = guideX + VeticalLineOffset
+    const VeticalTextPointX = guideX + VeticalTextOffset
+    const VeticalTextPointY = PointY1 + fontSize / 3
 
-const Spliter: FC<Props> = ({ zero, draw }) => {
+    const HorizentalLinePointX1 = PointX1 + HorizentalLineOffset
+    const HorizentalLinePointX2 = PointX2 + HorizentalLineOffset
+    const HorizentalLineLengthX1 = VeticalLinePointX
+    const HorizentalLineLengthX2 = VeticalLinePointX
+
     return (
         <>
             <line
-                x1={ViewMargin + zero.x}
-                y1={0}
-                x2={ViewMargin + zero.x}
-                y2={ViewSize}
-                stroke="white"
-                strokeWidth={30}
-                strokeDasharray={'500 400'}
+                x1={HorizentalLinePointX1}
+                y1={PointY1}
+                x2={HorizentalLineLengthX1}
+                y2={PointY1}
+                stroke={HorizentalColor}
+                strokeWidth={10}
+                // strokeDasharray={`200 100`}
             />
-            {/* <DashY zero={zero} draw={draw} /> */}
-            <Parts zero={zero} draw={draw} />
+            <g transform={`translate(${VeticalTextPointX}, ${VeticalTextPointY})`}>
+                <text
+                    fill={HorizentalColor}
+                    fontSize={fontSize}
+                    text-anchor="end"
+                    transform="rotate(0)"
+                >
+                    {text}
+                </text>
+            </g>
         </>
     )
 }

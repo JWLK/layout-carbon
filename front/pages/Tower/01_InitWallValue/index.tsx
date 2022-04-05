@@ -29,7 +29,7 @@ import { ViewBox, ViewCenter } from '@objects/Base/AxisBase'
 import AxisX from '@objects/Base/AxisX'
 import AxisY from '@objects/Base/AxisY'
 
-import Sections from '@objects/Tower/Sections'
+import Parts from '@objects/Tower/Parts'
 
 const InitWallValue = () => {
     const sectionData = [
@@ -67,18 +67,20 @@ const InitWallValue = () => {
         <>
             <PageTypeWide>
                 <Grid fullWidth>
-                    <Row>
-                        <Column sm={2} md={6} lg={10}>
-                            <Header>
-                                01. Init Wall Values
-                                <p>
-                                    Design the initial model by entering the basic values of the
-                                    tower.
-                                </p>
-                            </Header>
-                        </Column>
-                        <Column sm={2} md={2} lg={2}></Column>
-                    </Row>
+                    <Section>
+                        <Row>
+                            <Column sm={2} md={6} lg={10}>
+                                <Header>
+                                    01. Init Wall Values
+                                    <p>
+                                        Design the initial model by entering the basic values of the
+                                        tower.
+                                    </p>
+                                </Header>
+                            </Column>
+                            <Column sm={2} md={2} lg={2}></Column>
+                        </Row>
+                    </Section>
                     <SectionDivider />
                     <Section>
                         <h3>Section Type </h3>
@@ -87,10 +89,10 @@ const InitWallValue = () => {
                                 <Tile>
                                     <AspectRatio>
                                         <svg viewBox={ViewBox} fill="#fff">
-                                            <Sections
-                                                base={ViewCenter}
+                                            <Parts
+                                                center={ViewCenter}
                                                 draws={sectionData}
-                                                margin={100}
+                                                margin={300}
                                             />
                                             <AxisX />
                                             <AxisY />

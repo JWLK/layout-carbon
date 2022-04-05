@@ -7,9 +7,11 @@ interface Props {
     corner1: ObjPoint
     corner2: ObjPoint
     guideX: number
+    text: number
     fontSize: number
 }
-const TextDistance: FC<Props> = ({ corner1, corner2, guideX, fontSize }) => {
+
+const TextDistance: FC<Props> = ({ corner1, corner2, guideX, text, fontSize }) => {
     // Bottom Loggest Point of section = guide(x)
     const PointX1 = MX + (corner1.x < corner2.x ? corner1.x : corner2.x) // top
     const PointX2 = MX + (corner1.x > corner2.x ? corner1.x : corner2.x) // bottom
@@ -17,10 +19,10 @@ const TextDistance: FC<Props> = ({ corner1, corner2, guideX, fontSize }) => {
     const PointY2 = MY - corner2.y
 
     const VeticalColor = '#2ee2fe'
-    const VeticalLineOffset = 2000
+    const VeticalLineOffset = 3000
     const VeticalTextOffset = VeticalLineOffset - 300
     const HorizentalColor = '#ffff2f'
-    const HorizentalLineOffset = 300
+    const HorizentalLineOffset = 100
 
     const VeticalLinePointX = guideX + VeticalLineOffset
     const VeticalTextPointX = guideX + VeticalTextOffset
@@ -56,7 +58,7 @@ const TextDistance: FC<Props> = ({ corner1, corner2, guideX, fontSize }) => {
             </g>
             <g transform={`translate(${VeticalTextPointX}, ${VeticalTextPointY})`}>
                 <text fill={VeticalColor} fontSize={fontSize} transform="rotate(-90)">
-                    {Math.abs(corner2.y - corner1.y)}
+                    {text}
                 </text>
             </g>
             <line

@@ -1,18 +1,22 @@
 import React, { FC, useMemo } from 'react'
+import { MX, MY } from '@objects/Base/AxisBase'
 import Wall from '@objects/Tools/WallTypeA'
 import TextDistance from '@objects/Tools/TextDistanceTypeA'
+import Spliter from '@objects/Tools/SpliterTypeA'
 
 import { ObjPoint, ObjSquare } from 'typings/db'
 
 interface Props {
     base: ObjPoint
     draw: ObjSquare
-    guideX: number
+    textGuideX: number
+    splitGuideX: number
+    splitText: ObjPoint
 }
 
 const WALL_THICKNESS = 10
 
-const RenderLine: FC<Props> = ({ base, draw, guideX }) => {
+const RenderLine: FC<Props> = ({ base, draw, textGuideX, splitGuideX, splitText }) => {
     // console.log(point)
     var point: ObjPoint[] = []
 
@@ -54,7 +58,20 @@ const RenderLine: FC<Props> = ({ base, draw, guideX }) => {
                     thickness={WALL_THICKNESS}
                 />
             ))}
-            <TextDistance corner1={p2} corner2={p3} guideX={guideX} fontSize={500} />
+            <TextDistance
+                corner1={p2}
+                corner2={p3}
+                guideX={textGuideX}
+                text={Math.abs(p2.y - p3.y)}
+                fontSize={500}
+            />
+            <Spliter
+                corner1={p1}
+                corner2={p4}
+                guideX={splitGuideX}
+                fontSize={500}
+                text={splitText.y}
+            />
         </g>
     )
 }

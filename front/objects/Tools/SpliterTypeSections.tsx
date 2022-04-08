@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { MX, MY } from '@objects/Base/AxisBase'
+import { MX, MY } from '@objects/Base/AxisSections'
 
 import { ObjPoint, ObjSquare } from 'typings/object'
 
@@ -7,11 +7,21 @@ interface Props {
     corner1: ObjPoint
     corner2: ObjPoint
     guideX: number
+    guideMargin: number
+    lineWidth: number
     fontSize: number
     text: number
 }
 
-const Spliter: FC<Props> = ({ corner1, corner2, guideX, fontSize, text }) => {
+const Spliter: FC<Props> = ({
+    corner1,
+    corner2,
+    guideX,
+    guideMargin,
+    lineWidth,
+    fontSize,
+    text,
+}) => {
     // Bottom Loggest Point of section = guide(x)
     const PointX1 = MX + (corner1.x > corner2.x ? corner1.x : corner2.x) // top : short
     const PointX2 = MX + (corner1.x < corner2.x ? corner1.x : corner2.x) // bottom : long
@@ -19,10 +29,10 @@ const Spliter: FC<Props> = ({ corner1, corner2, guideX, fontSize, text }) => {
     const PointY2 = MY - corner2.y
 
     const VeticalColor = '#2ee2fe'
-    const VeticalLineOffset = -1000
-    const VeticalTextOffset = VeticalLineOffset - 300
+    const VeticalLineOffset = -guideMargin
+    const VeticalTextOffset = VeticalLineOffset - guideMargin * 0.1
     const HorizentalColor = '#ffff2f'
-    const HorizentalLineOffset = -100
+    const HorizentalLineOffset = -guideMargin * 0.1
 
     const VeticalLinePointX = guideX + VeticalLineOffset
     const VeticalTextPointX = guideX + VeticalTextOffset
@@ -41,7 +51,7 @@ const Spliter: FC<Props> = ({ corner1, corner2, guideX, fontSize, text }) => {
                 x2={HorizentalLineLengthX1}
                 y2={PointY1}
                 stroke={HorizentalColor}
-                strokeWidth={10}
+                strokeWidth={lineWidth}
                 // strokeDasharray={`200 100`}
             />
             <g transform={`translate(${VeticalTextPointX}, ${VeticalTextPointY})`}>

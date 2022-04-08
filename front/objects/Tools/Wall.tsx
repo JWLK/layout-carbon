@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { ViewScale, ViewMargin } from '@objects/Base/AxisBase'
 
-import { ObjPoint, ObjSquare } from 'typings/db'
+import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
     corner1: ObjPoint

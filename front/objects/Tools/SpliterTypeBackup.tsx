@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import { ViewScale, ViewMargin, ViewSize } from '@objects/Base/AxisBase'
 
-import { ObjPoint, ObjSquare } from 'typings/db'
+import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
     zero: ObjPoint

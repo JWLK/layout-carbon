@@ -1,0 +1,66 @@
+//Tower Element
+import { ObjPoint, ObjSquare, TWInitialValue, TWRawData } from 'typings/object'
+
+export const _TWRawData: TWRawData = {
+    initial: {
+        topUpperOutDia: 4950,
+        bottomLowerOutDia: 7300,
+        totalHeight: 100000,
+        offset: 10,
+        maxHeight: 110000,
+        divided: 4,
+        custom: false,
+    },
+    sections: [
+        { top: 7300, bottom: 7300, height: 25000 },
+        { top: 7300, bottom: 7300, height: 25000 },
+        { top: 4950, bottom: 7300, height: 27500 },
+        { top: 4950, bottom: 4950, height: 30000 },
+    ],
+    parts: [
+        [
+            { top: 6200, bottom: 6500, height: 2100 },
+            { top: 6000, bottom: 6200, height: 2100 },
+            { top: 5600, bottom: 6000, height: 2100 },
+            { top: 5400, bottom: 5600, height: 2100 },
+            { top: 5200, bottom: 5400, height: 2250 },
+            { top: 5000, bottom: 5200, height: 2250 },
+            { top: 4800, bottom: 5000, height: 2250 },
+            { top: 4600, bottom: 4800, height: 2250 },
+            { top: 4000, bottom: 4600, height: 2335 },
+        ],
+        [
+            { top: 6200, bottom: 6500, height: 2100 },
+            { top: 6000, bottom: 6200, height: 2100 },
+            { top: 5600, bottom: 6000, height: 2100 },
+            { top: 5400, bottom: 5600, height: 2100 },
+            { top: 5200, bottom: 5400, height: 2250 },
+            { top: 5000, bottom: 5200, height: 2250 },
+            { top: 4800, bottom: 5000, height: 2250 },
+            { top: 4600, bottom: 4800, height: 2250 },
+            { top: 4000, bottom: 4600, height: 2335 },
+        ],
+        [
+            { top: 6200, bottom: 6500, height: 2100 },
+            { top: 6000, bottom: 6200, height: 2100 },
+            { top: 5600, bottom: 6000, height: 2100 },
+            { top: 5400, bottom: 5600, height: 2100 },
+            { top: 5200, bottom: 5400, height: 2250 },
+            { top: 5000, bottom: 5200, height: 2250 },
+            { top: 4800, bottom: 5000, height: 2250 },
+            { top: 4600, bottom: 4800, height: 2250 },
+            { top: 4000, bottom: 4600, height: 2335 },
+        ],
+        [
+            { top: 6200, bottom: 6500, height: 2100 },
+            { top: 6000, bottom: 6200, height: 2100 },
+            { top: 5600, bottom: 6000, height: 2100 },
+            { top: 5400, bottom: 5600, height: 2100 },
+            { top: 5200, bottom: 5400, height: 2250 },
+            { top: 5000, bottom: 5200, height: 2250 },
+            { top: 4800, bottom: 5000, height: 2250 },
+            { top: 4600, bottom: 4800, height: 2250 },
+            { top: 4000, bottom: 4600, height: 2335 },
+        ],
+    ],
+}

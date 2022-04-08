@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import Wall from '@objects/Tools/Wall'
 import Corner from '@objects/Tools/Corner'
 
-import { ObjPoint } from 'typings/db'
+import { ObjPoint } from 'typings/object'
 
 interface Props {
     id: string

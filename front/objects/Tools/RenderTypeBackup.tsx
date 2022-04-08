@@ -3,7 +3,7 @@ import Wall from '@objects/Tools/WallTypeA'
 import Spliter from '@objects/Tools/SpliterTypeBackup'
 import TextDistance from '@objects/Tools/TextDistanceTypeBackup'
 
-import { ObjPoint, ObjSquare } from 'typings/db'
+import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
     id: string

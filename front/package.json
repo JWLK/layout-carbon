@@ -48,10 +48,10 @@
         "sass": "^1.49.9",
         "sass-loader": "^12.6.0",
         "socket.io-client": "^4.4.1",
-        "swr": "^1.1.2",
+        "swr": "1.1",
         "swr-devtools": "^0.4.0",
         "typescript": "^4.6.2",
-        "update": "^0.7.4",
+        "update": "^0.4.2",
         "upgrade": "^1.1.0"
     },
     "devDependencies": {

@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
-import { MX, MY } from '@objects/Base/AxisBase'
-import Wall from '@objects/Tools/WallTypeA'
-import TextDistance from '@objects/Tools/TextDistanceTypeA'
-import Spliter from '@objects/Tools/SpliterTypeA'
+import { MX, MY } from '@objects/Base/AxisSections'
+import Wall from '@objects/Tools/WallTypeSections'
+import TextDistance from '@objects/Tools/TextDistanceTypeSections'
+import Spliter from '@objects/Tools/SpliterTypeSections'
 
 import { ObjPoint, ObjSquare } from 'typings/object'
 
@@ -11,12 +11,24 @@ interface Props {
     draw: ObjSquare
     textGuideX: number
     splitGuideX: number
+    guideMargin: number
     splitText: ObjPoint
+    thickness: number
+    lineWidth: number
+    fontSize: number
 }
 
-const WALL_THICKNESS = 10
-
-const RenderLine: FC<Props> = ({ base, draw, textGuideX, splitGuideX, splitText }) => {
+const RenderLine: FC<Props> = ({
+    base,
+    draw,
+    textGuideX,
+    splitGuideX,
+    guideMargin,
+    splitText,
+    thickness,
+    lineWidth,
+    fontSize,
+}) => {
     // console.log(point)
     var point: ObjPoint[] = []
 
@@ -55,21 +67,25 @@ const RenderLine: FC<Props> = ({ base, draw, textGuideX, splitGuideX, splitText 
                     key={`wall-${a.x},${a.y}-${b.x},${b.y}`}
                     corner1={a}
                     corner2={b}
-                    thickness={WALL_THICKNESS}
+                    thickness={thickness}
                 />
             ))}
             <TextDistance
                 corner1={p2}
                 corner2={p3}
                 guideX={textGuideX}
+                guideMargin={guideMargin}
                 text={Math.abs(p2.y - p3.y)}
-                fontSize={500}
+                lineWidth={lineWidth}
+                fontSize={fontSize}
             />
             <Spliter
                 corner1={p1}
                 corner2={p4}
                 guideX={splitGuideX}
-                fontSize={500}
+                guideMargin={guideMargin}
+                lineWidth={lineWidth}
+                fontSize={fontSize}
                 text={splitText.y}
             />
         </g>

@@ -1,8 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
+import { useParams } from 'react-router'
 
-import { ObjPoint, ObjSquare, ObjData } from 'typings/db'
+//Request
+import useSWR from 'swr'
+import fetchStore from '@utils/store'
 
-import { Fade32 } from '@carbon/icons-react'
+import { Fade32, SettingsCheck32 } from '@carbon/icons-react'
 import {
     Grid,
     Row,
@@ -16,6 +19,8 @@ import {
     Button,
     Toggle,
     TextInput,
+    NumberInput,
+    Slider,
     FormGroup,
     RadioButtonGroup,
     RadioButton,
@@ -24,105 +29,286 @@ import {
     Tab,
 } from 'carbon-components-react'
 
-//Tower Element
-import { ViewBox, ViewCenter } from '@objects/Base/AxisBase'
-import AxisX from '@objects/Base/AxisX'
-import AxisY from '@objects/Base/AxisY'
+/*Tower Element*/
+//Type
+import { ObjPoint, ObjSquare, TWInitialValue, TWRawData } from 'typings/object'
+//Data
+import { InitValue } from '@objects/Data/InitValue'
+//Element
+import { ViewSize, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisSections'
 
+import Sections from '@objects/Tower/Sections'
 import Parts from '@objects/Tower/Parts'
 
 const BuildValue = () => {
-    const towerData = {
-        base: { totalHeight: 100000, offset: 10, maxHeight: 110000, custom: false, divided: 4 },
-        section: { 0: true, 1: 25000, 2: 25000, 3: 27500, 4: 30000 },
-        parts: {
-            0: true,
-            1: [
-                { top: 6200, bottom: 6500, height: 2100 },
-                { top: 6000, bottom: 6200, height: 2100 },
-                { top: 5600, bottom: 6000, height: 2100 },
-                { top: 5400, bottom: 5600, height: 2100 },
-                { top: 5200, bottom: 5400, height: 2250 },
-                { top: 5000, bottom: 5200, height: 2250 },
-                { top: 4800, bottom: 5000, height: 2250 },
-                { top: 4600, bottom: 4800, height: 2250 },
-                { top: 4000, bottom: 4600, height: 2335 },
-            ],
-            2: [
-                { top: 6200, bottom: 6500, height: 2100 },
-                { top: 6000, bottom: 6200, height: 2100 },
-                { top: 5600, bottom: 6000, height: 2100 },
-                { top: 5400, bottom: 5600, height: 2100 },
-                { top: 5200, bottom: 5400, height: 2250 },
-                { top: 5000, bottom: 5200, height: 2250 },
-                { top: 4800, bottom: 5000, height: 2250 },
-                { top: 4600, bottom: 4800, height: 2250 },
-                { top: 4000, bottom: 4600, height: 2335 },
-            ],
-            3: [
-                { top: 6200, bottom: 6500, height: 2100 },
-                { top: 6000, bottom: 6200, height: 2100 },
-                { top: 5600, bottom: 6000, height: 2100 },
-                { top: 5400, bottom: 5600, height: 2100 },
-                { top: 5200, bottom: 5400, height: 2250 },
-                { top: 5000, bottom: 5200, height: 2250 },
-                { top: 4800, bottom: 5000, height: 2250 },
-                { top: 4600, bottom: 4800, height: 2250 },
-                { top: 4000, bottom: 4600, height: 2335 },
-            ],
-            4: [
-                { top: 6200, bottom: 6500, height: 2100 },
-                { top: 6000, bottom: 6200, height: 2100 },
-                { top: 5600, bottom: 6000, height: 2100 },
-                { top: 5400, bottom: 5600, height: 2100 },
-                { top: 5200, bottom: 5400, height: 2250 },
-                { top: 5000, bottom: 5200, height: 2250 },
-                { top: 4800, bottom: 5000, height: 2250 },
-                { top: 4600, bottom: 4800, height: 2250 },
-                { top: 4000, bottom: 4600, height: 2335 },
-            ],
-        },
+    /* Param */
+    const { workspace } = useParams<{ workspace?: string }>()
+    /* Localstorage */
+    const key = `${workspace}-towerData`
+    if (localStorage.getItem(key) === null) {
+        localStorage.setItem(key, JSON.stringify(InitValue))
     }
+    /* SWR */
+    const { data: TD, mutate } = useSWR<TWRawData>(key, fetchStore)
 
     /* State */
     //Set Tower Number of Section
-    const [sectionNumber, setSectionNumber] = useState('Sec-9')
-    const onChangeSectionNumber = useCallback(
-        (value) => {
-            setSectionNumber(value)
-            // console.log(value)
+    // const [sectionNumber, setSectionNumber] = useState('Sec-9')
+    // const onChangeSectionNumber = useCallback(
+    //     (value) => {
+    //         setSectionNumber(value)
+    //         // console.log(value)
+    //     },
+    //     [sectionNumber, setSectionNumber],
+    // )
+    // //Set Tower Type Option
+    // const [typeOption, setTypeOption] = useState('Type-a')
+    // const onChangeTypeOption = useCallback(
+    //     (value) => {
+    //         setTypeOption(value)
+    //         // console.log(value)
+    //     },
+    //     [typeOption, setTypeOption],
+    // )
+
+    //Initial Value State
+    const [rawData, setRawData] = useState({} as TWRawData)
+    const [initValue, setInitValue] = useState({} as TWInitialValue)
+    const [sectionsObject, setSectionsObject] = useState([] as ObjSquare[])
+    const [topUpperOutDia, setTopUpperOutDia] = useState(0)
+    const [bottomLowerOutDia, setBottomLowerOutDia] = useState(0)
+    const [totalHeight, setTotalHeight] = useState(0)
+    const [divided, setDivided] = useState(0)
+
+    const onChangeTopUpperOutDia = useCallback(
+        (e) => {
+            setTopUpperOutDia(e.value)
+            initValue.topUpperOutDia = e.value
+            rawData.initial = initValue
+            localStorage.setItem(key, JSON.stringify(rawData))
+            mutate()
         },
-        [sectionNumber, setSectionNumber],
+        [initValue, rawData, topUpperOutDia],
     )
-    //Set Tower Type Option
-    const [typeOption, setTypeOption] = useState('Type-a')
-    const onChangeTypeOption = useCallback(
-        (value) => {
-            setTypeOption(value)
-            // console.log(value)
+
+    const onChangeBottomLowerOutDia = useCallback(
+        (e) => {
+            setBottomLowerOutDia(e.value)
+            initValue.bottomLowerOutDia = e.value
+            rawData.initial = initValue
+            localStorage.setItem(key, JSON.stringify(rawData))
+            mutate()
         },
-        [typeOption, setTypeOption],
+        [initValue, rawData, bottomLowerOutDia],
     )
+
+    const onChangeTotalHeight = useCallback(
+        (e) => {
+            setTotalHeight(e.value)
+            initValue.totalHeight = e.value
+            rawData.initial = initValue
+            localStorage.setItem(key, JSON.stringify(rawData))
+            mutate()
+        },
+        [initValue, rawData, totalHeight],
+    )
+
+    const onChangeDevided = useCallback(
+        (e) => {
+            setDivided(e.value)
+            initValue.divided = e.value
+            rawData.initial = initValue
+            localStorage.setItem(key, JSON.stringify(rawData))
+            mutate()
+        },
+        [initValue, rawData, divided],
+    )
+
+    const onClickSetSections = useCallback(
+        (e) => {
+            e.preventDefault()
+            var sectionsWrap = []
+
+            for (var i = 0; i < divided; i++) {
+                var eachHeight = Math.round(totalHeight / divided)
+                console.log('eachHeight', eachHeight)
+                var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+                console.log('triBottom', triBottom)
+                var eachHypo =
+                    Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
+                console.log('eachHypo', eachHypo)
+                var angle = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+                console.log('angle', (180 / Math.PI) * angle)
+
+                var sectionWidthTop = topUpperOutDia + eachHypo * i * Math.sin(angle) * 2
+                var sectionWidthBottom = topUpperOutDia + eachHypo * (i + 1) * Math.sin(angle) * 2
+                // console.log('sectionWidth', Math.round(sectionWidth * 2 + topUpperOutDia))
+
+                sectionsWrap[divided - 1 - i] = {
+                    top: sectionWidthTop,
+                    bottom: sectionWidthBottom,
+                    height: eachHeight,
+                }
+            }
+            setSectionsObject(sectionsWrap)
+            rawData.sections = sectionsWrap
+            localStorage.setItem(key, JSON.stringify(rawData))
+            mutate()
+        },
+        [bottomLowerOutDia, totalHeight, divided, rawData],
+    )
+
+    useEffect(() => {
+        if (TD !== undefined) {
+            // console.log(TD)
+            setRawData(TD)
+            setInitValue(TD.initial)
+            setTopUpperOutDia(TD.initial.topUpperOutDia)
+            setBottomLowerOutDia(TD.initial.bottomLowerOutDia)
+            setTotalHeight(TD.initial.totalHeight)
+            setDivided(TD.initial.divided)
+        }
+    }, [TD])
+
+    if (TD === undefined) {
+        return <div>Loading...</div>
+    }
 
     return (
         <>
             <Tabs>
-                <Tab label="Base Tower Value"></Tab>
-                <Tab label="Each Parts Value">
+                <Tab label="Initial Tower Value">
+                    <h3>Initial Value</h3>
+                    <Row as="article" narrow>
+                        <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                            <Tile>
+                                <svg
+                                    viewBox={`${ViewSize * 0.2} ${ViewSize * 0.1} ${
+                                        ViewSize * 0.7
+                                    } ${ViewSize * 0.9}`}
+                                    fill="#fff"
+                                >
+                                    {TD.sections && (
+                                        <Sections
+                                            center={ViewCenter}
+                                            draws={TD.sections}
+                                            margin={0}
+                                        />
+                                    )}
+                                </svg>
+                            </Tile>
+                        </Column>
+                        <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                            <Accordion style={{ marginBlock: '2rem' }} align="end" size="lg">
+                                <AccordionItem title="Tower Layout Base" open>
+                                    <Slider
+                                        ariaLabelInput="Top Upper Outside Diameter"
+                                        id="topUpperOutDia"
+                                        labelText="Top Upper Outside Diameter"
+                                        max={8000}
+                                        min={3000}
+                                        step={50}
+                                        value={topUpperOutDia}
+                                        onChange={onChangeTopUpperOutDia}
+                                    />
+                                    <br />
+                                    <br />
+                                    <Slider
+                                        ariaLabelInput="Bottom Lower Outside Diameter"
+                                        id="bottomLowerOutDia"
+                                        labelText="Bottom Lower Outside Diameter"
+                                        max={8000}
+                                        min={3000}
+                                        step={50}
+                                        value={bottomLowerOutDia}
+                                        onChange={onChangeBottomLowerOutDia}
+                                    />
+                                    <br />
+                                    <br />
+                                    <Slider
+                                        ariaLabelInput="Bottom Lower Outside Diameter"
+                                        id="bottomLowerOutDia"
+                                        labelText="Total Height"
+                                        max={110000}
+                                        min={90000}
+                                        step={100}
+                                        value={totalHeight}
+                                        onChange={onChangeTotalHeight}
+                                    />
+                                    <br />
+                                    <br />
+                                    <Slider
+                                        ariaLabelInput="Number of Tower Sectionl"
+                                        id="initial-divided"
+                                        labelText="Number of Tower Sectionl"
+                                        max={6}
+                                        min={1}
+                                        step={1}
+                                        value={divided}
+                                        onChange={onChangeDevided}
+                                    />
+                                    <br />
+                                    <br />
+                                    <Button
+                                        renderIcon={SettingsCheck32}
+                                        onClick={onClickSetSections}
+                                    >
+                                        Set
+                                    </Button>
+                                    <br />
+                                    <br />
+                                </AccordionItem>
+                                <AccordionItem title="Setting Value" open>
+                                    <Slider
+                                        ariaLabelInput="Top Upper Outside Diameter"
+                                        id="topUpperOutDia"
+                                        labelText="Top Upper Outside Diameter"
+                                        max={8000}
+                                        min={3000}
+                                        step={50}
+                                        value={topUpperOutDia}
+                                        onChange={onChangeTopUpperOutDia}
+                                    />
+                                    <br />
+                                    <Slider
+                                        ariaLabelInput="Bottom Lower Outside Diameter"
+                                        id="bottomLowerOutDia"
+                                        labelText="Bottom Lower Outside Diameter"
+                                        max={8000}
+                                        min={3000}
+                                        step={50}
+                                        value={bottomLowerOutDia}
+                                        onChange={onChangeBottomLowerOutDia}
+                                    />
+                                    <br />
+                                    <Slider
+                                        ariaLabelInput="Bottom Lower Outside Diameter"
+                                        id="bottomLowerOutDia"
+                                        labelText="Total Height"
+                                        max={110000}
+                                        min={90000}
+                                        step={100}
+                                        value={totalHeight}
+                                        onChange={onChangeTotalHeight}
+                                    />
+                                </AccordionItem>
+                            </Accordion>
+                        </Column>
+                    </Row>
+                </Tab>
+                {/* <Tab label="Each Parts Value">
                     <h3>Parts Value</h3>
                     <Row as="article" narrow>
                         <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                             <Tile>
                                 <AspectRatio>
                                     <svg viewBox={ViewBox} fill="#fff">
-                                        {towerData.parts[0] ? (
-                                            <Parts
+                                        {TD?.parts && (
+                                            <Sections
                                                 center={ViewCenter}
-                                                draws={towerData.parts[1]}
+                                                draws={TD?.parts[0]}
                                                 margin={300}
                                             />
-                                        ) : (
-                                            <div>Data Not Setting</div>
                                         )}
                                         <AxisX />
                                         <AxisY />
@@ -181,7 +367,7 @@ const BuildValue = () => {
                             </Accordion>
                         </Column>
                     </Row>
-                </Tab>
+                </Tab> */}
                 <Tab label="Tab label 2">
                     <p>Content for second tab goes here.</p>
                 </Tab>

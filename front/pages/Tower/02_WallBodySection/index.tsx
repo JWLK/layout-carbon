@@ -11,15 +11,7 @@ import {} from './styles'
 import { Fade32 } from '@carbon/icons-react'
 import { Grid, Row, Column, Button, TextInput } from 'carbon-components-react'
 
-//Tower Element
-import { ObjPoint, ObjSquare, TWInitialValue, TWRawData } from 'typings/object'
-import { ViewBox, ViewCenter } from '@objects/Base/AxisBase'
-import AxisX from '@objects/Base/AxisX'
-import AxisY from '@objects/Base/AxisY'
-
 const WallBodySection = () => {
-    const { data: towerData } = useSWR<TWRawData>('towerData', fetchStore)
-    console.log(towerData)
     return (
         <>
             <PageTypeWide>

@@ -26,6 +26,16 @@ export interface TWRawData {
     parts: Array<ObjSquare[]>
 }
 
+export interface TWSectionsData {
+    sections: ObjSquare[]
+    parts: Array<ObjSquare[]>
+}
+
+export interface TWPartsData {
+    sections: ObjSquare[]
+    parts: Array<ObjSquare[]>
+}
+
 export interface TWRevalidyData {
     initial: TWInitialValue
     section: number[]

@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react'
-import { MX, MY } from '@objects/Base/AxisSections'
+import { MX, MY } from '@objects/Base/AxisBase'
 import { ObjPoint, ObjSquare } from 'typings/object'
 
-import Render from '@objects/Tools/RenderTypeSections'
-import TextDistance from '@objects/Tools/TextDistanceTypeSections'
+import RenderTypeA from '@objects/Tools/RenderTypeA'
+import TextDistance from '@objects/Tools/TextDistanceTypeA'
 
 interface Props {
     center: ObjPoint
@@ -11,12 +11,7 @@ interface Props {
     margin: number
 }
 
-const WALL_THICKNESS = 200
-const LINE_WIDTH = WALL_THICKNESS / 2
-const GUIDE_MARGIN = 15000
-const FONT_SIZE = 3000
-
-const Sections: FC<Props> = ({ center, draws, margin }) => {
+const Parts: FC<Props> = ({ center, draws, margin }) => {
     const savedShift: number[] = [center.y]
     const savedText: number[] = [0]
     const savedSum: number[] = [center.y]
@@ -28,7 +23,7 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
                 savedShift.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [],
     )
     const splitText: ObjPoint[] = useMemo(
         () =>
@@ -38,43 +33,35 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
                 savedText.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [],
     )
     return (
         <>
             {draws.map((draw, index) => (
-                <Render
+                <RenderTypeA
                     key={index}
                     base={centerShiftY[index]}
                     draw={draw}
                     textGuideX={MX + center.x + draws[0].bottom / 2}
                     splitGuideX={MX + center.x - draws[0].bottom / 2}
-                    guideMargin={GUIDE_MARGIN}
                     splitText={splitText[index]}
-                    thickness={WALL_THICKNESS}
-                    lineWidth={LINE_WIDTH}
-                    fontSize={FONT_SIZE}
                 />
             ))}
             <TextDistance
-                MX={MX}
-                MY={MY}
                 corner1={{
-                    x: center.x + draws[0].bottom / 2 + GUIDE_MARGIN,
+                    x: center.x + draws[0].bottom / 2 + 3000,
                     y: centerShiftY[centerShiftY.length - 1].y + draws[draws.length - 1].height,
                 }}
                 corner2={{
-                    x: center.x + draws[0].bottom / 2 + GUIDE_MARGIN,
+                    x: center.x + draws[0].bottom / 2 + 3000,
                     y: centerShiftY[0].y,
                 }}
-                guideX={center.x + draws[0].bottom / 2 + GUIDE_MARGIN * 2}
-                guideMargin={GUIDE_MARGIN}
+                guideX={center.x + draws[0].bottom / 2 + 6000}
                 text={splitText[splitText.length - 1].y}
-                lineWidth={LINE_WIDTH}
-                fontSize={FONT_SIZE}
+                fontSize={500}
             />
         </>
     )
 }
 
-export default Sections
+export default Parts

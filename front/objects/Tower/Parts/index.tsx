@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
-import { MX, MY } from '@objects/Base/AxisSections'
+import { MX, MY } from '@objects/Base/AxisParts'
 import { ObjPoint, ObjSquare } from 'typings/object'
 
-import Render from '@objects/Tools/RenderTypeSections'
+import Render from '@objects/Tools/RenderTypeParts'
 import TextDistance from '@objects/Tools/TextDistanceTypeSections'
 
 interface Props {
@@ -11,12 +11,12 @@ interface Props {
     margin: number
 }
 
-const WALL_THICKNESS = 200
+const WALL_THICKNESS = 100
 const LINE_WIDTH = WALL_THICKNESS / 2
-const GUIDE_MARGIN = 15000
-const FONT_SIZE = 3000
+const GUIDE_MARGIN = 4000
+const FONT_SIZE = 1000
 
-const Sections: FC<Props> = ({ center, draws, margin }) => {
+const Parts: FC<Props> = ({ center, draws, margin }) => {
     const savedShift: number[] = [center.y]
     const savedText: number[] = [0]
     const savedSum: number[] = [center.y]
@@ -77,4 +77,4 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
     )
 }
 
-export default Sections
+export default Parts

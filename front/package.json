@@ -51,7 +51,7 @@
         "swr": "1.1",
         "swr-devtools": "^0.4.0",
         "typescript": "^4.6.2",
-        "update": "^0.4.2",
+        "update": "^0.7.4",
         "upgrade": "^1.1.0"
     },
     "devDependencies": {

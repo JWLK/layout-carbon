@@ -15,7 +15,7 @@ const InitWallValue = () => {
         <>
             <PageTypeWide>
                 <Grid fullWidth>
-                    <Header>Initial Wall Value</Header>
+                    {/* <Header>Initial Wall Value</Header>
                     <p>Design the initial model by entering the basic values of the tower.</p>
                     <Section>
                         <Tabs>
@@ -28,6 +28,15 @@ const InitWallValue = () => {
                                 <PartsOutline />
                             </Tab>
                         </Tabs>
+                    </Section> */}
+                    <Section>
+                        <h3>Sections Outline</h3>
+                        <SectionsOutline />
+                    </Section>
+                    <SectionDivider />
+                    <Section>
+                        <h3>Parts Setting </h3>
+                        <PartsOutline />
                     </Section>
                 </Grid>
             </PageTypeWide>

@@ -57,7 +57,7 @@ const SectionOutline = () => {
     const [sectionsObject, setSectionsObject] = useState([] as ObjSquare[])
 
     const [scaleViewBox, setScaleViewBox] = useState(
-        `${ViewMargin * 3.5} ${35000} ${ViewSize / 1.5} ${ViewSize - 35000}`,
+        `${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`,
     )
     const [totalHeight, setTotalHeight] = useState(0)
     const [topUpperOutDia, setTopUpperOutDia] = useState(0)

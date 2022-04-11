@@ -42,7 +42,7 @@ import {
 //Data
 import { SectionsValue, PartsValue } from '@objects/Data/InitValue'
 //Element
-import { ViewSize, ViewMargin, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisSections'
+import { ViewSize, ViewMargin, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisParts'
 
 import Parts from '@objects/Tower/Parts'
 
@@ -71,13 +71,51 @@ const PartsOutline = () => {
     const [sectionsObject, setSectionsObject] = useState([] as ObjSquare[])
     const [partsObject, setPartsObject] = useState([] as Array<ObjSquare[]>)
 
-    const [scaleViewBox, setScaleViewBox] = useState(`${0} ${0} ${ViewSize} ${ViewSize}`)
+    const [currentTabIndex, setCurrentTabIndex] = useState(0)
+
+    const [scaleViewBox, setScaleViewBox] = useState(
+        `${ViewMargin * 1.5} ${15000} ${ViewSize / 1.5} ${ViewSize - 15000}`,
+    )
+
+    const onChangeCurrentTabIndex = useCallback(
+        (value) => {
+            if (SD !== undefined) {
+                onChangeScale(SD.sections[value].height)
+                console.log(SD.sections[value].height)
+            }
+        },
+        [SD],
+    )
+
+    const onChangeScale = useCallback(
+        (value) => {
+            console.log(value)
+            if (value > 70000) {
+                setScaleViewBox(
+                    `${ViewMargin * 1.5} ${-60000} ${ViewSize / 1.5} ${ViewSize + 55000}`,
+                )
+            } else if (value > 48000) {
+                setScaleViewBox(
+                    `${ViewMargin * 1.5} ${-15000} ${ViewSize / 1.5} ${ViewSize + 15000}`,
+                )
+            } else if (value > 30000) {
+                setScaleViewBox(`${ViewMargin * 1.5} ${-5000} ${ViewSize / 1.5} ${ViewSize + 5000}`)
+            } else {
+                setScaleViewBox(
+                    `${ViewMargin * 1.5} ${15000} ${ViewSize / 1.5} ${ViewSize - 15000}`,
+                )
+            }
+        },
+        [SD],
+    )
 
     useEffect(() => {
         if (TD !== undefined && SD !== undefined) {
             // console.log(TD)
+            setRawData(TD)
             setSectionsObject(TD.sections)
             setPartsObject(TD.parts)
+            onChangeScale(SD.sections[0].height)
 
             SD.sections = TD.sections
             SD.parts = TD.parts
@@ -93,8 +131,9 @@ const PartsOutline = () => {
 
     return (
         <>
-            <Tabs type="container">
-                {SD.parts.map((v, index) => {
+            <Tabs type="container" onSelectionChange={onChangeCurrentTabIndex}>
+                {SD.parts.map((part, index) => {
+                    // onChangeScale(SD.sections[index].height)
                     return (
                         <Tab label={`Section ${index}`}>
                             <Row as="article" narrow>

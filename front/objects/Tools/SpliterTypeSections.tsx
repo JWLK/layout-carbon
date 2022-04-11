@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
-import { MX, MY } from '@objects/Base/AxisSections'
 
 import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
+    MX: number
+    MY: number
     corner1: ObjPoint
     corner2: ObjPoint
     guideX: number
@@ -14,6 +15,8 @@ interface Props {
 }
 
 const Spliter: FC<Props> = ({
+    MX,
+    MY,
     corner1,
     corner2,
     guideX,
@@ -61,7 +64,7 @@ const Spliter: FC<Props> = ({
                     text-anchor="end"
                     transform="rotate(0)"
                 >
-                    {text}
+                    {text.toLocaleString()}
                 </text>
             </g>
         </>

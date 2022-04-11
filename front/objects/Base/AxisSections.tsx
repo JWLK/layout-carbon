@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const ViewMargin: any = 10000
-export const ViewScale: any = 120000
+export const ViewScale: any = 150000
 export const MX: any = ViewMargin
 export const MY: any = ViewScale
 export const ViewSize: any = ViewScale + ViewMargin

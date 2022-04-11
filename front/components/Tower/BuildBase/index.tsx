@@ -35,7 +35,7 @@ import { ObjPoint, ObjSquare, TWInitialValue, TWRawData } from 'typings/object'
 //Data
 import { InitValue } from '@objects/Data/InitValue'
 //Element
-import { ViewSize, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisSections'
+import { ViewSize, ViewMargin, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisSections'
 
 import Sections from '@objects/Tower/Sections'
 import Parts from '@objects/Tower/Parts'
@@ -75,10 +75,26 @@ const BuildValue = () => {
     const [rawData, setRawData] = useState({} as TWRawData)
     const [initValue, setInitValue] = useState({} as TWInitialValue)
     const [sectionsObject, setSectionsObject] = useState([] as ObjSquare[])
+
+    const [scaleViewBox, setScaleViewBox] = useState(
+        `${ViewMargin * 3.5} ${35000} ${ViewSize / 1.5} ${ViewSize - 35000}`,
+    )
+    const [totalHeight, setTotalHeight] = useState(0)
     const [topUpperOutDia, setTopUpperOutDia] = useState(0)
     const [bottomLowerOutDia, setBottomLowerOutDia] = useState(0)
-    const [totalHeight, setTotalHeight] = useState(0)
     const [divided, setDivided] = useState(0)
+
+    const onChangeTotalHeight = useCallback(
+        (e) => {
+            console.log(e.imaginaryTarget.value)
+            setTotalHeight(e.imaginaryTarget.value)
+            initValue.totalHeight = e.imaginaryTarget.value
+            rawData.initial = initValue
+            localStorage.setItem(key, JSON.stringify(rawData))
+            // mutate()
+        },
+        [initValue, rawData, totalHeight],
+    )
 
     const onChangeTopUpperOutDia = useCallback(
         (e) => {
@@ -102,17 +118,6 @@ const BuildValue = () => {
         [initValue, rawData, bottomLowerOutDia],
     )
 
-    const onChangeTotalHeight = useCallback(
-        (e) => {
-            setTotalHeight(e.value)
-            initValue.totalHeight = e.value
-            rawData.initial = initValue
-            localStorage.setItem(key, JSON.stringify(rawData))
-            mutate()
-        },
-        [initValue, rawData, totalHeight],
-    )
-
     const onChangeDevided = useCallback(
         (e) => {
             setDivided(e.value)
@@ -123,6 +128,18 @@ const BuildValue = () => {
         },
         [initValue, rawData, divided],
     )
+
+    const onChangeScale = useCallback((value) => {
+        if (value > 180000) {
+            setScaleViewBox(`${ViewMargin} ${-65000} ${ViewSize} ${ViewSize + 65000}`)
+        } else if (value > 140000) {
+            setScaleViewBox(`${ViewMargin * 2.5} ${-45000} ${ViewSize / 1.2} ${ViewSize + 45000}`)
+        } else if (value > 110000) {
+            setScaleViewBox(`${ViewMargin * 3} ${-5000} ${ViewSize / 1.3} ${ViewSize + 5000}`)
+        } else {
+            setScaleViewBox(`${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`)
+        }
+    }, [])
 
     const onClickSetSections = useCallback(
         (e) => {
@@ -151,6 +168,9 @@ const BuildValue = () => {
                 }
             }
             setSectionsObject(sectionsWrap)
+
+            onChangeScale(totalHeight)
+
             rawData.sections = sectionsWrap
             localStorage.setItem(key, JSON.stringify(rawData))
             mutate()
@@ -163,9 +183,10 @@ const BuildValue = () => {
             // console.log(TD)
             setRawData(TD)
             setInitValue(TD.initial)
+            setTotalHeight(TD.initial.totalHeight)
+            onChangeScale(TD.initial.totalHeight)
             setTopUpperOutDia(TD.initial.topUpperOutDia)
             setBottomLowerOutDia(TD.initial.bottomLowerOutDia)
-            setTotalHeight(TD.initial.totalHeight)
             setDivided(TD.initial.divided)
         }
     }, [TD])
@@ -182,12 +203,7 @@ const BuildValue = () => {
                     <Row as="article" narrow>
                         <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                             <Tile>
-                                <svg
-                                    viewBox={`${ViewSize * 0.2} ${ViewSize * 0.1} ${
-                                        ViewSize * 0.7
-                                    } ${ViewSize * 0.9}`}
-                                    fill="#fff"
-                                >
+                                <svg viewBox={scaleViewBox} fill="#fff">
                                     {TD.sections && (
                                         <Sections
                                             center={ViewCenter}
@@ -201,6 +217,21 @@ const BuildValue = () => {
                         <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                             <Accordion style={{ marginBlock: '2rem' }} align="end" size="lg">
                                 <AccordionItem title="Tower Layout Base" open>
+                                    <NumberInput
+                                        id="totalHeight"
+                                        label="Total Height"
+                                        invalidText="This value cannot be used. (Valid Value = 5,000mm~200,000mm)"
+                                        min={5000}
+                                        max={200000}
+                                        onChange={onChangeTotalHeight}
+                                        size="lg"
+                                        step={100}
+                                        value={totalHeight}
+                                        warnText="A high threshold may impact performance"
+                                    />
+                                    <br />
+                                    <br />
+
                                     <Slider
                                         ariaLabelInput="Top Upper Outside Diameter"
                                         id="topUpperOutDia"
@@ -213,6 +244,7 @@ const BuildValue = () => {
                                     />
                                     <br />
                                     <br />
+
                                     <Slider
                                         ariaLabelInput="Bottom Lower Outside Diameter"
                                         id="bottomLowerOutDia"
@@ -225,18 +257,7 @@ const BuildValue = () => {
                                     />
                                     <br />
                                     <br />
-                                    <Slider
-                                        ariaLabelInput="Bottom Lower Outside Diameter"
-                                        id="bottomLowerOutDia"
-                                        labelText="Total Height"
-                                        max={110000}
-                                        min={90000}
-                                        step={100}
-                                        value={totalHeight}
-                                        onChange={onChangeTotalHeight}
-                                    />
-                                    <br />
-                                    <br />
+
                                     <Slider
                                         ariaLabelInput="Number of Tower Sectionl"
                                         id="initial-divided"
@@ -249,6 +270,7 @@ const BuildValue = () => {
                                     />
                                     <br />
                                     <br />
+
                                     <Button
                                         renderIcon={SettingsCheck32}
                                         onClick={onClickSetSections}
@@ -270,27 +292,6 @@ const BuildValue = () => {
                                         onChange={onChangeTopUpperOutDia}
                                     />
                                     <br />
-                                    <Slider
-                                        ariaLabelInput="Bottom Lower Outside Diameter"
-                                        id="bottomLowerOutDia"
-                                        labelText="Bottom Lower Outside Diameter"
-                                        max={8000}
-                                        min={3000}
-                                        step={50}
-                                        value={bottomLowerOutDia}
-                                        onChange={onChangeBottomLowerOutDia}
-                                    />
-                                    <br />
-                                    <Slider
-                                        ariaLabelInput="Bottom Lower Outside Diameter"
-                                        id="bottomLowerOutDia"
-                                        labelText="Total Height"
-                                        max={110000}
-                                        min={90000}
-                                        step={100}
-                                        value={totalHeight}
-                                        onChange={onChangeTotalHeight}
-                                    />
                                 </AccordionItem>
                             </Accordion>
                         </Column>

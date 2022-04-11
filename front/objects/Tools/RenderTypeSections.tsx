@@ -65,12 +65,16 @@ const RenderLine: FC<Props> = ({
             {walls.map(([a, b]) => (
                 <Wall
                     key={`wall-${a.x},${a.y}-${b.x},${b.y}`}
+                    MX={MX}
+                    MY={MY}
                     corner1={a}
                     corner2={b}
                     thickness={thickness}
                 />
             ))}
             <TextDistance
+                MX={MX}
+                MY={MY}
                 corner1={p2}
                 corner2={p3}
                 guideX={textGuideX}
@@ -80,6 +84,8 @@ const RenderLine: FC<Props> = ({
                 fontSize={fontSize}
             />
             <Spliter
+                MX={MX}
+                MY={MY}
                 corner1={p1}
                 corner2={p4}
                 guideX={splitGuideX}

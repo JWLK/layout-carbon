@@ -1,6 +1,6 @@
 import React from 'react'
 
-import TowerBuildValue from '@components/Tower/BuildValue'
+import TowerBuildValue from '@components/Tower/BuildBase'
 
 import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
 

@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
-import { MX, MY } from '@objects/Base/AxisSections'
 
 import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
+    MX: number
+    MY: number
     corner1: ObjPoint
     corner2: ObjPoint
     guideX: number
@@ -14,6 +15,8 @@ interface Props {
 }
 
 const TextDistance: FC<Props> = ({
+    MX,
+    MY,
     corner1,
     corner2,
     guideX,
@@ -71,7 +74,7 @@ const TextDistance: FC<Props> = ({
             </g>
             <g transform={`translate(${VeticalTextPointX}, ${VeticalTextPointY})`}>
                 <text fill={VeticalColor} fontSize={fontSize} transform="rotate(-90)">
-                    {text}
+                    {text.toLocaleString()}
                 </text>
             </g>
             <line

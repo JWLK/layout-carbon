@@ -11,10 +11,10 @@ interface Props {
     margin: number
 }
 
-const WALL_THICKNESS = 100
-const LINE_WIDTH = 50
-const FONT_SIZE = 2000
-const GUIDE_MARGIN = 10000
+const WALL_THICKNESS = 200
+const LINE_WIDTH = WALL_THICKNESS / 2
+const GUIDE_MARGIN = 15000
+const FONT_SIZE = 3000
 
 const Sections: FC<Props> = ({ center, draws, margin }) => {
     const savedShift: number[] = [center.y]
@@ -57,6 +57,8 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
                 />
             ))}
             <TextDistance
+                MX={MX}
+                MY={MY}
                 corner1={{
                     x: center.x + draws[0].bottom / 2 + GUIDE_MARGIN,
                     y: centerShiftY[centerShiftY.length - 1].y + draws[draws.length - 1].height,

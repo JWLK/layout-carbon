@@ -1,14 +1,15 @@
 import React, { FC } from 'react'
-import { MY, MX } from '@objects/Base/AxisSections'
 
 import { ObjPoint, ObjSquare } from 'typings/object'
 
 interface Props {
+    MX: number
+    MY: number
     corner1: ObjPoint
     corner2: ObjPoint
     thickness: number
 }
-const Wall: FC<Props> = ({ corner1, corner2, thickness }) => {
+const Wall: FC<Props> = ({ MX, MY, corner1, corner2, thickness }) => {
     return (
         <g>
             <line

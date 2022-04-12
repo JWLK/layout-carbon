@@ -48,7 +48,7 @@ const Spliter: FC<Props> = ({ corner1, corner2, guideX, fontSize, text }) => {
                 <text
                     fill={HorizentalColor}
                     fontSize={fontSize}
-                    text-anchor="end"
+                    textAnchor="end"
                     transform="rotate(0)"
                 >
                     {text}

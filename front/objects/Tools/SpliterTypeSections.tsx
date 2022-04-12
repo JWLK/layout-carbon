@@ -61,7 +61,7 @@ const Spliter: FC<Props> = ({
                 <text
                     fill={HorizentalColor}
                     fontSize={fontSize}
-                    text-anchor="end"
+                    textAnchor="end"
                     transform="rotate(0)"
                 >
                     {text.toLocaleString()}

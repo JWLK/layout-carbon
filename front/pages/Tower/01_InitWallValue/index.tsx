@@ -36,7 +36,7 @@ const InitWallValue = () => {
                     <SectionDivider />
                     <Section>
                         <h3>Parts Setting </h3>
-                        <PartsOutline />
+                        {/* <PartsOutline /> */}
                     </Section>
                 </Grid>
             </PageTypeWide>

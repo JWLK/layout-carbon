@@ -22,18 +22,20 @@ export interface TWInitialValue {
 
 export interface TWRawData {
     initial: TWInitialValue
-    sections: ObjSquare[]
-    parts: Array<ObjSquare[]>
+    sectionData: TWSection[]
+    partsData: TWParts[]
 }
 
-export interface TWSectionsData {
-    sections: ObjSquare[]
-    parts: Array<ObjSquare[]>
+export interface TWSection {
+    index: number
+    section: ObjSquare
+    tapered: boolean
 }
 
-export interface TWPartsData {
-    sections: ObjSquare[]
-    parts: Array<ObjSquare[]>
+export interface TWParts {
+    index: number
+    parts: ObjSquare[]
+    valid: boolean
 }
 
 export interface TWRevalidyData {

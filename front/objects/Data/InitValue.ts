@@ -1,12 +1,17 @@
 //Tower Element
-import {
-    ObjPoint,
-    ObjSquare,
-    TWInitialValue,
-    TWRawData,
-    TWSectionsData,
-    TWPartsData,
-} from 'typings/object'
+import { ObjPoint, ObjSquare, TWInitialValue, TWRawData, TWSection, TWParts } from 'typings/object'
+
+export const InitSection: TWSection = {
+    index: 0,
+    section: { top: 4950, bottom: 7300, height: 100000 },
+    tapered: true,
+}
+
+export const InitParts: TWParts = {
+    index: 0,
+    parts: [{ top: 4950, bottom: 7300, height: 100000 }],
+    valid: true,
+}
 
 export const RawData: TWRawData = {
     initial: {
@@ -18,21 +23,6 @@ export const RawData: TWRawData = {
         divided: 1,
         custom: false,
     },
-    sections: [{ top: 4950, bottom: 7300, height: 100000 }],
-    parts: [],
-}
-
-export const SectionsValue: TWPartsData = {
-    sections: [],
-    parts: [],
-}
-
-export const PartsValue: TWPartsData = {
-    sections: [],
-    parts: [],
-}
-
-export const RawSaveValue: TWPartsData = {
-    sections: [],
-    parts: [],
+    sectionData: [InitSection],
+    partsData: [InitParts],
 }

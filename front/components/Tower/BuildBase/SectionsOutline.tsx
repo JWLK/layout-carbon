@@ -27,11 +27,19 @@ import {
     Dropdown,
     Tabs,
     Tab,
+    DataTable,
+    TableContainer,
+    Table,
+    TableHead,
+    TableHeader,
+    TableBody,
+    TableRow,
+    TableCell,
 } from 'carbon-components-react'
 
 /*Tower Element*/
 //Type
-import { ObjPoint, ObjSquare, TWInitialValue, TWRawData } from 'typings/object'
+import { ObjPoint, ObjSquare, TWInitialValue, TWRawData, TWSection, TWParts } from 'typings/object'
 //Data
 import { RawData } from '@objects/Data/InitValue'
 //Element
@@ -43,18 +51,19 @@ const SectionOutline = () => {
     /* Param */
     const { workspace } = useParams<{ workspace?: string }>()
     /* Localstorage */
-    const key = `${workspace}-towerData`
-    if (localStorage.getItem(key) === null) {
-        localStorage.setItem(key, JSON.stringify(RawData))
+    const keyRawData = `${workspace}-towerData`
+    if (localStorage.getItem(keyRawData) === null) {
+        localStorage.setItem(keyRawData, JSON.stringify(RawData))
     }
     /* SWR */
-    const { data: TD, mutate } = useSWR<TWRawData>(key, fetchStore)
+    const { data: TD, mutate } = useSWR<TWRawData>(keyRawData, fetchStore)
 
-    /* State */
-    //Initial Value State
+    /*
+     ** Init Tab
+     */
     const [rawData, setRawData] = useState({} as TWRawData)
-    const [initValue, setInitValue] = useState({} as TWInitialValue)
-    const [sectionsObject, setSectionsObject] = useState([] as ObjSquare[])
+    const [initData, setInitData] = useState({} as TWInitialValue)
+    const [sectionData, setSectionData] = useState([] as TWSection[])
 
     const [scaleViewBox, setScaleViewBox] = useState(
         `${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`,
@@ -66,47 +75,44 @@ const SectionOutline = () => {
 
     const onChangeTotalHeight = useCallback(
         (e) => {
-            console.log(e.imaginaryTarget.value)
             setTotalHeight(e.imaginaryTarget.value)
-            initValue.totalHeight = e.imaginaryTarget.value
-            rawData.initial = initValue
-            localStorage.setItem(key, JSON.stringify(rawData))
-            // mutate()
+            initData.totalHeight = e.imaginaryTarget.value
+            rawData.initial = initData
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
-        [initValue, rawData, totalHeight],
+        [keyRawData, rawData, initData],
     )
 
     const onChangeTopUpperOutDia = useCallback(
         (e) => {
             setTopUpperOutDia(e.value)
-            initValue.topUpperOutDia = e.value
-            rawData.initial = initValue
-            localStorage.setItem(key, JSON.stringify(rawData))
-            mutate()
+            initData.topUpperOutDia = e.value
+            rawData.initial = initData
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
-        [initValue, rawData, topUpperOutDia],
+        [keyRawData, rawData, initData],
     )
 
     const onChangeBottomLowerOutDia = useCallback(
         (e) => {
             setBottomLowerOutDia(e.value)
-            initValue.bottomLowerOutDia = e.value
-            rawData.initial = initValue
-            localStorage.setItem(key, JSON.stringify(rawData))
-            mutate()
+            initData.bottomLowerOutDia = e.value
+            rawData.initial = initData
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            // mutate()
         },
-        [initValue, rawData, bottomLowerOutDia],
+        [keyRawData, rawData, initData],
     )
 
     const onChangeDevided = useCallback(
         (e) => {
             setDivided(e.value)
-            initValue.divided = e.value
-            rawData.initial = initValue
-            localStorage.setItem(key, JSON.stringify(rawData))
-            mutate()
+            initData.divided = e.value
+            rawData.initial = initData
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            // mutate()
         },
-        [initValue, rawData, divided],
+        [keyRawData, rawData, initData],
     )
 
     const onChangeScale = useCallback((value) => {
@@ -123,56 +129,100 @@ const SectionOutline = () => {
 
     const onClickSetSections = useCallback(
         (e) => {
-            e.preventDefault()
-            var sectionsWrap = []
-            var partsWrap = []
+            var sectionsObject = [] as TWSection[]
+            var partsObject = [] as TWParts[]
 
             for (var i = 0; i < divided; i++) {
+                /* Init Value */
                 var eachHeight = Math.round(totalHeight / divided)
-                console.log('eachHeight', eachHeight)
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
-                console.log('triBottom', triBottom)
                 var eachHypo =
                     Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
-                console.log('eachHypo', eachHypo)
                 var angle = Math.PI / 2 - Math.atan(totalHeight / triBottom)
-                console.log('angle', (180 / Math.PI) * angle)
 
-                var sectionWidthTop = topUpperOutDia + eachHypo * i * Math.sin(angle) * 2
-                var sectionWidthBottom = topUpperOutDia + eachHypo * (i + 1) * Math.sin(angle) * 2
-                // console.log('sectionWidth', Math.round(sectionWidth * 2 + topUpperOutDia))
+                // console.log('eachHeight', eachHeight)
+                // console.log('triBottom', triBottom)
+                // console.log('eachHypo', eachHypo)
+                // console.log('angle', (180 / Math.PI) * angle)
 
-                sectionsWrap[divided - 1 - i] = {
-                    top: sectionWidthTop,
-                    bottom: sectionWidthBottom,
-                    height: eachHeight,
+                /* Calc Value */
+                var sectionWidthTop = Math.round(
+                    topUpperOutDia + eachHypo * i * Math.sin(angle) * 2,
+                )
+                var sectionWidthBottom = Math.round(
+                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(angle) * 2,
+                )
+                // console.log(
+                //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
+                // )
+
+                //Inser Reverse
+                sectionsObject[divided - 1 - i] = {
+                    index: i,
+                    section: {
+                        top: sectionWidthTop,
+                        bottom: sectionWidthBottom,
+                        height: eachHeight,
+                    },
+                    tapered: true,
                 }
-                partsWrap[divided - 1 - i] = [
-                    { top: sectionWidthTop, bottom: sectionWidthBottom, height: eachHeight },
-                ]
+                partsObject[divided - 1 - i] = {
+                    index: i,
+                    parts: [
+                        { top: sectionWidthTop, bottom: sectionWidthBottom, height: eachHeight },
+                    ],
+                    valid: true,
+                }
             }
-            setSectionsObject(sectionsWrap)
 
-            onChangeScale(totalHeight)
-
-            rawData.sections = sectionsWrap
-            rawData.parts = partsWrap
-            localStorage.setItem(key, JSON.stringify(rawData))
+            rawData.sectionData = sectionsObject
+            rawData.partsData = partsObject
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
             mutate()
         },
-        [bottomLowerOutDia, totalHeight, divided, rawData],
+        [keyRawData, rawData, topUpperOutDia, bottomLowerOutDia, totalHeight, divided],
     )
 
+    /*
+     ** Detail Tab
+     */
+    const onClickTypeToggle = useCallback(
+        (index) => {
+            const section = sectionData.map((v) => {
+                if (v.index === index) {
+                    v.tapered = !v.tapered
+                }
+                return v
+            })
+            rawData.sectionData = section
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            mutate()
+        },
+        [keyRawData, rawData, sectionData],
+    )
+
+    /*
+     ** Data Renewal
+    *
+    SWR에 LocalStorage 데이터를 반영하여 최신으로 업데이트
+    useState를 통해 LocalStorage 1차 저장(useState == LocalStorage -> 자동 저장을 위해)
+    => 반영 mutate() => useEffect(~, [TD])를 통해 SWR(==ServerData) 최신 데이터 Front에 반영
+    Front 환경에서 보여주는 데이터는 임시저장한 LocalStorage 데이터가 아닌
+    SWR 데이터를 기준으로 보여줄 수 있도록 함.
+     */
     useEffect(() => {
         if (TD !== undefined) {
             // console.log(TD)
             setRawData(TD)
-            setInitValue(TD.initial)
+            setInitData(TD.initial)
             setTotalHeight(TD.initial.totalHeight)
             onChangeScale(TD.initial.totalHeight)
             setTopUpperOutDia(TD.initial.topUpperOutDia)
             setBottomLowerOutDia(TD.initial.bottomLowerOutDia)
             setDivided(TD.initial.divided)
+
+            setSectionData(TD.sectionData)
+            // onCreateTypeData(TD.sectionData.length)
         }
     }, [TD])
 
@@ -180,21 +230,48 @@ const SectionOutline = () => {
         return <div>Loading...</div>
     }
 
+    const headers = [
+        {
+            key: 'no',
+            header: 'No.',
+        },
+        {
+            key: 'height',
+            header: 'Height',
+        },
+        {
+            key: 'type',
+            header: 'Type',
+        },
+        {
+            key: 'top',
+            header: 'Top',
+        },
+        {
+            key: 'bottom',
+            header: 'Bottom',
+        },
+    ]
     return (
         <>
             <Row as="article" narrow>
                 <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                     <Tile>
                         <svg viewBox={scaleViewBox} fill="#fff">
-                            {TD.sections && (
-                                <Sections center={ViewCenter} draws={TD.sections} margin={0} />
+                            {TD.sectionData && (
+                                <Sections
+                                    center={ViewCenter}
+                                    draws={TD.sectionData.map((v) => v.section)}
+                                    margin={0}
+                                />
                             )}
                         </svg>
                     </Tile>
                 </Column>
                 <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                    <Accordion style={{ marginBlock: '2rem' }} align="end" size="lg">
-                        <AccordionItem title="Tower Layout Base" open>
+                    <Tabs>
+                        <Tab label="Default">
+                            <br />
                             <NumberInput
                                 id="totalHeight"
                                 label="Total Height"
@@ -209,7 +286,6 @@ const SectionOutline = () => {
                             />
                             <br />
                             <br />
-
                             <Slider
                                 ariaLabelInput="Top Upper Outside Diameter"
                                 id="topUpperOutDia"
@@ -222,7 +298,6 @@ const SectionOutline = () => {
                             />
                             <br />
                             <br />
-
                             <Slider
                                 ariaLabelInput="Bottom Lower Outside Diameter"
                                 id="bottomLowerOutDia"
@@ -235,7 +310,6 @@ const SectionOutline = () => {
                             />
                             <br />
                             <br />
-
                             <Slider
                                 ariaLabelInput="Number of Tower Sectionl"
                                 id="initial-divided"
@@ -248,14 +322,83 @@ const SectionOutline = () => {
                             />
                             <br />
                             <br />
-
                             <Button renderIcon={SettingsCheck32} onClick={onClickSetSections}>
                                 Set
                             </Button>
                             <br />
                             <br />
-                        </AccordionItem>
-                    </Accordion>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        {headers.map((header) => (
+                                            <TableHeader
+                                                key={header.key}
+                                                style={{ textAlign: 'center' }}
+                                            >
+                                                {header.header}
+                                            </TableHeader>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {TD.sectionData
+                                        .slice(0)
+                                        .reverse()
+                                        .map((v) => (
+                                            <TableRow
+                                                key={`section-${v.index}`}
+                                                style={{ textAlign: 'end' }}
+                                            >
+                                                <TableCell>{v.index + 1}</TableCell>
+                                                <TableCell>
+                                                    <TextInput
+                                                        id={`section-height-${v.index}`}
+                                                        labelText=""
+                                                        value={v.section.height}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        kind="ghost"
+                                                        onClick={(e) => onClickTypeToggle(v.index)}
+                                                        style={{
+                                                            width: '5rem',
+                                                            fontSize: '0.8rem',
+                                                            textAlign: 'center',
+
+                                                            color: v.tapered
+                                                                ? '#00fe33'
+                                                                : '#ffff00',
+                                                        }}
+                                                    >
+                                                        {v.tapered ? 'Tapered' : 'Linear'}
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextInput
+                                                        id={`section-top-${v.index}`}
+                                                        labelText=""
+                                                        value={v.section.top}
+                                                        disabled={!v.tapered}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextInput
+                                                        id={`section-bottom-${v.index}`}
+                                                        labelText=""
+                                                        value={v.section.bottom}
+                                                        disabled={!v.tapered}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
+                        </Tab>
+                        <Tab label="Detail">
+                            <br />
+                        </Tab>
+                    </Tabs>
                 </Column>
             </Row>
         </>

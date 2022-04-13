@@ -64,6 +64,7 @@ const SectionOutline = () => {
     const [rawData, setRawData] = useState({} as TWRawData)
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
+    const [partsData, setPartsData] = useState([] as TWParts[])
 
     const [scaleViewBox, setScaleViewBox] = useState(
         `${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`,
@@ -75,8 +76,11 @@ const SectionOutline = () => {
 
     const onChangeTotalHeight = useCallback(
         (e) => {
-            setTotalHeight(e.imaginaryTarget.value)
-            initData.totalHeight = e.imaginaryTarget.value
+            const valueNumber = parseInt(
+                e.imaginaryTarget.value !== '' ? e.imaginaryTarget.value : 0,
+            )
+            setTotalHeight(valueNumber)
+            initData.totalHeight = valueNumber
             rawData.initial = initData
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
@@ -99,7 +103,6 @@ const SectionOutline = () => {
             initData.bottomLowerOutDia = e.value
             rawData.initial = initData
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            // mutate()
         },
         [keyRawData, rawData, initData],
     )
@@ -110,7 +113,6 @@ const SectionOutline = () => {
             initData.divided = e.value
             rawData.initial = initData
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            // mutate()
         },
         [keyRawData, rawData, initData],
     )
@@ -127,8 +129,9 @@ const SectionOutline = () => {
         }
     }, [])
 
-    const onClickSetSections = useCallback(
+    const onClickSetSectionsInitData = useCallback(
         (e) => {
+            e.preventDefault()
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
 
@@ -178,6 +181,12 @@ const SectionOutline = () => {
             rawData.sectionData = sectionsObject
             rawData.partsData = partsObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
+
+            //개별 업데이터
+            // setRawData(rawData)
+            // setSectionData(sectionsObject)
+
+            //한번에 업데이터
             mutate()
         },
         [keyRawData, rawData, topUpperOutDia, bottomLowerOutDia, totalHeight, divided],
@@ -191,25 +200,129 @@ const SectionOutline = () => {
             const section = sectionData.map((v) => {
                 if (v.index === index) {
                     v.tapered = !v.tapered
+                    !v.tapered ? (v.section.top = v.section.bottom) : ''
                 }
                 return v
             })
-            rawData.sectionData = section
+
+            const updateSection = updateSectionsTaperedSync(section)
+
+            setSectionData(updateSection)
+            rawData.sectionData = updateSection
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+        },
+        [keyRawData, rawData, sectionData],
+    )
+
+    type typeObjSquare = 'top' | 'bottom' | 'height'
+    const onChangeSectionData = useCallback(
+        (e, index) => {
+            const section = sectionData.map((v) => {
+                const typeObject: typeObjSquare = e.target.name
+                if (v.index === index) {
+                    v.section[`${typeObject}`] = parseInt(
+                        e.target.value !== '' ? e.target.value : 0,
+                    )
+                }
+                return v
+            })
+
+            const updateInitial = updateInitialSync(section)
+            const updateSection = updateSectionsTaperedSync(section)
+
+            rawData.initial = updateInitial
+            rawData.sectionData = updateSection
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
             mutate()
         },
         [keyRawData, rawData, sectionData],
     )
 
+    const updateInitialSync = (sections: TWSection[]) => {
+        var totalHeight = 0
+        for (var i = 0; i < sections.length; i++) {
+            totalHeight += sections[i].section.height
+        }
+        initData.topUpperOutDia = sections[sections.length - 1].section.top
+        initData.bottomLowerOutDia = sections[0].section.bottom
+        initData.totalHeight = totalHeight
+
+        return initData
+    }
+    const updateSectionsTaperedSync = (sections: TWSection[]) => {
+        if (sections[0].tapered === false) {
+            sections[0].section.top = sections[0].section.bottom
+        }
+
+        for (var i = 1; i < sections.length; i++) {
+            if (sections[i].tapered) {
+                sections[i] = {
+                    index: sections[i].index,
+                    section: {
+                        top: sections[i].section.top,
+                        bottom: sections[i - 1].section.top,
+                        height: sections[i].section.height,
+                    },
+                    tapered: sections[i].tapered,
+                }
+            } else {
+                sections[i] = {
+                    index: sections[i].index,
+                    section: {
+                        top: sections[i - 1].section.top,
+                        bottom: sections[i - 1].section.top,
+                        height: sections[i].section.height,
+                    },
+                    tapered: sections[i].tapered,
+                }
+            }
+        }
+        return sections
+    }
+
+    const updatePartsSync = (sections: TWSection[], parts: TWParts[]) => {
+        for (var i = 0; i < sections.length; i++) {
+            parts[i] = {
+                index: parts[i].index,
+                parts: [
+                    {
+                        top: sections[i].section.top,
+                        bottom: sections[i].section.bottom,
+                        height: sections[i].section.height,
+                    },
+                ],
+                valid: true,
+            }
+        }
+        return parts
+    }
+
+    const onClickSetSectionsFinalData = useCallback(
+        (e) => {
+            e.preventDefault()
+            const updateInitial = updateInitialSync(sectionData)
+            const updateSection = updateSectionsTaperedSync(sectionData)
+            const updateParts = updatePartsSync(updateSection, partsData)
+            rawData.initial = updateInitial
+            rawData.sectionData = updateSection
+            rawData.partsData = updateParts
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            mutate()
+        },
+        [keyRawData, partsData, rawData, sectionData, updateInitialSync],
+    )
+
     /*
-     ** Data Renewal
+    ** Data Renewal
     *
-    SWR에 LocalStorage 데이터를 반영하여 최신으로 업데이트
-    useState를 통해 LocalStorage 1차 저장(useState == LocalStorage -> 자동 저장을 위해)
-    => 반영 mutate() => useEffect(~, [TD])를 통해 SWR(==ServerData) 최신 데이터 Front에 반영
-    Front 환경에서 보여주는 데이터는 임시저장한 LocalStorage 데이터가 아닌
-    SWR 데이터를 기준으로 보여줄 수 있도록 함.
-     */
+    SWR를 활용하여 LocalStorage 데이터를 반영해 useState의 Value를 최신으로 업데이트
+    onChange를 통해 useState, LocalStorage 1차 저장(useState == LocalStorage -> 선택적으로 자동저장 활용)
+    [Server 반영 방법]
+    - useState : set() Method를 이용해서 개별적인 데이터 업데이트
+    - SWR : mutate() => useEffect(~, [TD])를 통해 useState Value를 최신데이터로 업데이트해 Front에 반영
+    [Front 표현]
+    - useState : object를 이용해서 데이터 반영
+    */
     useEffect(() => {
         if (TD !== undefined) {
             // console.log(TD)
@@ -222,7 +335,7 @@ const SectionOutline = () => {
             setDivided(TD.initial.divided)
 
             setSectionData(TD.sectionData)
-            // onCreateTypeData(TD.sectionData.length)
+            setPartsData(TD.partsData)
         }
     }, [TD])
 
@@ -252,16 +365,21 @@ const SectionOutline = () => {
             header: 'Bottom',
         },
     ]
+
+    // console.log(
+    //     'sectionData',
+    //     sectionData.map((v) => v.section),
+    // )
     return (
         <>
             <Row as="article" narrow>
                 <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                     <Tile>
                         <svg viewBox={scaleViewBox} fill="#fff">
-                            {TD.sectionData && (
+                            {sectionData.length && (
                                 <Sections
                                     center={ViewCenter}
-                                    draws={TD.sectionData.map((v) => v.section)}
+                                    draws={sectionData.map((v) => v.section)}
                                     margin={0}
                                 />
                             )}
@@ -321,10 +439,13 @@ const SectionOutline = () => {
                                 onChange={onChangeDevided}
                             />
                             <br />
-                            <br />
-                            <Button renderIcon={SettingsCheck32} onClick={onClickSetSections}>
-                                Set
+                            <Button
+                                renderIcon={SettingsCheck32}
+                                onClick={onClickSetSectionsInitData}
+                            >
+                                Init Data Setting
                             </Button>
+                            <br />
                             <br />
                             <br />
                             <Table>
@@ -341,7 +462,7 @@ const SectionOutline = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {TD.sectionData
+                                    {sectionData
                                         .slice(0)
                                         .reverse()
                                         .map((v) => (
@@ -354,6 +475,10 @@ const SectionOutline = () => {
                                                     <TextInput
                                                         id={`section-height-${v.index}`}
                                                         labelText=""
+                                                        name="height"
+                                                        onChange={(e) =>
+                                                            onChangeSectionData(e, v.index)
+                                                        }
                                                         value={v.section.height}
                                                     />
                                                 </TableCell>
@@ -378,6 +503,10 @@ const SectionOutline = () => {
                                                     <TextInput
                                                         id={`section-top-${v.index}`}
                                                         labelText=""
+                                                        name="top"
+                                                        onChange={(e) =>
+                                                            onChangeSectionData(e, v.index)
+                                                        }
                                                         value={v.section.top}
                                                         disabled={!v.tapered}
                                                     />
@@ -386,14 +515,28 @@ const SectionOutline = () => {
                                                     <TextInput
                                                         id={`section-bottom-${v.index}`}
                                                         labelText=""
+                                                        name="bottom"
+                                                        onChange={(e) =>
+                                                            onChangeSectionData(e, v.index)
+                                                        }
                                                         value={v.section.bottom}
-                                                        disabled={!v.tapered}
+                                                        disabled={
+                                                            !v.tapered &&
+                                                            v.index !== sectionData.length - 1
+                                                        }
                                                     />
                                                 </TableCell>
                                             </TableRow>
                                         ))}
                                 </TableBody>
                             </Table>
+                            <br />
+                            <Button
+                                renderIcon={SettingsCheck32}
+                                onClick={onClickSetSectionsFinalData}
+                            >
+                                SAVE Sections Data
+                            </Button>
                         </Tab>
                         <Tab label="Detail">
                             <br />

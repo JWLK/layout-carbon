@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import { ViewScale, ViewMargin, ViewSize } from '@objects/Base/AxisBase'
 
 import { ObjPoint, ObjSquare } from 'typings/object'

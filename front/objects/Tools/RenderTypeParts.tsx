@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react'
-import { MX, MY } from '@objects/Base/AxisParts'
+import { MX, MY } from '@objects/Base/AxisSections'
 import Wall from '@objects/Tools/WallTypeSections'
 import TextDistance from '@objects/Tools/TextDistanceTypeSections'
 import Spliter from '@objects/Tools/SpliterTypeSections'
@@ -57,7 +57,7 @@ const RenderLine: FC<Props> = ({
                 const b = point[(i + 1) % point.length]
                 return [a, b]
             }),
-        [draw],
+        [point],
     )
 
     return (

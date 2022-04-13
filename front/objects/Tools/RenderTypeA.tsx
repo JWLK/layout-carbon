@@ -45,7 +45,7 @@ const RenderLine: FC<Props> = ({ base, draw, textGuideX, splitGuideX, splitText 
                 const b = point[(i + 1) % point.length]
                 return [a, b]
             }),
-        [draw],
+        [point],
     )
 
     return (

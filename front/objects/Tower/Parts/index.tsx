@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react'
-import { MX, MY } from '@objects/Base/AxisParts'
+import { MX, MY } from '@objects/Base/AxisSections'
 import { ObjPoint, ObjSquare } from 'typings/object'
 
 import Render from '@objects/Tools/RenderTypeParts'
@@ -11,15 +11,15 @@ interface Props {
     margin: number
 }
 
-const WALL_THICKNESS = 100
-const LINE_WIDTH = WALL_THICKNESS / 2
-const GUIDE_MARGIN = 4000
-const FONT_SIZE = 1000
-
 const Parts: FC<Props> = ({ center, draws, margin }) => {
+    var WALL_THICKNESS = 200
+    var LINE_WIDTH = WALL_THICKNESS / 2
+    var GUIDE_MARGIN = 15000
+    var FONT_SIZE = 2000
+
     const savedShift: number[] = [center.y]
     const savedText: number[] = [0]
-    const savedSum: number[] = [center.y]
+
     const centerShiftY: ObjPoint[] = useMemo(
         () =>
             draws.map((draw, index) => {
@@ -28,7 +28,7 @@ const Parts: FC<Props> = ({ center, draws, margin }) => {
                 savedShift.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [center.x, draws, margin, savedShift],
     )
     const splitText: ObjPoint[] = useMemo(
         () =>
@@ -38,8 +38,35 @@ const Parts: FC<Props> = ({ center, draws, margin }) => {
                 savedText.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [center.x, draws, savedText],
     )
+
+    if (splitText[splitText.length - 1].y > 80000) {
+        WALL_THICKNESS = 200
+        LINE_WIDTH = WALL_THICKNESS / 2
+        GUIDE_MARGIN = 15000
+        FONT_SIZE = 2000
+    } else if (splitText[splitText.length - 1].y > 50000) {
+        WALL_THICKNESS = 150
+        LINE_WIDTH = WALL_THICKNESS / 2
+        GUIDE_MARGIN = 10000
+        FONT_SIZE = 1500
+    } else if (splitText[splitText.length - 1].y > 25000) {
+        WALL_THICKNESS = 30
+        LINE_WIDTH = WALL_THICKNESS / 2
+        GUIDE_MARGIN = 8000
+        FONT_SIZE = 800
+    } else if (splitText[splitText.length - 1].y > 15000) {
+        WALL_THICKNESS = 30
+        LINE_WIDTH = WALL_THICKNESS / 2
+        GUIDE_MARGIN = 4000
+        FONT_SIZE = 600
+    } else {
+        WALL_THICKNESS = 20
+        LINE_WIDTH = WALL_THICKNESS / 2
+        GUIDE_MARGIN = 3000
+        FONT_SIZE = 400
+    }
     return (
         <>
             {draws.map((draw, index) => (

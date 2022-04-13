@@ -57,7 +57,7 @@ const RenderLine: FC<Props> = ({
                 const b = point[(i + 1) % point.length]
                 return [a, b]
             }),
-        [draw],
+        [point],
     )
 
     return (

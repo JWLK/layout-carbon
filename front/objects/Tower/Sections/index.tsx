@@ -19,7 +19,6 @@ const FONT_SIZE = 3000
 const Sections: FC<Props> = ({ center, draws, margin }) => {
     const savedShift: number[] = [center.y]
     const savedText: number[] = [0]
-    const savedSum: number[] = [center.y]
     const centerShiftY: ObjPoint[] = useMemo(
         () =>
             draws.map((draw, index) => {
@@ -28,7 +27,7 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
                 savedShift.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [center.x, draws, margin, savedShift],
     )
     const splitText: ObjPoint[] = useMemo(
         () =>
@@ -38,7 +37,7 @@ const Sections: FC<Props> = ({ center, draws, margin }) => {
                 savedText.push(y)
                 return { x: x, y: y }
             }),
-        [draws],
+        [center.x, draws, savedText],
     )
     return (
         <>

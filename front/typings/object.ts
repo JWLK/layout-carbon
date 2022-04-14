@@ -35,7 +35,7 @@ export interface TWSection {
 export interface TWParts {
     index: number
     parts: ObjSquare[]
-    valid: boolean
+    angle: number
 }
 
 export interface TWRevalidyData {

@@ -54,6 +54,10 @@ import {
 
 import Sections from '@objects/Tower/Sections'
 import Parts from '@objects/Tower/Parts'
+import Planar from '@objects/Tower/Planar'
+
+//TEST Object
+import Sector from '@objects/Tools/Sector'
 
 const PartsOutline = () => {
     /* Param */
@@ -85,15 +89,20 @@ const PartsOutline = () => {
     }, [])
 
     useEffect(() => {
-        if (currentTapIndex == 0) {
-            setScaleViewBox(onChangeScale(initData.totalHeight))
-        } else {
-            sectionData.map((v, index) => {
-                if (index == currentTapIndex - 1) {
-                    setScaleViewBox(onChangeScale(v.section.height))
-                }
-            })
-        }
+        // if (currentTapIndex == 0) {
+        //     setScaleViewBox(onChangeScale(initData.totalHeight))
+        // } else {
+        //     sectionData.map((v, index) => {
+        //         if (index == currentTapIndex - 1) {
+        //             setScaleViewBox(onChangeScale(v.section.height))
+        //         }
+        //     })
+        // }
+        sectionData.map((v, index) => {
+            if (index == currentTapIndex) {
+                setScaleViewBox(onChangeScale(v.section.height))
+            }
+        })
     }, [currentTapIndex, initData.totalHeight, onChangeScale, sectionData])
     /*
     ** Data Renewal
@@ -146,8 +155,95 @@ const PartsOutline = () => {
     return (
         <>
             <Tabs onSelectionChange={onChaneTabIndex}>
+                {partsData.map((v) => {
+                    return (
+                        <Tab label={`section ${v.index + 1}`}>
+                            <Row as="article" narrow>
+                                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                                    <Tile>
+                                        <div style={{ marginBottom: '0.5rem' }}>Front view</div>
+                                        <div style={{ border: '1px solid #333' }}>
+                                            <svg viewBox={scaleViewBox} fill="#fff">
+                                                {partsData.length && (
+                                                    <Parts
+                                                        center={ViewCenter}
+                                                        draws={v.parts}
+                                                        margin={0}
+                                                    />
+                                                )}
+                                            </svg>
+                                        </div>
+                                    </Tile>
+                                </Column>
+                                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                                    <Tile>
+                                        <div style={{ marginBottom: '0.5rem' }}>Planar view</div>
+                                        <div style={{ border: '1px solid #333' }}>
+                                            <svg viewBox={`0 0 20000 50000`} fill="#fff">
+                                                <Planar
+                                                    top={v.parts[0].top}
+                                                    bottom={v.parts[0].bottom}
+                                                    height={v.parts[0].height}
+                                                    angle={v.angle}
+                                                />
+                                                <g transform="translate(5000, 1000) rotate(0)">
+                                                    {/* <Sector
+                                                        angle={360 * Math.sin(v.angle)}
+                                                        range={3000}
+                                                    />
+                                                    <Sector
+                                                        angle={360 * Math.sin(v.angle)}
+                                                        range={7500}
+                                                    /> */}
+                                                    {/* <line
+                                                        x1={0}
+                                                        y1={0}
+                                                        x2={5000}
+                                                        y2={10000}
+                                                        stroke={'#ffff00'}
+                                                        strokeWidth={10}
+                                                        // strokeDasharray={`500 300`}
+                                                    />
+                                                    <line
+                                                        x1={0}
+                                                        y1={0}
+                                                        x2={-5000}
+                                                        y2={10000}
+                                                        stroke={'#ffff00'}
+                                                        strokeWidth={10}
+                                                        // strokeDasharray={`500 300`}
+                                                    /> */}
+                                                </g>
+                                                {/* <g transform="translate(5000, 2500) rotate(0)">
+                                                    <rect
+                                                        x="-4300"
+                                                        y="0"
+                                                        width="8600"
+                                                        height="5000"
+                                                        stroke="blue"
+                                                        fill="#eee"
+                                                        fill-opacity="0.1"
+                                                        stroke-opacity="0.8"
+                                                    />
+                                                </g> */}
+                                            </svg>
+                                        </div>
+                                    </Tile>
+                                </Column>
+                                {/* <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                                    <Tile>
+                                        <div>Upper Side view</div>
+                                        
+                                    </Tile>
+                                </Column> */}
+                            </Row>
+                        </Tab>
+                    )
+                })}
+
+                {/* Section Info Tab */}
                 <Tab label="Section Info">
-                    <Row as="article" narrow>
+                    {/* <Row as="article" narrow>
                         <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
                             <Tile>
                                 <svg viewBox={scaleViewBox} fill="#fff">
@@ -202,70 +298,8 @@ const PartsOutline = () => {
                                 </TableBody>
                             </Table>
                         </Column>
-                    </Row>
+                    </Row> */}
                 </Tab>
-                {partsData.map((v) => {
-                    return (
-                        <Tab label={`section ${v.index + 1}`}>
-                            <Row as="article" narrow>
-                                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                                    <Tile>
-                                        <svg viewBox={scaleViewBox} fill="#fff">
-                                            {partsData.length && (
-                                                <Parts
-                                                    center={ViewCenter}
-                                                    draws={v.parts}
-                                                    margin={0}
-                                                />
-                                            )}
-                                        </svg>
-                                    </Tile>
-                                </Column>
-                                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                {headers.map((header) => (
-                                                    <TableHeader key={header.key}>
-                                                        {header.header}
-                                                    </TableHeader>
-                                                ))}
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {sectionData
-                                                .slice(0)
-                                                .reverse()
-                                                .map((v) => (
-                                                    <TableRow
-                                                        key={`section-${v.index}`}
-                                                        style={{ textAlign: 'end' }}
-                                                    >
-                                                        <TableCell>{v.index + 1}</TableCell>
-                                                        <TableCell>{v.section.height}</TableCell>
-                                                        <TableCell>
-                                                            <div
-                                                                style={{
-                                                                    fontSize: '0.8rem',
-                                                                    color: v.tapered
-                                                                        ? '#00fe33'
-                                                                        : '#ffff00',
-                                                                }}
-                                                            >
-                                                                {v.tapered ? 'Tapered' : 'Linear'}
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell>{v.section.top}</TableCell>
-                                                        <TableCell>{v.section.bottom}</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                        </TableBody>
-                                    </Table>
-                                </Column>
-                            </Row>
-                        </Tab>
-                    )
-                })}
             </Tabs>
         </>
     )

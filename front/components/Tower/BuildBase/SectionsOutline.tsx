@@ -44,6 +44,7 @@ import { ObjPoint, ObjSquare, TWInitialValue, TWRawData, TWSection, TWParts } fr
 import { RawData } from '@objects/Data/InitValue'
 //Element
 import { ViewSize, ViewMargin, ViewCenter, AxisX, AxisY } from '@objects/Base/AxisSections'
+import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
 import Sections from '@objects/Tower/Sections'
 
@@ -141,7 +142,7 @@ const SectionOutline = () => {
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
                 var eachHypo =
                     Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
-                var angle = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+                var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
 
                 // console.log('eachHeight', eachHeight)
                 // console.log('triBottom', triBottom)
@@ -150,10 +151,10 @@ const SectionOutline = () => {
 
                 /* Calc Value */
                 var sectionWidthTop = Math.round(
-                    topUpperOutDia + eachHypo * i * Math.sin(angle) * 2,
+                    topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
                 )
                 var sectionWidthBottom = Math.round(
-                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(angle) * 2,
+                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
                 )
                 // console.log(
                 //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
@@ -174,7 +175,7 @@ const SectionOutline = () => {
                     parts: [
                         { top: sectionWidthTop, bottom: sectionWidthBottom, height: eachHeight },
                     ],
-                    valid: true,
+                    angle: toAngle(radian),
                 }
             }
 
@@ -291,7 +292,19 @@ const SectionOutline = () => {
                         height: sections[i].section.height,
                     },
                 ],
-                valid: true,
+                angle:
+                    sections[i].section.top == sections[i].section.bottom
+                        ? 0
+                        : toAngle(
+                              Math.PI / 2 -
+                                  Math.atan(
+                                      sections[i].section.height /
+                                          (Math.abs(
+                                              sections[i].section.top - sections[i].section.bottom,
+                                          ) /
+                                              2),
+                                  ),
+                          ),
             }
         }
         return parts

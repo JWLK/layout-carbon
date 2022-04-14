@@ -1,5 +1,6 @@
 //Tower Element
 import { ObjPoint, ObjSquare, TWInitialValue, TWRawData, TWSection, TWParts } from 'typings/object'
+import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
 export const InitSection: TWSection = {
     index: 0,
@@ -10,7 +11,7 @@ export const InitSection: TWSection = {
 export const InitParts: TWParts = {
     index: 0,
     parts: [{ top: 4950, bottom: 7300, height: 100000 }],
-    valid: true,
+    angle: toAngle(Math.PI / 2 - Math.atan(100000 / 7300)),
 }
 
 export const RawData: TWRawData = {

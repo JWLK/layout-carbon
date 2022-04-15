@@ -4,9 +4,11 @@ import { polarToCartesian } from '@objects/Tools/Cartesian'
 interface props {
     angle: number
     range: number
+    color: string
+    strokeSize: number
 }
 
-const Sector: FC<props> = ({ angle, range }) => {
+const Sector: FC<props> = ({ angle, range, color, strokeSize }) => {
     let arcStart = polarToCartesian(range, -angle / 2)
     let arcEnd = polarToCartesian(range, angle / 2)
     let largeArc = angle > 180 ? '1' : '0'
@@ -20,10 +22,10 @@ const Sector: FC<props> = ({ angle, range }) => {
             `}
             // fill="rgba(255,255,255,0.5)"
             // fill-opacity="0.5"
-            stroke="rgba(255,255,255,0.5)"
-            stroke-linecap="round"
-            stroke-width="10"
-            stroke-dasharray="5,5"
+            stroke={color}
+            stroke-linecap="butt"
+            stroke-width={strokeSize}
+            stroke-dasharray={`${strokeSize * 10},${strokeSize * 5}`}
             fill="none"
         />
     )

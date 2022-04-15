@@ -445,7 +445,7 @@ const SectionOutline = () => {
                                 ariaLabelInput="Number of Tower Sectionl"
                                 id="initial-divided"
                                 labelText="Number of Tower Sectionl"
-                                max={6}
+                                max={10}
                                 min={1}
                                 step={1}
                                 value={divided}

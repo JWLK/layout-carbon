@@ -30,7 +30,7 @@ const InitWallValue = () => {
                         </Tabs>
                     </Section> */}
                     <Section>
-                        <h3>Sections Outline</h3>
+                        <h3>Sections</h3>
                         <SectionsOutline />
                     </Section>
                     <SectionDivider />

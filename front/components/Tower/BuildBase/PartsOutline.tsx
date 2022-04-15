@@ -55,7 +55,8 @@ import {
 import Sections from '@objects/Tower/Sections'
 import Parts from '@objects/Tower/Parts'
 import ConeWithOrigin from '@objects/Tower/Planar/ConeWithOrigin'
-import SectorTrancated from '@objects/Tower/Planar/SectorTrancated'
+import SectorTrancatedOrigin from '@objects/Tower/Planar/SectorTrancatedOrigin'
+import SectorTrancatedScaleUp from '@objects/Tower/Planar/SectorTrancatedScaleUp'
 
 //TEST Object
 import Sector from '@objects/Tools/Sector'
@@ -85,9 +86,13 @@ const PartsOutline = () => {
 
     const [currentTapIndex, setCurrentTapIndex] = useState(0)
 
-    const onChaneTabIndex = useCallback((value) => {
-        setCurrentTapIndex(value)
-    }, [])
+    const onChaneTabIndex = useCallback(
+        (value) => {
+            setCurrentTapIndex(value)
+            setDivided(partsData[value].divided)
+        },
+        [partsData],
+    )
 
     useEffect(() => {
         // if (currentTapIndex == 0) {
@@ -104,7 +109,114 @@ const PartsOutline = () => {
                 setScaleViewBox(onChangeScale(v.section.height))
             }
         })
-    }, [currentTapIndex, initData.totalHeight, onChangeScale, sectionData])
+    }, [currentTapIndex, initData.totalHeight, sectionData])
+
+    /*Setting State*/
+    const [divided, setDivided] = useState(1)
+
+    const onChangeDevided = useCallback(
+        (e) => {
+            setDivided(e.value)
+        },
+        [keyRawData, rawData, initData],
+    )
+
+    const onClickSetPartsData = useCallback(
+        (e) => {
+            e.preventDefault()
+            var partsObject = [] as TWParts[]
+            var parts = [] as ObjSquare[]
+            var totalHeight = sectionData[currentTapIndex].section.height
+            var topUpperOutDia = sectionData[currentTapIndex].section.top
+            var bottomLowerOutDia = sectionData[currentTapIndex].section.bottom
+
+            for (var i = 0; i < divided; i++) {
+                /* Init Value */
+                var eachHeight = Math.round(totalHeight / divided)
+                var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+                var eachHypo =
+                    Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
+                var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+
+                // console.log('eachHeight', eachHeight)
+                // console.log('triBottom', triBottom)
+                // console.log('eachHypo', eachHypo)
+                // console.log('angle', (180 / Math.PI) * angle)
+
+                /* Calc Value */
+                var sectionWidthTop = Math.round(
+                    topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
+                )
+                var sectionWidthBottom = Math.round(
+                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
+                )
+                // console.log(
+                //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
+                // )
+
+                //Inser Reverse
+                parts[divided - 1 - i] = {
+                    top: sectionWidthTop,
+                    bottom: sectionWidthBottom,
+                    height: eachHeight,
+                }
+            }
+
+            rawData.partsData[currentTapIndex].divided = divided
+            rawData.partsData[currentTapIndex].parts = parts
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+
+            //개별 업데이터
+            // setRawData(rawData)
+            // setSectionData(sectionsObject)
+
+            //한번에 업데이터
+            mutate()
+        },
+        [sectionData, currentTapIndex, divided, rawData, keyRawData, mutate],
+    )
+
+    type typeObjSquare = 'top' | 'bottom' | 'height'
+    const onChangePartsData = useCallback(
+        (e, selected) => {
+            console.log(e, selected)
+            const parts = partsData[currentTapIndex].parts.map((v, index) => {
+                const typeObject: typeObjSquare = e.target.name
+                if (index === selected) {
+                    v[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
+                }
+                return v
+            })
+
+            // const updateInitial = updateInitialSync(section)
+            // const updateParts = updatePartsTaperedSync(section)
+
+            localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSync(parts)))
+            mutate()
+        },
+        [currentTapIndex, keyRawData, mutate, partsData, rawData],
+    )
+
+    const updateRawDatadSync = (parts: ObjSquare[]) => {
+        var totalHeight = 0
+        var sectionHeight = 0
+
+        for (var i = 0; i < partsData[currentTapIndex].parts.length; i++) {
+            sectionHeight += partsData[currentTapIndex].parts[i].height
+        }
+        sectionData[currentTapIndex].section.height = sectionHeight
+
+        for (var l = 0; l < sectionData.length; l++) {
+            totalHeight += sectionData[l].section.height
+        }
+        initData.totalHeight = totalHeight
+
+        rawData.initial = initData
+        rawData.sectionData = sectionData
+        rawData.partsData[currentTapIndex].parts = parts
+
+        return rawData
+    }
     /*
     ** Data Renewal
     *
@@ -123,6 +235,7 @@ const PartsOutline = () => {
             setInitData(TD.initial)
             setSectionData(TD.sectionData)
             setPartsData(TD.partsData)
+            setDivided(TD.partsData[currentTapIndex].divided)
         }
     }, [TD])
 
@@ -140,10 +253,6 @@ const PartsOutline = () => {
             header: 'Height',
         },
         {
-            key: 'type',
-            header: 'Type',
-        },
-        {
             key: 'top',
             header: 'Top',
         },
@@ -158,56 +267,222 @@ const PartsOutline = () => {
             <Tabs onSelectionChange={onChaneTabIndex}>
                 {partsData.map((v) => {
                     return (
-                        <Tab label={`section ${v.index + 1}`}>
+                        <Tab label={`section ${sectionData.length - v.index}`}>
                             <Row as="article" narrow>
-                                <Column sm={4} md={8} lg={2} style={{ marginBlock: '0.5rem' }}>
+                                <Column sm={8} md={8} lg={12} style={{ marginBlock: '0.5rem' }}>
                                     <Tile>
-                                        <div style={{ marginBottom: '0.5rem' }}>Front view</div>
-                                        <div style={{ border: '1px solid #333' }}>
-                                            <svg viewBox={scaleViewBox} fill="#fff">
-                                                {partsData.length && (
-                                                    <Parts
-                                                        center={ViewCenter}
-                                                        draws={v.parts}
-                                                        margin={0}
-                                                    />
-                                                )}
-                                            </svg>
-                                        </div>
+                                        <div style={{ marginBottom: '1.5rem' }}>Planar view</div>
+                                        <Tabs type="container">
+                                            <Tab label="Total">
+                                                <Row as="article" narrow>
+                                                    <Column
+                                                        sm={4}
+                                                        md={8}
+                                                        lg={6}
+                                                        style={{ marginBlock: '0.5rem' }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                border: '1px solid #333',
+                                                                marginRight: '1rem',
+                                                            }}
+                                                        >
+                                                            <svg viewBox={scaleViewBox} fill="#fff">
+                                                                {partsData.length && (
+                                                                    <Parts
+                                                                        center={ViewCenter}
+                                                                        draws={v.parts}
+                                                                        margin={0}
+                                                                    />
+                                                                )}
+                                                            </svg>
+                                                        </div>
+                                                    </Column>
+                                                    <Column
+                                                        sm={4}
+                                                        md={8}
+                                                        lg={6}
+                                                        style={{ marginBlock: '0.5rem' }}
+                                                    >
+                                                        <Slider
+                                                            ariaLabelInput="Number of Part"
+                                                            id="initial-divided"
+                                                            labelText="Number of Tower Part"
+                                                            max={20}
+                                                            min={1}
+                                                            step={1}
+                                                            value={divided}
+                                                            onChange={onChangeDevided}
+                                                        />
+
+                                                        <Button
+                                                            renderIcon={SettingsCheck32}
+                                                            onClick={onClickSetPartsData}
+                                                        >
+                                                            Set Parts
+                                                        </Button>
+                                                        <br />
+                                                        <br />
+                                                        <br />
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    {headers.map((header) => (
+                                                                        <TableHeader
+                                                                            key={header.key}
+                                                                            style={{
+                                                                                textAlign: 'center',
+                                                                            }}
+                                                                        >
+                                                                            {header.header}
+                                                                        </TableHeader>
+                                                                    ))}
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {partsData[currentTapIndex].parts
+                                                                    .slice(0)
+                                                                    .reverse()
+                                                                    .map((v, index) => (
+                                                                        <TableRow
+                                                                            key={`section-${index}`}
+                                                                            style={{
+                                                                                textAlign: 'end',
+                                                                            }}
+                                                                        >
+                                                                            <TableCell>
+                                                                                {partsData[
+                                                                                    currentTapIndex
+                                                                                ].divided - index}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                <TextInput
+                                                                                    id={`section-height-${index}`}
+                                                                                    labelText=""
+                                                                                    name="height"
+                                                                                    onChange={(e) =>
+                                                                                        onChangePartsData(
+                                                                                            e,
+                                                                                            divided -
+                                                                                                index -
+                                                                                                1,
+                                                                                        )
+                                                                                    }
+                                                                                    value={v.height}
+                                                                                />
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                <TextInput
+                                                                                    id={`section-top-${index}`}
+                                                                                    labelText=""
+                                                                                    name="top"
+                                                                                    value={v.top}
+                                                                                    disabled={true}
+                                                                                />
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                <TextInput
+                                                                                    id={`section-bottom-${index}`}
+                                                                                    labelText=""
+                                                                                    name="bottom"
+                                                                                    value={v.bottom}
+                                                                                    disabled={true}
+                                                                                />
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </Column>
+                                                </Row>
+                                            </Tab>
+                                            <Tab label="Each Part Setting">
+                                                <Row as="article" narrow>
+                                                    <Column
+                                                        sm={8}
+                                                        md={8}
+                                                        lg={6}
+                                                        style={{ marginBlock: '0.5rem' }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                border: '1px solid #333',
+                                                            }}
+                                                        >
+                                                            <SectorTrancatedOrigin
+                                                                top={v.parts[0].top}
+                                                                bottom={v.parts[0].bottom}
+                                                                height={v.parts[0].height}
+                                                            />
+                                                        </div>
+                                                    </Column>
+                                                    <Column
+                                                        sm={8}
+                                                        md={8}
+                                                        lg={6}
+                                                        style={{ marginBlock: '0.5rem' }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                border: '1px solid #333',
+                                                            }}
+                                                        >
+                                                            <SectorTrancatedScaleUp
+                                                                top={v.parts[0].top}
+                                                                bottom={v.parts[0].bottom}
+                                                                height={v.parts[0].height}
+                                                            />
+                                                        </div>
+                                                    </Column>
+                                                </Row>
+                                            </Tab>
+                                            {/* {v.parts.map((p, index) => {
+                                                return (
+                                                    <Tab label={`Part ${index + 1}`}>
+                                                        <Row as="article" narrow>
+                                                            <Column
+                                                                sm={8}
+                                                                md={8}
+                                                                lg={6}
+                                                                style={{ marginBlock: '0.5rem' }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        border: '1px solid #333',
+                                                                    }}
+                                                                >
+                                                                    <SectorTrancatedOrigin
+                                                                        top={p.top}
+                                                                        bottom={p.bottom}
+                                                                        height={p.height}
+                                                                    />
+                                                                </div>
+                                                            </Column>
+                                                            <Column
+                                                                sm={8}
+                                                                md={8}
+                                                                lg={6}
+                                                                style={{ marginBlock: '0.5rem' }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        border: '1px solid #333',
+                                                                    }}
+                                                                >
+                                                                    <SectorTrancatedScaleUp
+                                                                        top={p.top}
+                                                                        bottom={p.bottom}
+                                                                        height={p.height}
+                                                                    />
+                                                                </div>
+                                                            </Column>
+                                                        </Row>
+                                                    </Tab>
+                                                )
+                                            })} */}
+                                        </Tabs>
                                     </Tile>
                                 </Column>
-                                <Column sm={4} md={8} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                    <Tile>
-                                        <div style={{ marginBottom: '0.5rem' }}>Planar view</div>
-                                        <div style={{ border: '1px solid #333' }}>
-                                            <ConeWithOrigin
-                                                top={v.parts[0].top}
-                                                bottom={v.parts[0].bottom}
-                                                height={v.parts[0].height}
-                                                angle={v.angle}
-                                            />
-                                        </div>
-                                    </Tile>
-                                </Column>
-                                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                                    <Tile>
-                                        <div style={{ marginBottom: '0.5rem' }}>Planar view</div>
-                                        <div style={{ border: '1px solid #333' }}>
-                                            <SectorTrancated
-                                                top={v.parts[0].top}
-                                                bottom={v.parts[0].bottom}
-                                                height={v.parts[0].height}
-                                                angle={v.angle}
-                                            />
-                                        </div>
-                                    </Tile>
-                                </Column>
-                                {/* <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                                    <Tile>
-                                        <div>Upper Side view</div>
-                                        
-                                    </Tile>
-                                </Column> */}
                             </Row>
                         </Tab>
                     )

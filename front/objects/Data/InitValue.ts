@@ -11,7 +11,7 @@ export const InitSection: TWSection = {
 export const InitParts: TWParts = {
     index: 0,
     parts: [{ top: 4950, bottom: 7300, height: 100000 }],
-    angle: toAngle(Math.PI / 2 - Math.atan(100000 / 7300)),
+    divided: 1,
 }
 
 export const RawData: TWRawData = {

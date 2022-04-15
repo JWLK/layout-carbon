@@ -111,9 +111,6 @@ const SectionOutline = () => {
     const onChangeDevided = useCallback(
         (e) => {
             setDivided(e.value)
-            initData.divided = e.value
-            rawData.initial = initData
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
         [keyRawData, rawData, initData],
     )
@@ -175,10 +172,12 @@ const SectionOutline = () => {
                     parts: [
                         { top: sectionWidthTop, bottom: sectionWidthBottom, height: eachHeight },
                     ],
-                    angle: toAngle(radian),
+                    divided: 1,
                 }
             }
 
+            initData.divided = divided
+            rawData.initial = initData
             rawData.sectionData = sectionsObject
             rawData.partsData = partsObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
@@ -292,19 +291,7 @@ const SectionOutline = () => {
                         height: sections[i].section.height,
                     },
                 ],
-                angle:
-                    sections[i].section.top == sections[i].section.bottom
-                        ? 0
-                        : toAngle(
-                              Math.PI / 2 -
-                                  Math.atan(
-                                      sections[i].section.height /
-                                          (Math.abs(
-                                              sections[i].section.top - sections[i].section.bottom,
-                                          ) /
-                                              2),
-                                  ),
-                          ),
+                divided: parts[i].divided,
             }
         }
         return parts
@@ -442,7 +429,7 @@ const SectionOutline = () => {
                             <br />
                             <br />
                             <Slider
-                                ariaLabelInput="Number of Tower Sectionl"
+                                ariaLabelInput="Number of Tower Section"
                                 id="initial-divided"
                                 labelText="Number of Tower Sectionl"
                                 max={10}
@@ -483,7 +470,7 @@ const SectionOutline = () => {
                                                 key={`section-${v.index}`}
                                                 style={{ textAlign: 'end' }}
                                             >
-                                                <TableCell>{v.index + 1}</TableCell>
+                                                <TableCell>{initData.divided - v.index}</TableCell>
                                                 <TableCell>
                                                     <TextInput
                                                         id={`section-height-${v.index}`}

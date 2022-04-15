@@ -28,32 +28,53 @@ function height_TrcatedCone_To_OriginCone(top: number, btm: number, height: numb
     return coneHeight
 }
 
+function angle_Cone_To_Sector(under: number, hypo: number) {
+    // Cone Bottom Circle Arc = Sector Arc
+    // 2 * Math.PI * r = R_Hypo * {?}
+    // {?} =  2 * Math.PI * r  / R_Hypo
+    var sectorAngle = toAngle((2 * Math.PI * (under / 2)) / hypo)
+    return sectorAngle
+}
+
 const Planar: FC<Props> = ({ top, bottom, height }) => {
+    //Height
     var originConeHeight = height_TrcatedCone_To_OriginCone(top, bottom, height)
     var trancatedConeHeight = height
     var topConeHeight = originConeHeight - trancatedConeHeight
 
+    //Hypo
     var originConeHypo = MRound(Math.sqrt(Math.pow(originConeHeight, 2) + Math.pow(bottom / 2, 2)))
     var topConeHypo = MRound(Math.sqrt(Math.pow(topConeHeight, 2) + Math.pow(top / 2, 2)))
     var trancatedConeHypo = MRound(
         Math.sqrt(Math.pow(Math.abs(bottom - top) / 2, 2) + Math.pow(height, 2)),
     )
 
-    //View Scale Setting
-    const viewHeight = originConeHeight * 1.2
-    const viewWidth = viewHeight * 0.6
+    //Angle
+    var originSectorAngle = MRound(angle_Cone_To_Sector(bottom, originConeHypo))
+
+    //Sector Length
+    var originConeArcLength = MRound(2 * Math.PI * (bottom / 2))
+    var topConeArcLength = MRound(2 * Math.PI * (top / 2))
+
+    const viewHeight = originConeHeight * 1.5
+    const viewWidth = viewHeight * 1
     const viewCenterMargin = -viewWidth * 0.5
     const textSize = viewWidth * 0.02
     return (
         <svg viewBox={`${viewCenterMargin} 0 ${viewWidth} ${viewHeight}`} fill="#fff">
             <g transform={`translate(${viewCenterMargin}, 1000) rotate(0)`}>
-                <text x={1000} y={textSize} fill="eee" fontSize={textSize}>
-                    ORI Object [Height: {originConeHeight}, Hypo: {originConeHypo}, BTM: {bottom}]
+                <text x={1000} y={textSize * 2} fill="eee" fontSize={textSize}>
+                    Angle: {originSectorAngle}
                 </text>
-                <text x={1000} y={textSize * 3} fill="#11ff55" fontSize={textSize}>
-                    TOP Object [Height: {topConeHeight}, Hypo: {topConeHypo}, BTM: {top}]
+                <text x={1000} y={textSize * 4} fill="eee" fontSize={textSize}>
+                    ORI Object [Height: {originConeHeight}, Hypo: {originConeHypo}, BTM: {bottom},
+                    Arc: {originConeArcLength}]
                 </text>
-                <text x={1000} y={textSize * 5} fill="#fe00ee" fontSize={textSize}>
+                <text x={1000} y={textSize * 6} fill="#11ff55" fontSize={textSize}>
+                    TOP Object [Height: {topConeHeight}, Hypo: {topConeHypo}, BTM: {top}] Arc:
+                    {topConeArcLength}]
+                </text>
+                <text x={1000} y={textSize * 8} fill="#fe00ee" fontSize={textSize}>
                     BTM Object [Height: {trancatedConeHeight}, Hypo: {trancatedConeHypo}, TOP: {top}
                     , BTM: {bottom}]
                 </text>
@@ -70,8 +91,11 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
 
                 <path
                     d={`M0,0 l${top / 2},${topConeHeight} h${-top} Z`}
-                    fill={'#11ff55'}
-                    fill-opacity="0.1"
+                    fill="none"
+                    stroke={'#11ff55'}
+                    stroke-linecap="butt"
+                    stroke-width="50"
+                    stroke-opacity="0.5"
                 />
 
                 <path
@@ -85,6 +109,18 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
                     stroke-linecap="butt"
                     stroke-width="50"
                     stroke-opacity="0.5"
+                />
+                <Sector
+                    angle={originSectorAngle}
+                    range={originConeHypo}
+                    color={'#eee'}
+                    strokeSize={50}
+                />
+                <Sector
+                    angle={originSectorAngle}
+                    range={topConeHypo}
+                    color={'#11ff55'}
+                    strokeSize={50}
                 />
             </g>
         </svg>

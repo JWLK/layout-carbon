@@ -39,7 +39,15 @@ import {
 
 /*Tower Element*/
 //Type
-import { ObjPoint, ObjSquare, TWInitialValue, TWRawData, TWSection, TWParts } from 'typings/object'
+import {
+    ObjPoint,
+    ObjSquare,
+    TWInitialValue,
+    TWRawData,
+    TWSection,
+    TWParts,
+    TWFlanges,
+} from 'typings/object'
 //Data
 import { RawData } from '@objects/Data/InitValue'
 //Element
@@ -66,6 +74,7 @@ const SectionOutline = () => {
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
+    const [flangeData, setFlangeData] = useState([] as TWFlanges[])
 
     const [scaleViewBox, setScaleViewBox] = useState(
         `${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`,
@@ -132,6 +141,7 @@ const SectionOutline = () => {
             e.preventDefault()
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
+            var flangeObject = [] as TWFlanges[]
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
@@ -146,7 +156,7 @@ const SectionOutline = () => {
                 // console.log('eachHypo', eachHypo)
                 // console.log('angle', (180 / Math.PI) * angle)
 
-                /* Calc Value */
+                /* Calc Secion & Parts Value */
                 var sectionWidthTop = Math.round(
                     topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
                 )
@@ -170,9 +180,52 @@ const SectionOutline = () => {
                 partsObject[divided - 1 - i] = {
                     index: i,
                     parts: [
-                        { top: sectionWidthTop, bottom: sectionWidthBottom, height: eachHeight },
+                        {
+                            index: 0,
+                            part: {
+                                top: sectionWidthTop,
+                                bottom: sectionWidthBottom,
+                                height: eachHeight,
+                            },
+                            thickness: 50,
+                        },
                     ],
                     divided: 1,
+                }
+
+                /* Calc Flange Value */
+                flangeObject[divided - 1 - i] = {
+                    index: i,
+                    flange: [
+                        {
+                            outDia: 0,
+                            inDia: 0,
+                            flangeWidth: 0,
+                            flangeHeight: 0,
+                            neckWidth: 0,
+                            neckHeight: 0,
+                            minScrewWidth: 0,
+                            pcDia: 0,
+                            param_a: 0,
+                            param_b: 0,
+                            screwWidth: 0,
+                            screwNumberOf: 0,
+                        },
+                        {
+                            outDia: 0,
+                            inDia: 0,
+                            flangeWidth: 0,
+                            flangeHeight: 0,
+                            neckWidth: 0,
+                            neckHeight: 0,
+                            minScrewWidth: 0,
+                            pcDia: 0,
+                            param_a: 0,
+                            param_b: 0,
+                            screwWidth: 0,
+                            screwNumberOf: 0,
+                        },
+                    ],
                 }
             }
 
@@ -180,6 +233,7 @@ const SectionOutline = () => {
             rawData.initial = initData
             rawData.sectionData = sectionsObject
             rawData.partsData = partsObject
+            rawData.flangeData = flangeObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
 
             //개별 업데이터
@@ -280,21 +334,25 @@ const SectionOutline = () => {
         return sections
     }
 
-    const updatePartsSync = (sections: TWSection[], parts: TWParts[]) => {
+    const updatePartsSync = (sections: TWSection[], TWParts: TWParts[]) => {
         for (var i = 0; i < sections.length; i++) {
-            parts[i] = {
-                index: parts[i].index,
+            TWParts[i] = {
+                index: TWParts[i].index,
                 parts: [
                     {
-                        top: sections[i].section.top,
-                        bottom: sections[i].section.bottom,
-                        height: sections[i].section.height,
+                        index: TWParts[i].parts[0].index,
+                        part: {
+                            top: sections[i].section.top,
+                            bottom: sections[i].section.bottom,
+                            height: sections[i].section.height,
+                        },
+                        thickness: TWParts[i].parts[0].index,
                     },
                 ],
-                divided: parts[i].divided,
+                divided: TWParts[i].divided,
             }
         }
-        return parts
+        return TWParts
     }
 
     const onClickSetSectionsFinalData = useCallback(
@@ -373,7 +431,13 @@ const SectionOutline = () => {
     return (
         <>
             <Row as="article" narrow>
-                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                <Column
+                    sm={4}
+                    md={8}
+                    lg={12}
+                    xlg={{ span: 4, offset: 0 }}
+                    style={{ marginBlock: '0.5rem' }}
+                >
                     <Tile>
                         <svg viewBox={scaleViewBox} fill="#fff">
                             {sectionData.length && (
@@ -386,7 +450,7 @@ const SectionOutline = () => {
                         </svg>
                     </Tile>
                 </Column>
-                <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
+                <Column sm={4} md={8} lg={12} xlg={4} style={{ marginBlock: '0.5rem' }}>
                     <Tabs>
                         <Tab label="Default">
                             <br />
@@ -448,6 +512,13 @@ const SectionOutline = () => {
                             <br />
                             <br />
                             <br />
+                        </Tab>
+                    </Tabs>
+                </Column>
+
+                <Column sm={4} md={8} lg={12} xlg={4} style={{ marginBlock: '0.5rem' }}>
+                    <Tabs>
+                        <Tab label="Detail">
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -537,9 +608,6 @@ const SectionOutline = () => {
                             >
                                 SAVE Sections Data
                             </Button>
-                        </Tab>
-                        <Tab label="Detail">
-                            <br />
                         </Tab>
                     </Tabs>
                 </Column>

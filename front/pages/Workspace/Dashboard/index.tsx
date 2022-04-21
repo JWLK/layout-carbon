@@ -10,8 +10,13 @@ import useSWR from 'swr'
 //Components
 import InviteWorkspaceModal from '@components/Workspace/InviteWorkspaceModal'
 
-import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
-import { InfoText } from './styles'
+import {
+    PageTypeWide,
+    Header,
+    Section,
+    SectionDivider,
+    InfoText,
+} from '@pages/Common/ContentsLayout/styles'
 
 import { Fade32, ShareKnowledge32 } from '@carbon/icons-react'
 import {
@@ -121,6 +126,7 @@ const Dashboard = () => {
                                             placeholder="Placeholder text"
                                             disabled={projectInfoEdit}
                                         />
+                                        <br />
                                         <InfoText>Default Turbine Size</InfoText>
                                         <Dropdown
                                             id="default-turbine-size"
@@ -134,6 +140,7 @@ const Dashboard = () => {
                                             selectedItem={turnbineOption}
                                             disabled={projectInfoEdit}
                                         />
+                                        <br />
                                         <InfoText>Tower Manufacturer</InfoText>
                                         <RadioButtonGroup
                                             name="tower-manufacturer"

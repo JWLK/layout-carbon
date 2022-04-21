@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
 import Sector from '@objects/Element/Sector'
+import Paper from '@objects/Element/Paper'
 
 interface Props {
     top: number
@@ -36,7 +37,7 @@ function angle_Cone_To_Sector(under: number, hypo: number) {
     return sectorAngle
 }
 
-const Planar: FC<Props> = ({ top, bottom, height }) => {
+const SectorTC: FC<Props> = ({ top, bottom, height }) => {
     //Height
     var originConeHeight = height_TrcatedCone_To_OriginCone(top, bottom, height)
     var trancatedConeHeight = height
@@ -45,7 +46,8 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
     //Hypo
     var originConeHypo = MRound(Math.sqrt(Math.pow(originConeHeight, 2) + Math.pow(bottom / 2, 2)))
     var topConeHypo = MRound(Math.sqrt(Math.pow(topConeHeight, 2) + Math.pow(top / 2, 2)))
-    var trancatedConeHypo = MRound(
+    var trancatedConeHypo = MRound(originConeHypo - topConeHypo)
+    var trancatedConeHypo2 = MRound(
         Math.sqrt(Math.pow(Math.abs(bottom - top) / 2, 2) + Math.pow(height, 2)),
     )
 
@@ -56,30 +58,48 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
     var originConeArcLength = MRound(2 * Math.PI * (bottom / 2))
     var topConeArcLength = MRound(2 * Math.PI * (top / 2))
 
-    const viewHeight = originConeHeight * 1.5
-    const viewWidth = viewHeight * 1
+    var viewHeight = 0
+    var viewWidth = 0
+    var viewObject = 0
+    if (trancatedConeHeight > originConeArcLength) {
+        viewObject = trancatedConeHeight + 3000
+        viewHeight = trancatedConeHeight + 6000
+        viewWidth = originConeArcLength * 2
+    } else {
+        viewObject = trancatedConeHeight + 8000
+        viewHeight = trancatedConeHeight + 12000
+        viewWidth = originConeArcLength * 1.5
+    }
     const viewCenterMargin = -viewWidth * 0.5
     const textSize = viewWidth * 0.02
     return (
-        <svg viewBox={`${viewCenterMargin} 0 ${viewWidth} ${viewHeight}`} fill="#fff">
+        <svg viewBox={`${viewCenterMargin} ${0} ${viewWidth} ${viewHeight}`} fill="#fff">
             <g transform={`translate(${viewCenterMargin}, 1000) rotate(0)`}>
-                <text x={1000} y={textSize * 2} fill="eee" fontSize={textSize}>
+                <text x={1000} y={viewHeight - 8000} fill="eee" fontSize={textSize}>
                     Angle: {originSectorAngle}
                 </text>
-                <text x={1000} y={textSize * 4} fill="eee" fontSize={textSize}>
-                    ORI Object [Height: {originConeHeight}, Hypo: {originConeHypo}, BTM: {bottom},
-                    Arc: {originConeArcLength}]
+                <text x={1000} y={viewHeight - 8000 + textSize * 2} fill="eee" fontSize={textSize}>
+                    Arc: {originConeArcLength}
                 </text>
-                <text x={1000} y={textSize * 6} fill="#11ff55" fontSize={textSize}>
-                    TOP Object [Height: {topConeHeight}, Hypo: {topConeHypo}, BTM: {top}] Arc:
-                    {topConeArcLength}]
+                <text
+                    x={1000}
+                    y={viewHeight - 8000 + textSize * 4}
+                    fill="#11ff55"
+                    fontSize={textSize}
+                >
+                    Arc: {topConeArcLength}
                 </text>
-                <text x={1000} y={textSize * 8} fill="#fe00ee" fontSize={textSize}>
-                    BTM Object [Height: {trancatedConeHeight}, Hypo: {trancatedConeHypo}, TOP: {top}
-                    , BTM: {bottom}]
+                <text
+                    x={1000}
+                    y={viewHeight - 8000 + textSize * 6}
+                    fill="#fe00ee"
+                    fontSize={textSize}
+                >
+                    BTM Object [Height: {trancatedConeHeight}, Hypo: {trancatedConeHypo}, Hypo2:{' '}
+                    {trancatedConeHypo2}, TOP: {top}, BTM: {bottom}]
                 </text>
             </g>
-            <g transform={`translate(0, ${textSize * 10}) rotate(0)`}>
+            {/* <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}>
                 <path
                     d={`M0,0 l${bottom / 2},${originConeHeight} h${-bottom} Z`}
                     fill="none"
@@ -110,6 +130,18 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
                     stroke-width="50"
                     stroke-opacity="0.5"
                 />
+            </g> */}
+            {/* ORIGIN Planar */}
+            <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}></g>
+            {/* Sector Planar */}
+            <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}>
+                <Paper
+                    angle={originSectorAngle}
+                    rangeTop={topConeHypo}
+                    rangeBottom={originConeHypo}
+                    color={'#fe00ee'}
+                    strokeSize={50}
+                />
                 <Sector
                     angle={originSectorAngle}
                     range={originConeHypo}
@@ -127,4 +159,4 @@ const Planar: FC<Props> = ({ top, bottom, height }) => {
     )
 }
 
-export default Planar
+export default SectorTC

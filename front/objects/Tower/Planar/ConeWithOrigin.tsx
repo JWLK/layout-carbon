@@ -2,8 +2,6 @@ import React, { FC } from 'react'
 
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
-import Sector from '@objects/Tools/Sector'
-
 interface Props {
     top: number
     bottom: number

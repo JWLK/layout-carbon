@@ -46,17 +46,17 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                             element={NavLink}
                             renderIcon={DotMark32}
                             large
-                            to={`/workspace/${workspace}/initwallvalue/`}
+                            to={`/workspace/${workspace}/model_01/`}
                         >
-                            01.Initial Wall Value
+                            01.Initial Modeling
                         </SideNavLink>
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
                             renderIcon={DotMark32}
                             large
-                            to={`/workspace/${workspace}/wallbodysection/`}
+                            to={`/workspace/${workspace}/model_02/`}
                         >
-                            02.Wall Body Section
+                            02.Section & Flange
                         </SideNavLink>
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>

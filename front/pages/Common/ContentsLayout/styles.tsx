@@ -46,3 +46,8 @@ export const SectionDivider = styled.div`
     margin: 2rem auto;
     background-color: #393939;
 `
+
+export const InfoText = styled.div`
+    font-size: 1.5rem;
+    margin: 0.5rem 0 0.5rem 0;
+`

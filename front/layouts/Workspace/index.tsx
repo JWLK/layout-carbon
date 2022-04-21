@@ -17,8 +17,8 @@ const Channel = loadable(() => import('@pages/Workspace/Channel'))
 const DirectMessage = loadable(() => import('@pages/Workspace/DirectMessage'))
 const Project = loadable(() => import('@pages/Workspace/Project'))
 //Tower Pages
-const InitWallValue = loadable(() => import('@pages/Tower/01_InitWallValue'))
-const WallBodySection = loadable(() => import('@pages/Tower/02_WallBodySection'))
+const Model_01 = loadable(() => import('@pages/Tower/01_'))
+const Model_02 = loadable(() => import('@pages/Tower/02_'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
@@ -191,8 +191,8 @@ const Workspace = () => {
                         <Route path="/contentslayout/" element={<ContentsLayout />} />
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/project/" element={<Project />} />
-                        <Route path="/initwallvalue/" element={<InitWallValue />} />
-                        <Route path="/wallbodysection/" element={<WallBodySection />} />
+                        <Route path="/model_01/" element={<Model_01 />} />
+                        <Route path="/model_02/" element={<Model_02 />} />
                         <Route path="/channel/:channel" element={<Channel />} />
                         <Route path="/dm/:id" element={<DirectMessage />} />
                     </Routes>

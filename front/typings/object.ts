@@ -10,6 +10,21 @@ export interface ObjSquare {
     height: number
 }
 
+export interface ObjFlange {
+    outDia: number
+    inDia: number
+    flangeWidth: number
+    flangeHeight: number
+    neckWidth: number
+    neckHeight: number
+    minScrewWidth: number
+    pcDia: number
+    param_a: number
+    param_b: number
+    screwWidth: number
+    screwNumberOf: number
+}
+
 export interface TWInitialValue {
     topUpperOutDia: number
     bottomLowerOutDia: number
@@ -24,6 +39,7 @@ export interface TWRawData {
     initial: TWInitialValue
     sectionData: TWSection[]
     partsData: TWParts[]
+    flangeData: TWFlanges[]
 }
 
 export interface TWSection {
@@ -32,14 +48,19 @@ export interface TWSection {
     tapered: boolean
 }
 
+export interface TWPart {
+    index: number
+    part: ObjSquare
+    thickness: number
+}
+
 export interface TWParts {
     index: number
-    parts: ObjSquare[]
+    parts: TWPart[]
     divided: number
 }
 
-export interface TWRevalidyData {
-    initial: TWInitialValue
-    section: number[]
-    parts: Array<ObjSquare[]>
+export interface TWFlanges {
+    index: number
+    flange: ObjFlange[]
 }

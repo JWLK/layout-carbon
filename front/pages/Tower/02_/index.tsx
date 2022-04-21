@@ -19,7 +19,7 @@ const WallBodySection = () => {
         <>
             <PageTypeWide>
                 <Grid fullWidth>
-                    <Header>Section & Flange </Header>
+                    <Header>Section Flange </Header>
                     <p>Set the parts and flanges for each section.</p>
                     <SectionDivider />
                     <Section>

@@ -65,6 +65,9 @@ import {
     TWPart,
     TWFlanges,
     ObjFlange,
+    TWSectors,
+    ObjSector,
+    TWSector,
 } from 'typings/object'
 //Data
 import { RawData } from '@objects/Data/InitValue'
@@ -76,7 +79,7 @@ import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 import EachSection from '@objects/Tower/Sections/EachSection'
 import EachPart from '@objects/Tower/Parts/EachPart'
 import EachPartCircle from '@objects/Tower/Parts/EachPartCircle'
-import SectorTrancatedScaleUp from '@objects/Tower/Planar/SectorTrancatedScaleUp'
+import EachPaperSector from '@objects/Tower/Planar/EachPaperSector'
 import SectorTC from '@objects/Tower/Planar/SectorTC'
 import EachFlangeTypeL from '@objects/Tower/Sections/EachFlangeTypeL'
 import EachFlangeTopView from '@objects/Tower/Sections/EachFlangeTopView'
@@ -100,6 +103,8 @@ const ViewEachSection = () => {
     const [sectionData, setSectionData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
     const [flangeData, setFlangeData] = useState([] as TWFlanges[])
+    const [sectorsData, setSectorsData] = useState([] as TWSectors[])
+    const [sectorObject, setSectorObject] = useState({} as ObjSector)
 
     /*Selected Section Index State*/
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
@@ -120,19 +125,97 @@ const ViewEachSection = () => {
         })
     }, [currentSectionIndex, initData.totalHeight, sectionData])
 
-    /*Setting State*/
+    /*Setting Divided State*/
     const [divided, setDivided] = useState(1)
 
     const onChangeDevided = useCallback((e) => {
         setDivided(e.value)
     }, [])
 
+    /* Update Sector Data Calc*/
+    function MRound(v: number) {
+        v = Math.round(v * 1000) / 1000
+        return v
+    }
+    function height_TrcatedCone_To_OriginCone(top: number, btm: number, height: number) {
+        // x : top = x+height : btm
+        // btm*x = top(x+height)
+        // btm*x = top*x + top*height
+        // btm*x - top*x = top*height
+        // (btm-top) * x = top*height
+        // x = (top*height) / (btm-top)
+
+        const coneHeight = height + (top * height) / (btm - top)
+
+        return coneHeight
+    }
+
+    function angle_Cone_To_Sector(under: number, hypo: number) {
+        // Cone Bottom Circle Arc = Sector Arc
+        // 2 * Math.PI * r = R_Hypo * {?}
+        // {?} =  2 * Math.PI * r  / R_Hypo
+        var sectorAngle = toAngle((2 * Math.PI * (under / 2)) / hypo)
+        return sectorAngle
+    }
+
+    const sectorObjectUpdate = (top: number, bottom: number, height: number) => {
+        var sector = {} as ObjSector
+
+        //Height
+        var originConeHeight = height_TrcatedCone_To_OriginCone(top, bottom, height)
+        var trancatedConeHeight = height
+        var topConeHeight = originConeHeight - trancatedConeHeight
+
+        //Hypo
+        var originConeHypo = Math.sqrt(Math.pow(originConeHeight, 2) + Math.pow(bottom / 2, 2))
+        var topConeHypo = Math.sqrt(Math.pow(topConeHeight, 2) + Math.pow(top / 2, 2))
+        var trancatedConeHypo = originConeHypo - topConeHypo
+
+        //Angle
+        var degree = angle_Cone_To_Sector(bottom, originConeHypo) / 2
+        var radian = toRadian(angle_Cone_To_Sector(bottom, originConeHypo)) / 2
+
+        //Sector Length
+        var originConeArcLength = 2 * Math.PI * (bottom / 2)
+        var topConeArcLength = 2 * Math.PI * (top / 2)
+
+        //Paper Data
+        var trancatedMargin = topConeHypo - topConeHypo * Math.cos(radian)
+        var paperOriginWidth = trancatedConeHypo + topConeHypo - topConeHypo * Math.cos(radian)
+        var paperOriginHeight = 2 * originConeHypo * Math.sin(radian)
+        var paperMargin = 10
+        var paperSheetWidth = trancatedConeHypo + topConeHypo - topConeHypo * Math.cos(radian) + 20
+        var paperSheetHeight = 2 * originConeHypo * Math.sin(radian) + 20
+
+        sector = {
+            degree,
+            radian,
+            originConeHeight,
+            originConeHypo,
+            originConeArcLength,
+            topConeHeight,
+            topConeHypo,
+            topConeArcLength,
+            trancatedConeHeight,
+            trancatedConeHypo,
+            trancatedMargin,
+            paperOriginWidth,
+            paperOriginHeight,
+            paperMargin,
+            paperSheetWidth,
+            paperSheetHeight,
+        }
+
+        return sector
+    }
+
     const onClickSetPartsData = useCallback(
         (e) => {
             e.preventDefault()
             setCurrentPartIndex(0)
-            var partObject = [] as TWPart[]
-            var flangeObject = {} as TWFlanges
+            var partArray = [] as TWPart[]
+            var sectorArray = [] as TWSector[]
+            var flangeArray = {} as TWFlanges
             var totalHeight = sectionData[currentSectionIndex].section.height
             var topUpperOutDia = sectionData[currentSectionIndex].section.top
             var bottomLowerOutDia = sectionData[currentSectionIndex].section.bottom
@@ -162,7 +245,7 @@ const ViewEachSection = () => {
                 // )
 
                 //Inser Reverse
-                partObject[divided - 1 - i] = {
+                partArray[divided - 1 - i] = {
                     index: i,
                     part: {
                         top: sectionWidthTop,
@@ -171,9 +254,13 @@ const ViewEachSection = () => {
                     },
                     thickness: 50,
                 }
+                sectorArray[divided - 1 - i] = {
+                    index: i,
+                    sector: sectorObjectUpdate(sectionWidthTop, sectionWidthBottom, eachHeight),
+                }
             }
             /* Calc Flange Value */
-            flangeObject = {
+            flangeArray = {
                 index: currentSectionIndex,
                 flange: [
                     {
@@ -230,8 +317,9 @@ const ViewEachSection = () => {
             }
 
             rawData.partsData[currentSectionIndex].divided = divided
-            rawData.partsData[currentSectionIndex].parts = partObject
-            rawData.flangeData[currentSectionIndex] = flangeObject
+            rawData.partsData[currentSectionIndex].parts = partArray
+            rawData.sectorsData[currentSectionIndex].sectors = sectorArray
+            rawData.flangeData[currentSectionIndex] = flangeArray
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
 
             //개별 업데이터
@@ -241,7 +329,7 @@ const ViewEachSection = () => {
             //한번에 업데이터
             mutate()
         },
-        [sectionData, currentSectionIndex, divided, rawData, keyRawData, mutate],
+        [sectionData, currentSectionIndex, divided, rawData, keyRawData, sectorObject],
     )
 
     /*Each Part Select Event Option */
@@ -296,18 +384,23 @@ const ViewEachSection = () => {
     }, [])
 
     /* Table OnChange Event Controller*/
-
     //
     /* Table Section*/
     //
-    type typeObjSquare = 'top' | 'bottom' | 'height'
+    type typeObjSquare = 'top' | 'bottom' | 'height' | 'thickness'
     const onChangePartsData = useCallback(
         (e, selectedIndex) => {
             console.log(e.target.name, selectedIndex)
             const parts = partsData[currentSectionIndex].parts.map((v, index) => {
                 const typeObject: typeObjSquare = e.target.name
                 if (index === selectedIndex) {
-                    v.part[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    if (typeObject !== 'thickness') {
+                        v.part[`${typeObject}`] = parseInt(
+                            e.target.value !== '' ? e.target.value : 0,
+                        )
+                    } else {
+                        v.thickness = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    }
                 }
                 return v
             })
@@ -338,6 +431,13 @@ const ViewEachSection = () => {
         rawData.initial = initData
         rawData.sectionData = sectionData
         rawData.partsData[currentSectionIndex].parts = parts
+
+        rawData.sectorsData[currentSectionIndex].sectors[currentPartIndex].sector =
+            sectorObjectUpdate(
+                parts[currentPartIndex].part.top,
+                parts[currentPartIndex].part.bottom,
+                parts[currentPartIndex].part.height,
+            )
 
         return rawData
     }
@@ -426,6 +526,7 @@ const ViewEachSection = () => {
             setInitData(TD.initial)
             setSectionData(TD.sectionData)
             setPartsData(TD.partsData)
+            setSectorsData(TD.sectorsData)
             setFlangeData(TD.flangeData)
             setDivided(TD.partsData[currentSectionIndex].divided)
             setThinckness(TD.partsData[currentSectionIndex].parts[currentPartIndex].thickness)
@@ -464,6 +565,53 @@ const ViewEachSection = () => {
         {
             key: 'bottom-in',
             header: 'Lower inside diameter Dɪ,ɪ_ʟᴘʀ',
+        },
+    ]
+
+    const headersPlanar = [
+        {
+            key: 'no',
+            header: 'Part No.',
+        },
+        {
+            key: 'trancatedConeHypo',
+            header: 'W_i (m)',
+        },
+        {
+            key: 'topConeHypo',
+            header: 'Ro.a.i (m)',
+        },
+        {
+            key: 'topConeArcLength',
+            header: 'So.a.i (m)',
+        },
+        {
+            key: 'originConeArcLength',
+            header: 'Su.a.i (m)',
+        },
+        {
+            key: 'radian',
+            header: 'φ_i (rad)',
+        },
+        {
+            key: 'paperOriginWidth',
+            header: 'W_org.i (m)',
+        },
+        {
+            key: 'paperOriginHeight',
+            header: 'H_org.i (m)',
+        },
+        {
+            key: 'paperMargin',
+            header: 'δ (mm)',
+        },
+        {
+            key: 'paperSheetWidth',
+            header: 'W_sheet.i (m)',
+        },
+        {
+            key: 'paperSheetHeight',
+            header: 'H_sheet.i (m)',
         },
     ]
 
@@ -714,15 +862,55 @@ const ViewEachSection = () => {
                                                     padding: '1.5rem',
                                                 }}
                                             >
-                                                <div style={{ marginBottom: '1rem' }}>
-                                                    {`Part No. : ${currentPartIndex + 1}`}
-                                                </div>
-                                                <EachPart
-                                                    draws={partsData[currentSectionIndex].parts.map(
-                                                        (v) => v.part,
-                                                    )}
-                                                    currentPartIndex={currentPartIndex}
-                                                />
+                                                <Tabs>
+                                                    <Tab label="Part View">
+                                                        {/*  */}
+                                                        {/* Tab 1 Default View */}
+                                                        {/*  */}
+                                                        <div
+                                                            style={{
+                                                                fontSize: '1.5rem',
+                                                                marginBottom: '1rem',
+                                                            }}
+                                                        >
+                                                            {`Part No. : ${currentPartIndex + 1}`}
+                                                        </div>
+                                                        <EachPart
+                                                            draws={partsData[
+                                                                currentSectionIndex
+                                                            ].parts.map((v) => v.part)}
+                                                            currentPartIndex={currentPartIndex}
+                                                        />
+                                                    </Tab>
+                                                    <Tab label="Thickness">
+                                                        {/*  */}
+                                                        {/* Tab 2 Thickness */}
+                                                        {/*  */}
+                                                        <div style={{ marginBottom: '1rem' }}>
+                                                            Thickness
+                                                        </div>
+                                                        <Slider
+                                                            id="select-part-thickness"
+                                                            labelText={`Part No. ${
+                                                                currentPartIndex + 1
+                                                            } of Thickness (mm)`}
+                                                            max={100}
+                                                            min={1}
+                                                            step={1}
+                                                            value={thinckness}
+                                                            onChange={onChangeThickness}
+                                                        />
+                                                        <br />
+                                                        <EachPartCircle
+                                                            draw={
+                                                                partsData[currentSectionIndex]
+                                                                    .parts[currentPartIndex].part
+                                                            }
+                                                            viewSelect={'top'}
+                                                            thinckness={thinckness}
+                                                        />
+                                                    </Tab>
+                                                </Tabs>
                                             </Column>
 
                                             <Column
@@ -738,21 +926,11 @@ const ViewEachSection = () => {
                                                 <div style={{ marginBottom: '1rem' }}>
                                                     Planar View
                                                 </div>
-                                                <SectorTC
-                                                    top={
-                                                        partsData[currentSectionIndex].parts[
+                                                <EachPaperSector
+                                                    draw={
+                                                        sectorsData[currentSectionIndex].sectors[
                                                             currentPartIndex
-                                                        ].part.top
-                                                    }
-                                                    bottom={
-                                                        partsData[currentSectionIndex].parts[
-                                                            currentPartIndex
-                                                        ].part.bottom
-                                                    }
-                                                    height={
-                                                        partsData[currentSectionIndex].parts[
-                                                            currentPartIndex
-                                                        ].part.height
+                                                        ].sector
                                                     }
                                                 />
                                             </Column>
@@ -774,139 +952,218 @@ const ViewEachSection = () => {
                                                 sm={4}
                                                 md={8}
                                                 lg={12}
-                                                xlg={4}
+                                                xlg={12}
                                                 style={{
                                                     border: '1px solid #333',
                                                     padding: '1.5rem',
                                                 }}
                                             >
                                                 <div style={{ marginBottom: '1rem' }}>
-                                                    Thickness
+                                                    Total Part Parameter
                                                 </div>
-                                                <Slider
-                                                    id="select-part-thickness"
-                                                    labelText={`Part No. ${
-                                                        currentPartIndex + 1
-                                                    } of Thickness (mm)`}
-                                                    max={100}
-                                                    min={1}
-                                                    step={1}
-                                                    value={thinckness}
-                                                    onChange={onChangeThickness}
-                                                />
-                                                <br />
-                                                <EachPartCircle
-                                                    draw={
-                                                        partsData[currentSectionIndex].parts[
-                                                            currentPartIndex
-                                                        ].part
-                                                    }
-                                                    viewSelect={'top'}
-                                                    thinckness={thinckness}
-                                                />
-                                            </Column>
-
-                                            {/*  */}
-                                            {/* RIGHT 2 Thickness */}
-                                            {/*  */}
-                                            <Column
-                                                sm={4}
-                                                md={8}
-                                                lg={12}
-                                                xlg={8}
-                                                style={{
-                                                    border: '1px solid #333',
-                                                    padding: '1.5rem',
-                                                }}
-                                            >
-                                                <div style={{ marginBottom: '1rem' }}>
-                                                    Parameter
-                                                </div>
-                                                <Table>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            {headersPart.map((header) => (
-                                                                <TableHeader
-                                                                    key={header.key}
-                                                                    style={{
-                                                                        textAlign: 'start',
-                                                                    }}
-                                                                >
-                                                                    {header.header}
-                                                                </TableHeader>
-                                                            ))}
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {partsData[currentSectionIndex].parts
-                                                            .slice(0)
-                                                            .reverse()
-                                                            .map((v, index) => (
-                                                                <TableRow
-                                                                    key={`section-${index}`}
-                                                                    style={{
-                                                                        textAlign: 'end',
-                                                                    }}
-                                                                >
-                                                                    <TableCell>
-                                                                        {partsData[
-                                                                            currentSectionIndex
-                                                                        ].divided - index}
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <TextInput
-                                                                            id={`section-height-${index}`}
-                                                                            labelText=""
-                                                                            name="height"
-                                                                            onChange={(e) =>
-                                                                                onChangePartsData(
-                                                                                    e,
-                                                                                    divided -
-                                                                                        index -
-                                                                                        1,
-                                                                                )
-                                                                            }
-                                                                            value={v.part.height}
-                                                                        />
-                                                                    </TableCell>
-
-                                                                    <TableCell>
-                                                                        <TextInput
-                                                                            id={`section-thickness-${index}`}
-                                                                            labelText=""
-                                                                            name="thickness"
-                                                                            onChange={(e) =>
-                                                                                onChangePartsData(
-                                                                                    e,
-                                                                                    divided -
-                                                                                        index -
-                                                                                        1,
-                                                                                )
-                                                                            }
-                                                                            value={v.thickness}
-                                                                        />
-                                                                    </TableCell>
-
-                                                                    <TableCell>
-                                                                        {v.part.top}
-                                                                    </TableCell>
-
-                                                                    <TableCell>
-                                                                        {v.part.top -
-                                                                            v.thickness * 2}
-                                                                    </TableCell>
-
-                                                                    <TableCell>
-                                                                        {v.part.bottom}
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        {v.part.bottom -
-                                                                            v.thickness * 2}
-                                                                    </TableCell>
+                                                <Tabs>
+                                                    <Tab label="Part">
+                                                        {' '}
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    {headersPart.map((header) => (
+                                                                        <TableHeader
+                                                                            key={header.key}
+                                                                            style={{
+                                                                                textAlign: 'start',
+                                                                            }}
+                                                                        >
+                                                                            {header.header}
+                                                                        </TableHeader>
+                                                                    ))}
                                                                 </TableRow>
-                                                            ))}
-                                                    </TableBody>
-                                                </Table>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {partsData[
+                                                                    currentSectionIndex
+                                                                ].parts
+                                                                    .slice(0)
+                                                                    .reverse()
+                                                                    .map((v, index) => (
+                                                                        <TableRow
+                                                                            key={`section-${index}`}
+                                                                            style={{
+                                                                                textAlign: 'end',
+                                                                            }}
+                                                                        >
+                                                                            <TableCell>
+                                                                                {partsData[
+                                                                                    currentSectionIndex
+                                                                                ].divided - index}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                <TextInput
+                                                                                    id={`section-height-${index}`}
+                                                                                    labelText=""
+                                                                                    name="height"
+                                                                                    onChange={(e) =>
+                                                                                        onChangePartsData(
+                                                                                            e,
+                                                                                            divided -
+                                                                                                index -
+                                                                                                1,
+                                                                                        )
+                                                                                    }
+                                                                                    value={
+                                                                                        v.part
+                                                                                            .height
+                                                                                    }
+                                                                                />
+                                                                            </TableCell>
+
+                                                                            <TableCell>
+                                                                                <TextInput
+                                                                                    id={`section-thickness-${index}`}
+                                                                                    labelText=""
+                                                                                    name="thickness"
+                                                                                    onChange={(e) =>
+                                                                                        onChangePartsData(
+                                                                                            e,
+                                                                                            divided -
+                                                                                                index -
+                                                                                                1,
+                                                                                        )
+                                                                                    }
+                                                                                    value={
+                                                                                        v.thickness
+                                                                                    }
+                                                                                />
+                                                                            </TableCell>
+
+                                                                            <TableCell>
+                                                                                {v.part.top}
+                                                                            </TableCell>
+
+                                                                            <TableCell>
+                                                                                {v.part.top -
+                                                                                    v.thickness * 2}
+                                                                            </TableCell>
+
+                                                                            <TableCell>
+                                                                                {v.part.bottom}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {v.part.bottom -
+                                                                                    v.thickness * 2}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </Tab>
+                                                    <Tab label="Planar">
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    {headersPlanar.map((header) => (
+                                                                        <TableHeader
+                                                                            key={header.key}
+                                                                            style={{
+                                                                                textAlign: 'start',
+                                                                            }}
+                                                                        >
+                                                                            {header.header}
+                                                                        </TableHeader>
+                                                                    ))}
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {sectorsData[
+                                                                    currentSectionIndex
+                                                                ].sectors
+                                                                    .slice(0)
+                                                                    .reverse()
+                                                                    .map((v, index) => (
+                                                                        <TableRow
+                                                                            key={`sector-${index}`}
+                                                                            style={{
+                                                                                textAlign: 'end',
+                                                                            }}
+                                                                        >
+                                                                            <TableCell>
+                                                                                {partsData[
+                                                                                    currentSectionIndex
+                                                                                ].divided - index}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .trancatedConeHypo /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .topConeHypo /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .topConeArcLength /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .originConeArcLength /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector.radian,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .paperOriginWidth /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .paperOriginHeight /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .paperMargin,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .paperSheetWidth /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                            <TableCell>
+                                                                                {MRound(
+                                                                                    v.sector
+                                                                                        .paperSheetHeight /
+                                                                                        1000,
+                                                                                )}
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </Tab>
+                                                </Tabs>
                                             </Column>
                                         </Row>
                                     </Column>

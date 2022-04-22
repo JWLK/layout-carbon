@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 
 import { ObjPoint, ObjSquare, ObjFlange } from '@typings/object'
+import { polarToCartesian, toRadian, toAngle } from '@objects/Tools/Cartesian'
 import Line from '@objects/Element/Line'
+import Guide from '@objects/Element/Guide'
 interface Props {
     center: ObjPoint
     flange: ObjFlange
@@ -27,6 +29,7 @@ const Flange: FC<Props> = ({
     guideLineWidth,
     guideTextSize,
 }) => {
+    let innerR = polarToCartesian(100, 45)
     return (
         <>
             <g transform={`translate(${center.x}, ${-center.y})`}>
@@ -163,7 +166,7 @@ const Flange: FC<Props> = ({
                     }}
                     pointEnd={{
                         x: flange.outDia - flange.neckWidth * 10,
-                        y: flange.flangeHeight * 10,
+                        y: flange.flangeHeight * 10 + 50,
                     }}
                     lineColor={lineColor}
                     lineWidth={lineWidth}
@@ -174,6 +177,56 @@ const Flange: FC<Props> = ({
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
                     guideFloat={1}
+                />
+                {/* Neck - Flange Inner R */}
+                {/* <circle
+                    cx={flange.outDia - flange.neckWidth * 10 - 50}
+                    cy={-flange.flangeHeight * 10 - 50}
+                    r={100 / 2}
+                    fill="none"
+                    stroke={lineColor}
+                    strokeWidth={lineWidth}
+                /> */}
+                <g
+                    transform={`translate(${flange.outDia - flange.neckWidth * 10 - 100},${
+                        -flange.flangeHeight * 10 - 100
+                    }) rotate(${45})`}
+                >
+                    <Guide
+                        pointStart={{
+                            x: 0,
+                            y: 0,
+                        }}
+                        pointEnd={{
+                            x: 100,
+                            y: 0,
+                        }}
+                        guideMargin={0}
+                        guidePositon={'positive'}
+                        guideLineColor={guideLineColor!}
+                        guideLineWidth={guideLineWidth! / 2}
+                        guideTextSize={guideTextSize! / 2}
+                        guideTextAlgin={'start'}
+                        guideTextMargin={-250}
+                        guideFloat={1}
+                        label={'R '}
+                        unit={''}
+                    />
+                </g>
+                <path
+                    d={`
+                        M${flange.outDia - flange.neckWidth * 10},${-flange.flangeHeight * 10 - 50}
+                        A${50}, ${50}, 0, 0, 1, ${flange.outDia - flange.neckWidth * 10 - 50}, ${
+                        -flange.flangeHeight * 10
+                    }
+                        
+                    `}
+                    // fill="rgba(255,255,255,0.5)"
+                    // fill-opacity="0.5"
+                    stroke={lineColor}
+                    stroke-linecap="butt"
+                    stroke-width={lineWidth}
+                    fill="none"
                 />
                 {/* Flange crew minWidth */}
                 {/* TEXT */}
@@ -199,7 +252,7 @@ const Flange: FC<Props> = ({
                 {/* LINE */}
                 <Line
                     pointEnd={{
-                        x: flange.outDia - flange.neckWidth * 10,
+                        x: flange.outDia - flange.neckWidth * 10 - 50,
                         y: flange.flangeHeight * 10,
                     }}
                     pointStart={{

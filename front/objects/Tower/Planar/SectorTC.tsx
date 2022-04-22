@@ -1,160 +1,101 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
 import Sector from '@objects/Element/Sector'
-import Paper from '@objects/Element/Paper'
+import PaperTCSector from '@objects/Element/PaperTCSector'
+import PaperSheet from '@objects/Element/PaperSheet'
+import { ObjPoint, ObjSquare, ObjSector, TWSector, TWSectors } from '@typings/object'
 
 interface Props {
-    top: number
-    bottom: number
-    height: number
+    draw: ObjSector
 }
 
 function MRound(v: number) {
-    v = Math.round(v * 100) / 100
+    v = Math.round(v * 1000) / 1000
     return v
 }
 
-function height_TrcatedCone_To_OriginCone(top: number, btm: number, height: number) {
-    // x : top = x+height : btm
-    // btm*x = top(x+height)
-    // btm*x = top*x + top*height
-    // btm*x - top*x = top*height
-    // (btm-top) * x = top*height
-    // x = (top*height) / (btm-top)
-
-    const coneHeight = MRound(height + (top * height) / (btm - top))
-
-    return coneHeight
-}
-
-function angle_Cone_To_Sector(under: number, hypo: number) {
-    // Cone Bottom Circle Arc = Sector Arc
-    // 2 * Math.PI * r = R_Hypo * {?}
-    // {?} =  2 * Math.PI * r  / R_Hypo
-    var sectorAngle = toAngle((2 * Math.PI * (under / 2)) / hypo)
-    return sectorAngle
-}
-
-const SectorTC: FC<Props> = ({ top, bottom, height }) => {
-    //Height
-    var originConeHeight = height_TrcatedCone_To_OriginCone(top, bottom, height)
-    var trancatedConeHeight = height
-    var topConeHeight = originConeHeight - trancatedConeHeight
-
-    //Hypo
-    var originConeHypo = MRound(Math.sqrt(Math.pow(originConeHeight, 2) + Math.pow(bottom / 2, 2)))
-    var topConeHypo = MRound(Math.sqrt(Math.pow(topConeHeight, 2) + Math.pow(top / 2, 2)))
-    var trancatedConeHypo = MRound(originConeHypo - topConeHypo)
-    var trancatedConeHypo2 = MRound(
-        Math.sqrt(Math.pow(Math.abs(bottom - top) / 2, 2) + Math.pow(height, 2)),
-    )
-
-    //Angle
-    var originSectorAngle = MRound(angle_Cone_To_Sector(bottom, originConeHypo))
-
-    //Sector Length
-    var originConeArcLength = MRound(2 * Math.PI * (bottom / 2))
-    var topConeArcLength = MRound(2 * Math.PI * (top / 2))
-
+const SectorTC: FC<Props> = ({
+    draw: {
+        degree,
+        radian,
+        originConeHeight,
+        originConeHypo,
+        originConeArcLength,
+        topConeHeight,
+        topConeHypo,
+        topConeArcLength,
+        trancatedConeHeight,
+        trancatedConeHypo,
+        trancatedMargin,
+        paperOriginWidth,
+        paperOriginHeight,
+        paperMargin,
+        paperSheetWidth,
+        paperSheetHeight,
+    },
+}) => {
     var viewHeight = 0
     var viewWidth = 0
     var viewObject = 0
     if (trancatedConeHeight > originConeArcLength) {
         viewObject = trancatedConeHeight + 3000
         viewHeight = trancatedConeHeight + 6000
-        viewWidth = originConeArcLength * 2
+        viewWidth = originConeArcLength * 3
     } else {
-        viewObject = trancatedConeHeight + 8000
-        viewHeight = trancatedConeHeight + 12000
-        viewWidth = originConeArcLength * 1.5
+        viewObject = trancatedConeHeight + 5000
+        viewHeight = trancatedConeHeight + 6000
+        viewWidth = originConeArcLength * 1.1
     }
     const viewCenterMargin = -viewWidth * 0.5
     const textSize = viewWidth * 0.02
     return (
         <svg viewBox={`${viewCenterMargin} ${0} ${viewWidth} ${viewHeight}`} fill="#fff">
             <g transform={`translate(${viewCenterMargin}, 1000) rotate(0)`}>
-                <text x={1000} y={viewHeight - 8000} fill="eee" fontSize={textSize}>
-                    Angle: {originSectorAngle}
+                {/* <text x={1000} y={viewHeight - 8000 + textSize * 6} fill="eee" fontSize={textSize}>
+                    so.a.i : {topConeArcLength}, su.a.i: {originConeArcLength}, φi: {degree} deg /{' '}
+                    {radian} rad ,
                 </text>
-                <text x={1000} y={viewHeight - 8000 + textSize * 2} fill="eee" fontSize={textSize}>
-                    Arc: {originConeArcLength}
+                <text x={1000} y={viewHeight - 8000 + textSize * 8} fill="eee" fontSize={textSize}>
+                    Wi : {trancatedConeHypo}, wi : {trancatedMargin} , δ : {paperMargin},
                 </text>
-                <text
-                    x={1000}
-                    y={viewHeight - 8000 + textSize * 4}
-                    fill="#11ff55"
-                    fontSize={textSize}
-                >
-                    Arc: {topConeArcLength}
-                </text>
-                <text
-                    x={1000}
-                    y={viewHeight - 8000 + textSize * 6}
-                    fill="#fe00ee"
-                    fontSize={textSize}
-                >
-                    BTM Object [Height: {trancatedConeHeight}, Hypo: {trancatedConeHypo}, Hypo2:{' '}
-                    {trancatedConeHypo2}, TOP: {top}, BTM: {bottom}]
-                </text>
+                <text x={1000} y={viewHeight - 8000 + textSize * 10} fill="eee" fontSize={textSize}>
+                    Worg.i: {paperOriginWidth}, Horgi : {paperOriginHeight}, Wsheet.i :
+                    {paperSheetWidth}, Hsheet.i : {paperSheetHeight}
+                </text> */}
             </g>
-            {/* <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}>
-                <path
-                    d={`M0,0 l${bottom / 2},${originConeHeight} h${-bottom} Z`}
-                    fill="none"
-                    stroke={'#eee'}
-                    stroke-linecap="butt"
-                    stroke-width="30"
-                    stroke-opacity="0.5"
-                />
-
-                <path
-                    d={`M0,0 l${top / 2},${topConeHeight} h${-top} Z`}
-                    fill="none"
-                    stroke={'#11ff55'}
-                    stroke-linecap="butt"
-                    stroke-width="50"
-                    stroke-opacity="0.5"
-                />
-
-                <path
-                    d={`M0,${topConeHeight} h${top / 2} l${
-                        Math.abs(top - bottom) / 2
-                    },${trancatedConeHeight} h${-bottom} l${
-                        Math.abs(top - bottom) / 2
-                    },${-trancatedConeHeight} Z`}
-                    fill="none"
-                    stroke={'#fe00ee'}
-                    stroke-linecap="butt"
-                    stroke-width="50"
-                    stroke-opacity="0.5"
-                />
-            </g> */}
             {/* ORIGIN Planar */}
             <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}></g>
             {/* Sector Planar */}
             <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}>
-                <Paper
-                    angle={originSectorAngle}
+                <PaperTCSector
+                    angle={degree * 2}
                     rangeTop={topConeHypo}
                     rangeBottom={originConeHypo}
-                    color={'#fe00ee'}
-                    strokeSize={50}
-                />
-                <Sector
-                    angle={originSectorAngle}
-                    range={originConeHypo}
                     color={'#eee'}
                     strokeSize={50}
                 />
-                <Sector
-                    angle={originSectorAngle}
-                    range={topConeHypo}
-                    color={'#11ff55'}
-                    strokeSize={50}
-                />
+                <Sector angle={degree * 2} range={originConeHypo} color={'#eee'} strokeSize={10} />
+                <Sector angle={degree * 2} range={topConeHypo} color={'#11ff55'} strokeSize={10} />
             </g>
+            {/* Paper Outline */}
+            {/* <g transform={`translate(0, ${-originConeHeight + viewObject}) rotate(0)`}>
+                <PaperSheet
+                    center={{
+                        x: 0,
+                        y: -topConeHypo - trancatedConeHypo,
+                    }}
+                    draw={{
+                        top: paperSheetHeight,
+                        bottom: paperSheetHeight,
+                        height: paperSheetWidth,
+                    }}
+                    lineColor={'#ffff00'}
+                    lineWidth={30}
+                    guideEnable={false}
+                />
+            </g> */}
         </svg>
     )
 }

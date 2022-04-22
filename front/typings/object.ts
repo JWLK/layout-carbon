@@ -10,6 +10,25 @@ export interface ObjSquare {
     height: number
 }
 
+export interface ObjSector {
+    degree: number
+    radian: number //6
+    originConeHeight: number
+    originConeHypo: number
+    originConeArcLength: number // 5
+    topConeHeight: number
+    topConeHypo: number //3
+    topConeArcLength: number //4
+    trancatedConeHeight: number
+    trancatedConeHypo: number // 2
+    trancatedMargin: number
+    paperOriginWidth: number // 7
+    paperOriginHeight: number // 8
+    paperMargin: number // 9
+    paperSheetWidth: number // 10
+    paperSheetHeight: number // 11
+}
+
 export interface ObjFlange {
     outDia: number
     inDia: number
@@ -39,6 +58,7 @@ export interface TWRawData {
     initial: TWInitialValue
     sectionData: TWSection[]
     partsData: TWParts[]
+    sectorsData: TWSectors[]
     flangeData: TWFlanges[]
 }
 
@@ -58,6 +78,16 @@ export interface TWParts {
     index: number
     parts: TWPart[]
     divided: number
+}
+
+export interface TWSector {
+    index: number //PartIndex
+    sector: ObjSector //sector Data
+}
+
+export interface TWSectors {
+    index: number //SectionIndex
+    sectors: TWSector[] //Each Part Index => sector Data
 }
 
 export interface TWFlanges {

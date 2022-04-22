@@ -30,7 +30,6 @@ const Paper: FC<props> = ({ angle, rangeTop, rangeBottom, color, strokeSize }) =
             stroke={color}
             stroke-linecap="butt"
             stroke-width={strokeSize}
-            stroke-dasharray={`${strokeSize * 10},${strokeSize * 5}`}
             fill="none"
         />
     )

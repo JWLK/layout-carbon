@@ -47,6 +47,7 @@ import {
     TWSection,
     TWParts,
     TWFlanges,
+    TWSectors,
 } from 'typings/object'
 //Data
 import { RawData } from '@objects/Data/InitValue'
@@ -74,7 +75,6 @@ const SectionOutline = () => {
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
-    const [flangeData, setFlangeData] = useState([] as TWFlanges[])
 
     const [scaleViewBox, setScaleViewBox] = useState(
         `${ViewMargin * 3.5} ${25000} ${ViewSize / 1.5} ${ViewSize - 25000}`,
@@ -141,6 +141,7 @@ const SectionOutline = () => {
             e.preventDefault()
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
+            var sectorObject = [] as TWSectors[]
             var flangeObject = [] as TWFlanges[]
 
             for (var i = 0; i < divided; i++) {
@@ -177,6 +178,7 @@ const SectionOutline = () => {
                     },
                     tapered: true,
                 }
+
                 partsObject[divided - 1 - i] = {
                     index: i,
                     parts: [
@@ -191,6 +193,33 @@ const SectionOutline = () => {
                         },
                     ],
                     divided: 1,
+                }
+
+                sectorObject[divided - 1 - i] = {
+                    index: i,
+                    sectors: [
+                        {
+                            index: 0,
+                            sector: {
+                                degree: 0,
+                                radian: 0,
+                                originConeHeight: 0,
+                                originConeHypo: 0,
+                                originConeArcLength: 0,
+                                topConeHeight: 0,
+                                topConeHypo: 0,
+                                topConeArcLength: 0,
+                                trancatedConeHeight: 0,
+                                trancatedConeHypo: 0,
+                                trancatedMargin: 0,
+                                paperOriginWidth: 0,
+                                paperOriginHeight: 0,
+                                paperMargin: 0,
+                                paperSheetWidth: 0,
+                                paperSheetHeight: 0,
+                            },
+                        },
+                    ],
                 }
 
                 /* Calc Flange Value */
@@ -233,6 +262,7 @@ const SectionOutline = () => {
             rawData.initial = initData
             rawData.sectionData = sectionsObject
             rawData.partsData = partsObject
+            rawData.sectorsData = sectorObject
             rawData.flangeData = flangeObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
 
@@ -243,7 +273,7 @@ const SectionOutline = () => {
             //한번에 업데이터
             mutate()
         },
-        [keyRawData, rawData, topUpperOutDia, bottomLowerOutDia, totalHeight, divided],
+        [divided, initData, rawData, keyRawData, totalHeight, topUpperOutDia, bottomLowerOutDia],
     )
 
     /*

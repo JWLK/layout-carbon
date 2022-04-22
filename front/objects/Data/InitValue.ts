@@ -8,6 +8,9 @@ import {
     TWPart,
     TWParts,
     TWFlanges,
+    ObjSector,
+    TWSector,
+    TWSectors,
 } from 'typings/object'
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
@@ -27,6 +30,33 @@ export const InitParts: TWParts = {
     index: 0,
     parts: [InitPart],
     divided: 1,
+}
+
+export const InitSector: TWSector = {
+    index: 0,
+    sector: {
+        degree: 0,
+        radian: 0,
+        originConeHeight: 0,
+        originConeHypo: 0,
+        originConeArcLength: 0,
+        topConeHeight: 0,
+        topConeHypo: 0,
+        topConeArcLength: 0,
+        trancatedConeHeight: 0,
+        trancatedConeHypo: 0,
+        trancatedMargin: 0,
+        paperOriginWidth: 0,
+        paperOriginHeight: 0,
+        paperMargin: 0,
+        paperSheetWidth: 0,
+        paperSheetHeight: 0,
+    },
+}
+
+export const InitSecotors: TWSectors = {
+    index: 0,
+    sectors: [InitSector],
 }
 
 export const InitFlnage: TWFlanges = {
@@ -75,5 +105,6 @@ export const RawData: TWRawData = {
     },
     sectionData: [InitSection],
     partsData: [InitParts],
+    sectorsData: [InitSecotors],
     flangeData: [InitFlnage],
 }

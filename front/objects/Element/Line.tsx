@@ -18,6 +18,7 @@ interface Props {
     guideFloat?: number
     label?: string
     unit?: string
+    dashEnable?: boolean
 }
 
 const Line: FC<Props> = ({
@@ -35,6 +36,7 @@ const Line: FC<Props> = ({
     guideFloat,
     label,
     unit,
+    dashEnable,
 }) => {
     return (
         <>
@@ -46,6 +48,7 @@ const Line: FC<Props> = ({
                     y2={-pointEnd.y}
                     stroke={lineColor}
                     strokeWidth={lineWidth}
+                    stroke-dasharray={dashEnable! && `${lineWidth * 10},${lineWidth * 5}`}
                 />
             </g>
             {guideEnable && (

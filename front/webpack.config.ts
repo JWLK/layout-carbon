@@ -5,7 +5,6 @@ import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-serv
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
-
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration
 }

@@ -12,6 +12,7 @@ import { RawData } from '@objects/Data/InitValue'
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
 import VOrigin from '@objects/Tower/Body/VOrigin'
+import VOSection from '@objects/Tower/Body/VOSection'
 import VHalf from '@objects/Tower/Body/VHalf'
 
 /* @typings */
@@ -153,7 +154,7 @@ const Frame = () => {
             <GraphicWrap>
                 <GraphicViewOrigin>
                     {partsData.length && (
-                        <VOrigin
+                        <VOSection
                             draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
                             currentPartIndex={currentPartIndex}
                             setCurrentPartIndex={setCurrentPartIndex}

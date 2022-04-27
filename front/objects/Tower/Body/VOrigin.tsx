@@ -35,20 +35,13 @@ let TOTAL_GUIDE_LINE_WIDTH = 0
 let TOTAL_GUIDE_TEXT_SIZE = 0
 
 const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
-    /*Size Check*/
+    /*SIZE CHECK*/
     const { windowWidth, windowHeight } = useGlobal()
     /*VIEW BOX*/
     const [viewHeight, setViewHeight] = useState(0)
     const [viewWidth, setViewWidth] = useState(0)
     const [viewCenterMarginX, setViewCenterMarginX] = useState(0)
     const [viewCenterMarginY, setViewCenterMarginY] = useState(0)
-    // if (totalHeight / 3 > draws[0].bottom) {
-    //     viewHeight = totalHeight * 1.1
-    //     viewWidth = (viewHeight / 3) * 2
-    // } else {
-    //     viewWidth = draws[0].bottom * 2.5
-    //     viewHeight = (viewWidth / 2) * 3
-    // }
     useEffect(() => {
         if (windowWidth > 1000) {
             if (windowHeight > 1000) {
@@ -63,10 +56,10 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
         setViewWidth(320)
         setViewCenterMarginX(-viewWidth * 0.5)
         setViewCenterMarginY(-viewHeight)
-        console.log(windowHeight)
+        // console.log(windowHeight)
     }, [windowWidth, windowHeight, viewWidth, viewHeight])
 
-    //LINE SETTING
+    /*GRAPHIC VALUE*/
     LINE_WIDTH = viewWidth * 0.001
     LINE_WIDTH_ACTIVE = LINE_WIDTH * 3
 
@@ -75,7 +68,7 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
             {/* View Guide */}
             <Square
                 center={{ x: 0, y: 0 }}
-                draw={{ top: 319, bottom: 319, height: viewHeight }}
+                draw={{ top: 320, bottom: 320, height: viewHeight }}
                 lineColor={LINE_COLOR}
                 lineWidth={LINE_WIDTH}
                 guideEnable={GUIDE_ENABLE}

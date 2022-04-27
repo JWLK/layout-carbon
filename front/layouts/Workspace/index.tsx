@@ -95,7 +95,7 @@ const Workspace = () => {
         } else if (windowWidth >= 1500 && sideNavExpanded === false) {
             setSideNavExpand(true)
         }
-    }, [sideNavExpanded, windowWidth])
+    }, [windowWidth])
 
     useEffect(() => {
         if (channelData && userData && socket) {

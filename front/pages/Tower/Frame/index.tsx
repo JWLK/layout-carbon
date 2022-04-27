@@ -31,7 +31,14 @@ import {
 
 //CSS
 import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
-import { FlexWrap, GraphicWrap, SettingWrap, GraphicView, SettingView } from './styles'
+import {
+    FlexWrap,
+    GraphicWrap,
+    SettingWrap,
+    GraphicViewStretch,
+    GraphicViewHarf,
+    SettingView,
+} from './styles'
 import { Fade32 } from '@carbon/icons-react'
 import { Grid, Row, Column, Button, TextInput } from 'carbon-components-react'
 
@@ -143,7 +150,7 @@ const Frame = () => {
     return (
         <FlexWrap>
             <GraphicWrap>
-                <GraphicView>
+                <GraphicViewStretch>
                     {partsData.length && (
                         <EachSection
                             draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
@@ -151,8 +158,13 @@ const Frame = () => {
                             setCurrentPartIndex={setCurrentPartIndex}
                         />
                     )}
-                </GraphicView>
+                </GraphicViewStretch>
             </GraphicWrap>
+            <GraphicWrap>
+                <GraphicViewHarf></GraphicViewHarf>
+                <GraphicViewHarf></GraphicViewHarf>
+            </GraphicWrap>
+
             <SettingWrap>
                 <SettingView></SettingView>
             </SettingWrap>

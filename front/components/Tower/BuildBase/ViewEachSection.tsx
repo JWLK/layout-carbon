@@ -104,7 +104,6 @@ const ViewEachSection = () => {
     const [partsData, setPartsData] = useState([] as TWParts[])
     const [flangeData, setFlangeData] = useState([] as TWFlanges[])
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
-    const [sectorObject, setSectorObject] = useState({} as ObjSector)
 
     /*Selected Section Index State*/
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
@@ -127,7 +126,6 @@ const ViewEachSection = () => {
 
     /*Setting Divided State*/
     const [divided, setDivided] = useState(1)
-
     const onChangeDevided = useCallback((e) => {
         setDivided(e.value)
     }, [])
@@ -329,7 +327,7 @@ const ViewEachSection = () => {
             //한번에 업데이터
             mutate()
         },
-        [sectionData, currentSectionIndex, divided, rawData, keyRawData, sectorObject],
+        [sectionData, currentSectionIndex, divided, rawData, keyRawData],
     )
 
     /*Each Part Select Event Option */
@@ -665,7 +663,7 @@ const ViewEachSection = () => {
         },
         {
             key: 'pcDia',
-            header: 'Pitch Circle Diameter',
+            header: 'Bolt Circle Diameter',
         },
         {
             key: 'param_a',

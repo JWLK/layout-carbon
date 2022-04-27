@@ -19,6 +19,7 @@ const Project = loadable(() => import('@pages/Workspace/Project'))
 //Tower Pages
 const Model_01 = loadable(() => import('@pages/Tower/01_'))
 const Model_02 = loadable(() => import('@pages/Tower/02_'))
+const Frame = loadable(() => import('@pages/Tower/Frame'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
@@ -55,7 +56,7 @@ import {
 
 const Workspace = () => {
     /*Size Check*/
-    const { siteTitle, width } = useGlobal()
+    const { siteTitle, windowWidth } = useGlobal()
 
     /* Parameter */
     const { workspace } = useParams<{ workspace?: string }>()
@@ -89,12 +90,12 @@ const Workspace = () => {
 
     /* Loading useEffect */
     useEffect(() => {
-        if (width < 1056 && sideNavExpanded === true) {
+        if (windowWidth < 1500 && sideNavExpanded === true) {
             setSideNavExpand(false)
-        } else if (width >= 1056 && sideNavExpanded === false) {
+        } else if (windowWidth >= 1500 && sideNavExpanded === false) {
             setSideNavExpand(true)
         }
-    }, [width])
+    }, [sideNavExpanded, windowWidth])
 
     useEffect(() => {
         if (channelData && userData && socket) {
@@ -190,9 +191,10 @@ const Workspace = () => {
                     <Routes>
                         <Route path="/contentslayout/" element={<ContentsLayout />} />
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/project/" element={<Project />} />
                         <Route path="/model_01/" element={<Model_01 />} />
                         <Route path="/model_02/" element={<Model_02 />} />
+                        <Route path="/frame/" element={<Frame />} />
+                        <Route path="/project/" element={<Project />} />
                         <Route path="/channel/:channel" element={<Channel />} />
                         <Route path="/dm/:id" element={<DirectMessage />} />
                     </Routes>

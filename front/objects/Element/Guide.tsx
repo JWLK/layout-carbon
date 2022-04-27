@@ -14,6 +14,7 @@ interface Props {
     guideTextMargin?: number
     guideTextAlgin?: 'middle' | 'start' | 'end'
     label?: string
+    value?: number
     unit?: string
 }
 
@@ -29,6 +30,7 @@ const Guide: FC<Props> = ({
     guideTextMargin,
     guideTextAlgin,
     label,
+    value,
     unit,
 }) => {
     if (guideTextMargin == undefined) {
@@ -183,7 +185,7 @@ const Guide: FC<Props> = ({
                     dominant-baseline="middle"
                     text-anchor={guideTextAlgin}
                 >
-                    {label} {length / guideFloat}
+                    {label} {value == undefined ? length / guideFloat : value === 0 ? '' : value}
                     {unit}
                 </text>
             </g>

@@ -69,7 +69,7 @@ const Flange: FC<Props> = ({
                     guideLineColor={'#fff'}
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
-                    label={'PCD :'}
+                    label={'BCD :'}
                     unit={'mm'}
                 />
                 {/* Out Diameter */}

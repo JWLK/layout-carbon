@@ -58,6 +58,14 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         >
                             02.Section & Flange
                         </SideNavLink>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/frame/`}
+                        >
+                            0X.Frame
+                        </SideNavLink>
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}

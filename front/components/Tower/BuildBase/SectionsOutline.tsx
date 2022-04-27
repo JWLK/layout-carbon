@@ -461,13 +461,7 @@ const SectionOutline = () => {
     return (
         <>
             <Row as="article" narrow>
-                <Column
-                    sm={4}
-                    md={8}
-                    lg={12}
-                    xlg={{ span: 4, offset: 0 }}
-                    style={{ marginBlock: '0.5rem' }}
-                >
+                <Column sm={4} md={8} lg={5} xlg={5} style={{ marginBlock: '0.5rem' }}>
                     <Tile>
                         <svg viewBox={scaleViewBox} fill="#fff">
                             {sectionData.length && (
@@ -480,7 +474,7 @@ const SectionOutline = () => {
                         </svg>
                     </Tile>
                 </Column>
-                <Column sm={4} md={8} lg={12} xlg={4} style={{ marginBlock: '0.5rem' }}>
+                <Column sm={4} md={8} lg={7} xlg={7} style={{ marginBlock: '0.5rem' }}>
                     <Tabs>
                         <Tab label="Default">
                             <br />
@@ -543,11 +537,6 @@ const SectionOutline = () => {
                             <br />
                             <br />
                         </Tab>
-                    </Tabs>
-                </Column>
-
-                <Column sm={4} md={8} lg={12} xlg={4} style={{ marginBlock: '0.5rem' }}>
-                    <Tabs>
                         <Tab label="Detail">
                             <Table>
                                 <TableHead>

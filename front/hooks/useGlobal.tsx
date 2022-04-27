@@ -2,21 +2,33 @@ import React, { createContext, FC, useContext, useEffect, useState } from 'react
 import { debounce } from 'lodash'
 interface IGlobal {
     siteTitle: string
-    width: number
+    windowWidth: number
+    windowHeight: number
 }
 const GlobalContext = createContext<IGlobal>({
     siteTitle: 'SITE TITLE',
-    width: window.innerWidth,
+    windowWidth: window.innerWidth,
+    windowHeight: window.innerHeight,
 })
 export const GlobalProvider: FC = ({ children }) => {
     const siteTitle = 'EVO TOWER'
-    const [width, setWidth] = useState(window.innerWidth)
-    const handleResize = () => setWidth(window.innerWidth)
+    const [windowWidth, setWidth] = useState(window.innerWidth)
+    const [windowHeight, setHeight] = useState(window.innerHeight)
+    const handleResizeWidth = () => setWidth(window.innerWidth)
+    const handleResizeHeight = () => setHeight(window.innerHeight)
     useEffect(() => {
-        window.addEventListener('resize', debounce(handleResize, 100))
-        return () => window.removeEventListener('resize', handleResize)
+        window.addEventListener('resize', debounce(handleResizeWidth, 100))
+        return () => window.removeEventListener('resize', handleResizeWidth)
     }, [])
-    return <GlobalContext.Provider value={{ siteTitle, width }}>{children}</GlobalContext.Provider>
+    useEffect(() => {
+        window.addEventListener('resize', debounce(handleResizeHeight, 100))
+        return () => window.removeEventListener('resizeH', handleResizeHeight)
+    }, [])
+    return (
+        <GlobalContext.Provider value={{ siteTitle, windowWidth, windowHeight }}>
+            {children}
+        </GlobalContext.Provider>
+    )
 }
 
 export const useGlobal = () => {

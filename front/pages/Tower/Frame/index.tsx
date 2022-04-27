@@ -11,7 +11,8 @@ import { RawData } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
-import EachSection from '@objects/Tower/Sections/EachSectionRenew'
+import VOrigin from '@objects/Tower/Body/VOrigin'
+import VHalf from '@objects/Tower/Body/VHalf'
 
 /* @typings */
 import {
@@ -35,7 +36,7 @@ import {
     FlexWrap,
     GraphicWrap,
     SettingWrap,
-    GraphicViewStretch,
+    GraphicViewOrigin,
     GraphicViewHarf,
     SettingView,
 } from './styles'
@@ -150,19 +151,35 @@ const Frame = () => {
     return (
         <FlexWrap>
             <GraphicWrap>
-                <GraphicViewStretch>
+                <GraphicViewOrigin>
                     {partsData.length && (
-                        <EachSection
+                        <VOrigin
                             draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
                             currentPartIndex={currentPartIndex}
                             setCurrentPartIndex={setCurrentPartIndex}
                         />
                     )}
-                </GraphicViewStretch>
+                </GraphicViewOrigin>
             </GraphicWrap>
             <GraphicWrap>
-                <GraphicViewHarf></GraphicViewHarf>
-                <GraphicViewHarf></GraphicViewHarf>
+                <GraphicViewHarf>
+                    {partsData.length && (
+                        <VHalf
+                            draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                            currentPartIndex={currentPartIndex}
+                            setCurrentPartIndex={setCurrentPartIndex}
+                        />
+                    )}
+                </GraphicViewHarf>
+                <GraphicViewHarf>
+                    {partsData.length && (
+                        <VHalf
+                            draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                            currentPartIndex={currentPartIndex}
+                            setCurrentPartIndex={setCurrentPartIndex}
+                        />
+                    )}
+                </GraphicViewHarf>
             </GraphicWrap>
 
             <SettingWrap>

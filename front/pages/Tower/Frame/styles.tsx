@@ -24,7 +24,7 @@ export const GraphicWrap = styled.div`
         padding: 10px 15px;
     }
 `
-export const GraphicViewStretch = styled.div`
+export const GraphicViewOrigin = styled.div`
     width: 100%;
     height: calc(100% - 20px);
     max-width: 320px;

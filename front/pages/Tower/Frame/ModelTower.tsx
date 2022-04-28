@@ -490,7 +490,7 @@ const Frame = () => {
                                     ))}
                                 </TableRow>
                             ))}
-                        </TableBody> */}
+                        </TableBody>
                 </Table> */}
             </SettingWrapSide>
         </FlexWrap>

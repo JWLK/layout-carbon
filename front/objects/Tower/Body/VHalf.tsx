@@ -27,7 +27,7 @@ let GUIDE_COLOR = '#aaa'
 let GUIDE_LINE_WIDTH = 0
 let GUIDE_TEXT_SIZE = 0
 
-let TOTAL_GUIDE_POINT: ObjPoint[] = [INIT_CENTER, { x: 0, y: 0 }]
+let TOTAL_GUIDE_POINT: ObjPoint[] = [INIT_CENTER, { x: INIT_CENTER.x, y: 0 }]
 let TOTAL_GUIDE_MARGIN = 0
 const TOTAL_GUIDE_POSITION = 'positive'
 let TOTAL_GUIDE_COLOR = '#ffff00'

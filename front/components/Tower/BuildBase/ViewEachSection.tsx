@@ -64,6 +64,7 @@ import {
     TWParts,
     TWPart,
     TWFlanges,
+    TWFlange,
     ObjFlange,
     TWSectors,
     ObjSector,
@@ -102,7 +103,7 @@ const ViewEachSection = () => {
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
-    const [flangeData, setFlangeData] = useState([] as TWFlanges[])
+    const [flangesData, setFlangesData] = useState([] as TWFlanges[])
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
 
     /*Selected Section Index State*/
@@ -260,56 +261,63 @@ const ViewEachSection = () => {
             /* Calc Flange Value */
             flangeArray = {
                 index: currentSectionIndex,
-                flange: [
+                flanges: [
                     {
-                        outDia: sectionData[currentSectionIndex].section.bottom,
-                        inDia: sectionData[currentSectionIndex].section.bottom - 2 * 400, //= outDia - 2 * flangeWidth
-                        flangeWidth: 400,
-                        flangeHeight: 200,
-                        neckWidth: 50,
-                        neckHeight: 100,
-                        minScrewWidth: 80,
-                        pcDia: sectionData[currentSectionIndex].section.bottom - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
-                        param_a:
-                            (sectionData[currentSectionIndex].section.bottom -
-                                2 * 50 -
-                                2 * 80 -
-                                (sectionData[currentSectionIndex].section.bottom - 2 * 400)) /
-                            2,
-                        param_b:
-                            (sectionData[currentSectionIndex].section.bottom -
-                                50 -
+                        index: 0,
+                        flange: {
+                            outDia: sectionData[currentSectionIndex].section.bottom,
+                            inDia: sectionData[currentSectionIndex].section.bottom - 2 * 400, //= outDia - 2 * flangeWidth
+                            flangeWidth: 400,
+                            flangeHeight: 200,
+                            neckWidth: 50,
+                            neckHeight: 100,
+                            minScrewWidth: 80,
+                            pcDia:
+                                sectionData[currentSectionIndex].section.bottom - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+                            param_a:
                                 (sectionData[currentSectionIndex].section.bottom -
                                     2 * 50 -
-                                    2 * 80)) /
-                            2,
-                        screwWidth: 64,
-                        screwNumberOf: 150,
+                                    2 * 80 -
+                                    (sectionData[currentSectionIndex].section.bottom - 2 * 400)) /
+                                2,
+                            param_b:
+                                (sectionData[currentSectionIndex].section.bottom -
+                                    50 -
+                                    (sectionData[currentSectionIndex].section.bottom -
+                                        2 * 50 -
+                                        2 * 80)) /
+                                2,
+                            screwWidth: 64,
+                            screwNumberOf: 150,
+                        },
                     },
                     {
-                        outDia: sectionData[currentSectionIndex].section.top,
-                        inDia: sectionData[currentSectionIndex].section.top - 2 * 400, //= outDia - 2 * flangeWidth
-                        flangeWidth: 400,
-                        flangeHeight: 200,
-                        neckWidth: 50,
-                        neckHeight: 100,
-                        minScrewWidth: 80,
-                        pcDia: sectionData[currentSectionIndex].section.top - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
-                        param_a:
-                            (sectionData[currentSectionIndex].section.bottom -
-                                2 * 50 -
-                                2 * 80 -
-                                (sectionData[currentSectionIndex].section.bottom - 2 * 400)) /
-                            2,
-                        param_b:
-                            (sectionData[currentSectionIndex].section.bottom -
-                                50 -
+                        index: 1,
+                        flange: {
+                            outDia: sectionData[currentSectionIndex].section.top,
+                            inDia: sectionData[currentSectionIndex].section.top - 2 * 400, //= outDia - 2 * flangeWidth
+                            flangeWidth: 400,
+                            flangeHeight: 200,
+                            neckWidth: 50,
+                            neckHeight: 100,
+                            minScrewWidth: 80,
+                            pcDia: sectionData[currentSectionIndex].section.top - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+                            param_a:
                                 (sectionData[currentSectionIndex].section.bottom -
                                     2 * 50 -
-                                    2 * 80)) /
-                            2,
-                        screwWidth: 64,
-                        screwNumberOf: 150,
+                                    2 * 80 -
+                                    (sectionData[currentSectionIndex].section.bottom - 2 * 400)) /
+                                2,
+                            param_b:
+                                (sectionData[currentSectionIndex].section.bottom -
+                                    50 -
+                                    (sectionData[currentSectionIndex].section.bottom -
+                                        2 * 50 -
+                                        2 * 80)) /
+                                2,
+                            screwWidth: 64,
+                            screwNumberOf: 150,
+                        },
                     },
                 ],
             }
@@ -317,7 +325,7 @@ const ViewEachSection = () => {
             rawData.partsData[currentSectionIndex].divided = divided
             rawData.partsData[currentSectionIndex].parts = partArray
             rawData.sectorsData[currentSectionIndex].sectors = sectorArray
-            rawData.flangeData[currentSectionIndex] = flangeArray
+            rawData.flangesData[currentSectionIndex] = flangeArray
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
 
             //개별 업데이터
@@ -356,21 +364,21 @@ const ViewEachSection = () => {
     )
     /* Flange Data Update*/
     const updateFlangeThicknessSync = (thickness: number) => {
-        flangeData[currentSectionIndex].flange[0].neckWidth = thickness
-        flangeData[currentSectionIndex].flange[0].pcDia =
-            flangeData[currentPartIndex].flange[0].outDia -
+        flangesData[currentSectionIndex].flanges[0].flange.neckWidth = thickness
+        flangesData[currentSectionIndex].flanges[0].flange.pcDia =
+            flangesData[currentPartIndex].flanges[0].flange.outDia -
             2 * thickness -
-            2 * flangeData[currentPartIndex].flange[0].minScrewWidth
-        flangeData[currentPartIndex].flange[0].param_a =
-            (flangeData[currentPartIndex].flange[0].pcDia -
-                flangeData[currentPartIndex].flange[0].inDia) /
+            2 * flangesData[currentPartIndex].flanges[0].flange.minScrewWidth
+        flangesData[currentPartIndex].flanges[0].flange.param_a =
+            (flangesData[currentPartIndex].flanges[0].flange.pcDia -
+                flangesData[currentPartIndex].flanges[0].flange.inDia) /
             2
-        flangeData[currentPartIndex].flange[0].param_b =
-            (flangeData[currentPartIndex].flange[0].outDia -
-                flangeData[currentPartIndex].flange[0].neckWidth -
-                flangeData[currentPartIndex].flange[0].pcDia) /
+        flangesData[currentPartIndex].flanges[0].flange.param_b =
+            (flangesData[currentPartIndex].flanges[0].flange.outDia -
+                flangesData[currentPartIndex].flanges[0].flange.neckWidth -
+                flangesData[currentPartIndex].flanges[0].flange.pcDia) /
             2
-        rawData.flangeData[currentSectionIndex] = flangeData[currentSectionIndex]
+        rawData.flangesData[currentSectionIndex] = flangesData[currentSectionIndex]
         localStorage.setItem(keyRawData, JSON.stringify(rawData))
         mutate()
     }
@@ -457,29 +465,31 @@ const ViewEachSection = () => {
         | 'screwNumberOf'
     const onChangeFlnageData = useCallback(
         (e, selectedIndex) => {
-            console.log(e.target.name, selectedIndex, currentSectionIndex)
-            console.log('flangeData', flangeData[currentSectionIndex])
-            const flange = flangeData[currentSectionIndex].flange.map((v, index) => {
+            // console.log(e.target.name, selectedIndex, currentSectionIndex)
+            // console.log('flangeData', flangesData[currentSectionIndex])
+            const flange = flangesData[currentSectionIndex].flanges.map((v, index) => {
                 const typeObject: typeObjFlange = e.target.name
                 if (index === selectedIndex) {
-                    v[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    v.flange[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
                     if (typeObject == 'neckWidth') {
-                        v.pcDia =
-                            v.outDia -
+                        v.flange.pcDia =
+                            v.flange.outDia -
                             2 * parseInt(e.target.value !== '' ? e.target.value : 0) -
-                            2 * v.minScrewWidth
-                        v.param_a = (v.pcDia - v.inDia) / 2
-                        v.param_b = (v.outDia - v.neckWidth - v.pcDia) / 2
+                            2 * v.flange.minScrewWidth
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        v.flange.param_b =
+                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
                     } else if (typeObject == 'minScrewWidth') {
-                        v.pcDia =
-                            v.outDia -
-                            2 * v.neckWidth -
+                        v.flange.pcDia =
+                            v.flange.outDia -
+                            2 * v.flange.neckWidth -
                             2 * parseInt(e.target.value !== '' ? e.target.value : 0)
-                        v.param_a = (v.pcDia - v.inDia) / 2
-                        v.param_b = (v.outDia - v.neckWidth - v.pcDia) / 2
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        v.flange.param_b =
+                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
                     } else if (typeObject == 'flangeWidth') {
-                        v.inDia = v.outDia - v.flangeWidth * 2
-                        v.param_a = (v.pcDia - v.inDia) / 2
+                        v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
                     }
                 }
                 return v
@@ -488,20 +498,20 @@ const ViewEachSection = () => {
             localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithFlange(flange)))
             mutate()
         },
-        [currentSectionIndex, flangeData, keyRawData],
+        [currentSectionIndex, flangesData, keyRawData],
     )
 
-    const updateRawDatadSyncWithFlange = (flanges: ObjFlange[]) => {
+    const updateRawDatadSyncWithFlange = (flanges: TWFlange[]) => {
         //Out Diameter => part
         // partsData[currentSectionIndex].parts[0].part.bottom = flanges[0].outDia
         // partsData[currentSectionIndex].parts[partsData.length - 1].part.top = flanges[1].outDia
-        partsData[currentSectionIndex].parts[0].thickness = flanges[0].neckWidth
+        partsData[currentSectionIndex].parts[0].thickness = flanges[0].flange.neckWidth
         // partsData[currentSectionIndex].parts[partsData.length - 1].thickness = flanges[1].neckWidth
 
         rawData.initial = initData
         rawData.sectionData = sectionData
         rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
-        rawData.flangeData[currentSectionIndex].flange = flanges
+        rawData.flangesData[currentSectionIndex].flanges = flanges
 
         return rawData
     }
@@ -525,7 +535,7 @@ const ViewEachSection = () => {
             setSectionData(TD.sectionData)
             setPartsData(TD.partsData)
             setSectorsData(TD.sectorsData)
-            setFlangeData(TD.flangeData)
+            setFlangesData(TD.flangesData)
             setDivided(TD.partsData[currentSectionIndex].divided)
             setThinckness(TD.partsData[currentSectionIndex].parts[currentPartIndex].thickness)
         }
@@ -1208,7 +1218,9 @@ const ViewEachSection = () => {
                                                 currentPartIndex={currentPartIndex}
                                             /> */}
                                                 <EachFlangeTypeL
-                                                    flanges={flangeData[currentSectionIndex].flange}
+                                                    flanges={
+                                                        flangesData[currentSectionIndex].flanges
+                                                    }
                                                     currentFlange={0}
                                                 />
                                             </Column>
@@ -1230,7 +1242,9 @@ const ViewEachSection = () => {
                                                     style={{ marginBottom: '1rem' }}
                                                 >{`Top View `}</div>
                                                 <EachFlangeTopView
-                                                    flanges={flangeData[currentSectionIndex].flange}
+                                                    flanges={
+                                                        flangesData[currentSectionIndex].flanges
+                                                    }
                                                     currentFlange={0}
                                                 />
                                             </Column>
@@ -1274,97 +1288,101 @@ const ViewEachSection = () => {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {flangeData[currentSectionIndex].flange.map(
-                                                            (v, index) => {
-                                                                if (index == 0) {
-                                                                    return (
-                                                                        <TableRow
-                                                                            key={`section-${index}`}
-                                                                            style={{
-                                                                                textAlign: 'end',
-                                                                            }}
-                                                                        >
-                                                                            <TableCell>{`Body`}</TableCell>
-                                                                            <TableCell>
-                                                                                {index === 0
-                                                                                    ? 'Lower'
-                                                                                    : 'Upper'}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                {v.outDia}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                {v.inDia}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-flangeWidth-${index}`}
-                                                                                    labelText=""
-                                                                                    name="flangeWidth"
-                                                                                    value={
-                                                                                        v.flangeWidth
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-flangeHeight-${index}`}
-                                                                                    labelText=""
-                                                                                    name="flangeHeight"
-                                                                                    value={
-                                                                                        v.flangeHeight
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-neckHeight-${index}`}
-                                                                                    labelText=""
-                                                                                    name="neckHeight"
-                                                                                    value={
-                                                                                        v.neckHeight
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-neckWidth-${index}`}
-                                                                                    labelText=""
-                                                                                    name="neckWidth"
-                                                                                    value={
-                                                                                        v.neckWidth
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    )
-                                                                }
-                                                            },
-                                                        )}
+                                                        {flangesData[
+                                                            currentSectionIndex
+                                                        ].flanges.map((v, index) => {
+                                                            if (index == 0) {
+                                                                return (
+                                                                    <TableRow
+                                                                        key={`section-${index}`}
+                                                                        style={{
+                                                                            textAlign: 'end',
+                                                                        }}
+                                                                    >
+                                                                        <TableCell>{`Body`}</TableCell>
+                                                                        <TableCell>
+                                                                            {index === 0
+                                                                                ? 'Lower'
+                                                                                : 'Upper'}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.flange.outDia}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.flange.inDia}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-flangeWidth-${index}`}
+                                                                                labelText=""
+                                                                                name="flangeWidth"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .flangeWidth
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-flangeHeight-${index}`}
+                                                                                labelText=""
+                                                                                name="flangeHeight"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .flangeHeight
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-neckHeight-${index}`}
+                                                                                labelText=""
+                                                                                name="neckHeight"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .neckHeight
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-neckWidth-${index}`}
+                                                                                labelText=""
+                                                                                name="neckWidth"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .neckWidth
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                            }
+                                                        })}
                                                     </TableBody>
                                                 </Table>
 
@@ -1389,84 +1407,87 @@ const ViewEachSection = () => {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {flangeData[currentSectionIndex].flange.map(
-                                                            (v, index) => {
-                                                                if (index == 0) {
-                                                                    return (
-                                                                        <TableRow
-                                                                            key={`section-${index}`}
-                                                                            style={{
-                                                                                textAlign: 'end',
-                                                                            }}
-                                                                        >
-                                                                            <TableCell>{`Screw`}</TableCell>
-                                                                            <TableCell>
-                                                                                {index === 0
-                                                                                    ? 'Lower'
-                                                                                    : 'Upper'}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-minScrewWidth-${index}`}
-                                                                                    labelText=""
-                                                                                    name="minScrewWidth"
-                                                                                    value={
-                                                                                        v.minScrewWidth
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                {v.pcDia}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                {v.param_a}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                {v.param_b}
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-screwWidth-${index}`}
-                                                                                    labelText=""
-                                                                                    name="screwWidth"
-                                                                                    value={
-                                                                                        v.screwWidth
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                            <TableCell>
-                                                                                <TextInput
-                                                                                    id={`flange-screwNumberOf-${index}`}
-                                                                                    labelText=""
-                                                                                    name="screwNumberOf"
-                                                                                    value={
-                                                                                        v.screwNumberOf
-                                                                                    }
-                                                                                    onChange={(e) =>
-                                                                                        onChangeFlnageData(
-                                                                                            e,
-                                                                                            index,
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    )
-                                                                }
-                                                            },
-                                                        )}
+                                                        {flangesData[
+                                                            currentSectionIndex
+                                                        ].flanges.map((v, index) => {
+                                                            if (index == 0) {
+                                                                return (
+                                                                    <TableRow
+                                                                        key={`section-${index}`}
+                                                                        style={{
+                                                                            textAlign: 'end',
+                                                                        }}
+                                                                    >
+                                                                        <TableCell>{`Screw`}</TableCell>
+                                                                        <TableCell>
+                                                                            {index === 0
+                                                                                ? 'Lower'
+                                                                                : 'Upper'}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-minScrewWidth-${index}`}
+                                                                                labelText=""
+                                                                                name="minScrewWidth"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .minScrewWidth
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.flange.pcDia}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.flange.param_a}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.flange.param_b}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-screwWidth-${index}`}
+                                                                                labelText=""
+                                                                                name="screwWidth"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .screwWidth
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <TextInput
+                                                                                id={`flange-screwNumberOf-${index}`}
+                                                                                labelText=""
+                                                                                name="screwNumberOf"
+                                                                                value={
+                                                                                    v.flange
+                                                                                        .screwNumberOf
+                                                                                }
+                                                                                onChange={(e) =>
+                                                                                    onChangeFlnageData(
+                                                                                        e,
+                                                                                        index,
+                                                                                    )
+                                                                                }
+                                                                            />
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                            }
+                                                        })}
                                                     </TableBody>
                                                 </Table>
                                             </Column>

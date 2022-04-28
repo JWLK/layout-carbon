@@ -59,7 +59,7 @@ export interface TWRawData {
     sectionData: TWSection[]
     partsData: TWParts[]
     sectorsData: TWSectors[]
-    flangeData: TWFlanges[]
+    flangesData: TWFlanges[]
 }
 
 export interface TWSection {
@@ -90,7 +90,12 @@ export interface TWSectors {
     sectors: TWSector[] //Each Part Index => sector Data
 }
 
+export interface TWFlange {
+    index: number
+    flange: ObjFlange
+}
+
 export interface TWFlanges {
     index: number
-    flange: ObjFlange[]
+    flanges: TWFlange[]
 }

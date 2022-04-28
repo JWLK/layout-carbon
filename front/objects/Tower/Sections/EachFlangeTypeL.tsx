@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 
 /*IMPORT*/
-import { ObjPoint, ObjSquare, ObjFlange } from '@typings/object'
+import { ObjPoint, ObjSquare, ObjFlange, TWFlange } from '@typings/object'
 import Flange from '@objects/Element/Flange'
 
 interface Props {
-    flanges: ObjFlange[]
+    flanges: TWFlange[]
     currentFlange: number
 }
 
@@ -26,11 +26,12 @@ let GUIDE_TEXT_SIZE = 0
 
 const EachFlangeTypeL: FC<Props> = ({ flanges, currentFlange }) => {
     /*VIEW BOX*/
-    var viewWidth = flanges[currentFlange].outDia * 1 // 1
-    var viewCalc = (flanges[currentFlange].flangeHeight + flanges[currentFlange].neckHeight) * 10
+    var viewWidth = flanges[currentFlange].flange.outDia * 1 // 1
+    var viewCalc =
+        (flanges[currentFlange].flange.flangeHeight + flanges[currentFlange].flange.neckHeight) * 10
     var viewHeight = viewCalc * 2.5 // 2
     // const viewCenterMarginX = -viewWidth * 0 + flanges[currentFlange].outDia / 6
-    const viewCenterMarginX = -viewWidth * 0 + flanges[currentFlange].outDia / 6
+    const viewCenterMarginX = -viewWidth * 0 + flanges[currentFlange].flange.outDia / 6
     const viewCenterMarginY = -viewCalc * 1.5
     /*Guide Text Line Element*/
     LINE_WIDTH = viewWidth * 0.001
@@ -47,7 +48,7 @@ const EachFlangeTypeL: FC<Props> = ({ flanges, currentFlange }) => {
         >
             <Flange
                 center={{ x: 0, y: 0 }}
-                flange={flanges[currentFlange]}
+                flange={flanges[currentFlange].flange}
                 lineColor={LINE_COLOR}
                 lineWidth={LINE_WIDTH}
                 guideEnable={GUIDE_ENABLE}

@@ -27,7 +27,7 @@ let GUIDE_COLOR = '#aaa'
 let GUIDE_LINE_WIDTH = 0
 let GUIDE_TEXT_SIZE = 0
 
-let TOTAL_GUIDE_POINT: ObjPoint[] = [INIT_CENTER, { x: 0, y: 0 }]
+let TOTAL_GUIDE_POINT: ObjPoint[] = [INIT_CENTER, { x: INIT_CENTER.x, y: 0 }]
 let TOTAL_GUIDE_MARGIN = 0
 const TOTAL_GUIDE_POSITION = 'positive'
 let TOTAL_GUIDE_COLOR = '#ffff00'
@@ -117,16 +117,16 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
     }
 
     /*GRAPHIC VALUE*/
-    LINE_WIDTH = viewWidth * 0.001
+    LINE_WIDTH = viewWidth * 0.002
     LINE_WIDTH_ACTIVE = LINE_WIDTH * 3
     //GUIDE
-    GUIDE_MARGIN = LINE_WIDTH * 35
+    GUIDE_MARGIN = LINE_WIDTH * 30
     GUIDE_LINE_WIDTH = LINE_WIDTH / 2
-    GUIDE_TEXT_SIZE = getDivided < 15 ? GUIDE_MARGIN : GUIDE_MARGIN * 0.7
+    GUIDE_TEXT_SIZE = getDivided < 15 ? LINE_WIDTH * 20 : LINE_WIDTH * 15
     //TOTAL GUIDE
-    TOTAL_GUIDE_MARGIN = eachObject[0].bottom / 2 + GUIDE_MARGIN + 10 + GUIDE_TEXT_SIZE * 3
+    TOTAL_GUIDE_MARGIN = eachObject[0].bottom / 2 + GUIDE_MARGIN + GUIDE_TEXT_SIZE * 2
     TOTAL_GUIDE_LINE_WIDTH = LINE_WIDTH / 2
-    TOTAL_GUIDE_TEXT_SIZE = GUIDE_MARGIN
+    TOTAL_GUIDE_TEXT_SIZE = LINE_WIDTH * 20
 
     return (
         <svg viewBox={`${viewCenterMarginX} ${viewCenterMarginY} ${viewWidth} ${viewHeight}`}>
@@ -192,11 +192,15 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
                         {/* Top */}
                         <Guide
                             pointStart={{
-                                x: -eachObject[eachObject.length - 1].top / 2,
+                                x:
+                                    TOTAL_GUIDE_POINT[1].x -
+                                    eachObject[eachObject.length - 1].top / 2,
                                 y: TOTAL_GUIDE_POINT[1].y,
                             }}
                             pointEnd={{
-                                x: eachObject[eachObject.length - 1].top / 2,
+                                x:
+                                    TOTAL_GUIDE_POINT[1].x +
+                                    eachObject[eachObject.length - 1].top / 2,
                                 y: TOTAL_GUIDE_POINT[1].y,
                             }}
                             guideMargin={GUIDE_MARGIN}
@@ -210,8 +214,14 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
 
                         {/* Bottom */}
                         <Guide
-                            pointStart={{ x: -eachObject[0].bottom / 2, y: INIT_CENTER.y }}
-                            pointEnd={{ x: eachObject[0].bottom / 2, y: INIT_CENTER.y }}
+                            pointStart={{
+                                x: TOTAL_GUIDE_POINT[0].x - eachObject[0].bottom / 2,
+                                y: TOTAL_GUIDE_POINT[0].y,
+                            }}
+                            pointEnd={{
+                                x: TOTAL_GUIDE_POINT[0].x + eachObject[0].bottom / 2,
+                                y: TOTAL_GUIDE_POINT[0].y,
+                            }}
                             guideMargin={GUIDE_MARGIN}
                             guidePositon={'negative'}
                             guideLineColor={TOTAL_GUIDE_COLOR}

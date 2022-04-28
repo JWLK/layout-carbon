@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react'
 
-import { ObjPoint, ObjSquare, ObjFlange } from '@typings/object'
+import { ObjPoint, ObjSquare, ObjFlange, TWFlange } from '@typings/object'
 interface Props {
-    flanges: ObjFlange[]
+    flanges: TWFlange[]
     currentFlange: number
 }
 
@@ -29,15 +29,15 @@ let GUIDE_TEXT_MARGIN = 0
 const EachFlangeTopView: FC<Props> = ({ flanges, currentFlange }) => {
     //diameter Parameter
 
-    var outDiameter = flanges[currentFlange].outDia
+    var outDiameter = flanges[currentFlange].flange.outDia
     var outRadius = outDiameter / 2
-    var pichCircleDiameter = flanges[currentFlange].pcDia
+    var pichCircleDiameter = flanges[currentFlange].flange.pcDia
     var pichCircleRadius = pichCircleDiameter / 2
-    var innerDiameter = flanges[currentFlange].inDia
+    var innerDiameter = flanges[currentFlange].flange.inDia
     var innerRadius = innerDiameter / 2
 
-    var screwWidth = flanges[currentFlange].screwWidth
-    var screwNumberOf = flanges[currentFlange].screwNumberOf
+    var screwWidth = flanges[currentFlange].flange.screwWidth
+    var screwNumberOf = flanges[currentFlange].flange.screwNumberOf
 
     /*VIEW BOX*/
     var viewWidth = outDiameter * 1.2

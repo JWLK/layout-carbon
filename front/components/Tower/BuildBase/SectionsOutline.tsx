@@ -141,8 +141,8 @@ const SectionOutline = () => {
             e.preventDefault()
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
-            var sectorObject = [] as TWSectors[]
-            var flangeObject = [] as TWFlanges[]
+            var sectorsObject = [] as TWSectors[]
+            var flangesObject = [] as TWFlanges[]
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
@@ -195,7 +195,7 @@ const SectionOutline = () => {
                     divided: 1,
                 }
 
-                sectorObject[divided - 1 - i] = {
+                sectorsObject[divided - 1 - i] = {
                     index: i,
                     sectors: [
                         {
@@ -223,36 +223,42 @@ const SectionOutline = () => {
                 }
 
                 /* Calc Flange Value */
-                flangeObject[divided - 1 - i] = {
+                flangesObject[divided - 1 - i] = {
                     index: i,
-                    flange: [
+                    flanges: [
                         {
-                            outDia: 0,
-                            inDia: 0,
-                            flangeWidth: 0,
-                            flangeHeight: 0,
-                            neckWidth: 0,
-                            neckHeight: 0,
-                            minScrewWidth: 0,
-                            pcDia: 0,
-                            param_a: 0,
-                            param_b: 0,
-                            screwWidth: 0,
-                            screwNumberOf: 0,
+                            index: 0,
+                            flange: {
+                                outDia: 0,
+                                inDia: 0,
+                                flangeWidth: 0,
+                                flangeHeight: 0,
+                                neckWidth: 0,
+                                neckHeight: 0,
+                                minScrewWidth: 0,
+                                pcDia: 0,
+                                param_a: 0,
+                                param_b: 0,
+                                screwWidth: 0,
+                                screwNumberOf: 0,
+                            },
                         },
                         {
-                            outDia: 0,
-                            inDia: 0,
-                            flangeWidth: 0,
-                            flangeHeight: 0,
-                            neckWidth: 0,
-                            neckHeight: 0,
-                            minScrewWidth: 0,
-                            pcDia: 0,
-                            param_a: 0,
-                            param_b: 0,
-                            screwWidth: 0,
-                            screwNumberOf: 0,
+                            index: 1,
+                            flange: {
+                                outDia: 0,
+                                inDia: 0,
+                                flangeWidth: 0,
+                                flangeHeight: 0,
+                                neckWidth: 0,
+                                neckHeight: 0,
+                                minScrewWidth: 0,
+                                pcDia: 0,
+                                param_a: 0,
+                                param_b: 0,
+                                screwWidth: 0,
+                                screwNumberOf: 0,
+                            },
                         },
                     ],
                 }
@@ -262,8 +268,8 @@ const SectionOutline = () => {
             rawData.initial = initData
             rawData.sectionData = sectionsObject
             rawData.partsData = partsObject
-            rawData.sectorsData = sectorObject
-            rawData.flangeData = flangeObject
+            rawData.sectorsData = sectorsObject
+            rawData.flangesData = flangesObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
 
             //개별 업데이터

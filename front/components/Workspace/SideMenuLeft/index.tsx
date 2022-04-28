@@ -69,6 +69,23 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/model/tower`}
+                        >
+                            0X.M-Tower
+                        </SideNavLink>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/model/section`}
+                        >
+                            0X.M-Section
+                        </SideNavLink>
+                        <SideNavDivider />
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
                             renderIcon={Fade32}
                             large
                             to={`/workspace/${workspace}/project/`}

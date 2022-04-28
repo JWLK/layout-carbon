@@ -61,6 +61,27 @@ export const SettingWrap = styled.div`
         padding: 10px 15px;
     }
 `
+export const SettingWrapSide = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    width: 30%;
+    max-width: 750px;
+    min-height: 600px;
+    height: calc(100vh - 48px);
+    background: rgba(0, 100, 0, 0);
+    padding: 1rem 25px;
+
+    @media (max-width: 1000px) {
+        width: 100%;
+        max-width: 100%;
+        height: 600px;
+        padding: 10px 15px;
+    }
+`
 export const SettingView = styled.div`
     width: 100%;
     height: calc(100% - 20px);

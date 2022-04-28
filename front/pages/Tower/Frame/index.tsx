@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import { NavLinkProps, NavLink } from 'react-router-dom'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
@@ -7,7 +8,7 @@ import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
 /* @objects/Data */
-import { RawData } from '@objects/Data/InitValue'
+import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
@@ -47,8 +48,8 @@ import {
     /* Custom Carbon Design Component */
     NumberInputCustom,
     SliderCustom,
-} from './styles'
-import { Fade32 } from '@carbon/icons-react'
+} from '@pages/Tower/Frame/styles'
+import { Fade32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
 import { Grid, Row, Column, Button, TextInput, NumberInput, Slider } from 'carbon-components-react'
 
 const Frame = () => {
@@ -79,8 +80,6 @@ const Frame = () => {
     }, [])
 
     /* Initial Parameter : outline value */
-    //total height
-
     const [topUpperOutDia, setTopUpperOutDia] = useState(0)
     const [bottomLowerOutDia, setBottomLowerOutDia] = useState(0)
     const [totalHeight, setTotalHeight] = useState(0)
@@ -120,17 +119,42 @@ const Frame = () => {
         setDivided(e.value)
     }, [])
 
+    /* Initial Parameter : Validation Check */
+    const [validNextStep, setValidNextStep] = useState(false)
+    //Valid Parmeter
+    const [validHeight, setValidHeight] = useState(totalHeight >= 5000 && totalHeight <= 200000)
+    const [validTopBottom, setValidTopBottom] = useState(
+        bottomLowerOutDia >= topUpperOutDia ? true : false,
+    )
+    //Valid Button Event
+    const [validInitialData, setValidInitialData] = useState(validHeight && validTopBottom)
+    useEffect(() => {
+        setValidHeight(totalHeight >= 5000 && totalHeight <= 200000)
+        setValidTopBottom(bottomLowerOutDia >= topUpperOutDia ? true : false)
+        if (validHeight && validTopBottom) {
+            setValidInitialData(true)
+        } else {
+            setValidInitialData(false)
+        }
+        setValidNextStep(false)
+    }, [bottomLowerOutDia, topUpperOutDia, totalHeight, validHeight, validTopBottom])
+
     const onClickSetSectionsInitData = useCallback(
         (e) => {
             e.preventDefault()
+            setCurrentSectionIndex(0)
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
             var sectorsObject = [] as TWSectors[]
             var flangesObject = [] as TWFlanges[]
+            var defaultFlangeHeight = 200
+            var defaultNeckHeight = 100
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
-                var eachHeight = Math.round(totalHeight / divided)
+                var eachSectionHeight = Math.round(totalHeight / divided)
+                var eachPartHeight =
+                    eachSectionHeight - 2 * (defaultFlangeHeight + defaultNeckHeight)
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
                 var eachHypo =
                     Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
@@ -154,24 +178,24 @@ const Frame = () => {
 
                 //Inser Reverse
                 sectionsObject[divided - 1 - i] = {
-                    index: i,
+                    index: divided - 1 - i,
                     section: {
                         top: sectionWidthTop,
                         bottom: sectionWidthBottom,
-                        height: eachHeight,
+                        height: eachSectionHeight,
                     },
                     tapered: true,
                 }
 
                 partsObject[divided - 1 - i] = {
-                    index: i,
+                    index: divided - 1 - i,
                     parts: [
                         {
                             index: 0,
                             part: {
                                 top: sectionWidthTop,
                                 bottom: sectionWidthBottom,
-                                height: eachHeight,
+                                height: eachPartHeight,
                             },
                             thickness: 50,
                         },
@@ -179,72 +203,70 @@ const Frame = () => {
                     divided: 1,
                 }
 
-                sectorsObject[divided - 1 - i] = {
-                    index: i,
-                    sectors: [
-                        {
-                            index: 0,
-                            sector: {
-                                degree: 0,
-                                radian: 0,
-                                originConeHeight: 0,
-                                originConeHypo: 0,
-                                originConeArcLength: 0,
-                                topConeHeight: 0,
-                                topConeHypo: 0,
-                                topConeArcLength: 0,
-                                trancatedConeHeight: 0,
-                                trancatedConeHypo: 0,
-                                trancatedMargin: 0,
-                                paperOriginWidth: 0,
-                                paperOriginHeight: 0,
-                                paperMargin: 0,
-                                paperSheetWidth: 0,
-                                paperSheetHeight: 0,
-                            },
-                        },
-                    ],
-                }
-
                 /* Calc Flange Value */
                 flangesObject[divided - 1 - i] = {
-                    index: i,
+                    index: divided - 1 - i,
                     flanges: [
                         {
                             index: 0,
                             flange: {
-                                outDia: 0,
-                                inDia: 0,
-                                flangeWidth: 0,
-                                flangeHeight: 0,
-                                neckWidth: 0,
-                                neckHeight: 0,
-                                minScrewWidth: 0,
-                                pcDia: 0,
-                                param_a: 0,
-                                param_b: 0,
-                                screwWidth: 0,
-                                screwNumberOf: 0,
+                                outDia: sectionWidthBottom,
+                                inDia: sectionWidthBottom - 2 * 400, //= outDia - 2 * flangeWidth
+                                flangeWidth: 400,
+                                flangeHeight: defaultFlangeHeight,
+                                neckWidth: 50,
+                                neckHeight: defaultNeckHeight,
+                                minScrewWidth: 80,
+                                pcDia: sectionWidthBottom - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+                                param_a:
+                                    (sectionWidthBottom -
+                                        2 * 50 -
+                                        2 * 80 -
+                                        (sectionWidthBottom - 2 * 400)) /
+                                    2,
+                                // param_a =  (pcDia - inDia) / 2
+                                param_b:
+                                    (sectionWidthBottom -
+                                        50 -
+                                        (sectionWidthBottom - 2 * 50 - 2 * 80)) /
+                                    2,
+                                // param_b = (outDia - neckWidth - pcDia) / 2
+                                screwWidth: 64,
+                                screwNumberOf: 150,
                             },
                         },
                         {
                             index: 1,
                             flange: {
-                                outDia: 0,
-                                inDia: 0,
-                                flangeWidth: 0,
-                                flangeHeight: 0,
-                                neckWidth: 0,
-                                neckHeight: 0,
-                                minScrewWidth: 0,
-                                pcDia: 0,
-                                param_a: 0,
-                                param_b: 0,
-                                screwWidth: 0,
-                                screwNumberOf: 0,
+                                outDia: sectionWidthTop,
+                                inDia: sectionWidthTop - 2 * 400, //= outDia - 2 * flangeWidth
+                                flangeWidth: 400,
+                                flangeHeight: defaultFlangeHeight,
+                                neckWidth: 50,
+                                neckHeight: defaultNeckHeight,
+                                minScrewWidth: 80,
+                                pcDia: sectionWidthTop - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+                                param_a:
+                                    (sectionWidthTop -
+                                        2 * 50 -
+                                        2 * 80 -
+                                        (sectionWidthTop - 2 * 400)) /
+                                    2,
+                                // param_a =  (pcDia - inDia) / 2
+                                param_b:
+                                    (sectionWidthTop - 50 - (sectionWidthTop - 2 * 50 - 2 * 80)) /
+                                    2,
+                                // param_b = (outDia - neckWidth - pcDia) / 2
+                                screwWidth: 64,
+                                screwNumberOf: 150,
                             },
                         },
                     ],
+                }
+
+                sectorsObject[divided - 1 - i] = {
+                    index: divided - 1 - i,
+                    sectors: [InitSector],
                 }
             }
 
@@ -262,27 +284,17 @@ const Frame = () => {
 
             //한번에 업데이터
             mutate()
+            setValidNextStep(true)
         },
         [divided, initData, rawData, keyRawData, totalHeight, topUpperOutDia, bottomLowerOutDia],
     )
 
     /* Section Parameter : Current(Selected) Section Index State */
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
-    const onChaneSelectedIndex = useCallback(
-        (value) => {
-            setCurrentSectionIndex(value)
-            /* Link to Section Index */
-            setDivided(partsData[value].divided)
-        },
-        [partsData],
-    )
-    useEffect(() => {
-        sectionData.map((v, index) => {
-            if (index == currentSectionIndex) {
-                // setScaleViewBox(onChangeScale(v.section.height))
-            }
-        })
-    }, [currentSectionIndex, sectionData])
+    const onChaneSectionIndex = useCallback((value) => {
+        setCurrentSectionIndex(value)
+        /* Link to Section Index */
+    }, [])
 
     /*
     ** Data Renewal
@@ -324,59 +336,118 @@ const Frame = () => {
         <FlexWrap>
             <GraphicWrap>
                 <GraphicViewOrigin>
-                    {sectionData.length && (
-                        <VOTower
-                            draws={sectionData.map((v) => v.section)}
-                            currentIndex={currentSectionIndex}
-                            setCurrentIndex={setCurrentSectionIndex}
-                        />
-                    )}
+                    <VOTower
+                        draws={sectionData.map((v) => v.section)}
+                        currentIndex={currentSectionIndex}
+                        setCurrentIndex={setCurrentSectionIndex}
+                    />
                 </GraphicViewOrigin>
             </GraphicWrap>
             <SettingWrap>
                 <SettingView>
-                    <SettingTitle>Tower Initial Design</SettingTitle>
+                    <SettingTitle>
+                        Tower Initial Design
+                        <div style={{ float: 'right', paddingBottom: '100px' }}>
+                            <Button
+                                kind="tertiary"
+                                renderIcon={ArrowRight32}
+                                disabled={!validNextStep}
+                                as={NavLink}
+                                to={`/workspace/${workspace}/model/section`}
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </SettingTitle>
+
+                    {!validInitialData && (
+                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                            Invalid Value Exist. Check input value
+                        </div>
+                    )}
                     <SectionDivider />
-                    <InputLabel>Tower Total Height</InputLabel>
+                    <InputLabel>Tower Total Height (mm)</InputLabel>
                     <NumberInputCustom
                         id="NumberInput_totalHeight"
                         label=""
-                        invalidText="This value cannot be used. (Valid Value = 5,000mm~200,000mm)"
+                        size="lg"
                         min={5000}
                         max={200000}
-                        onChange={onChangeTotalHeight}
-                        size="lg"
                         step={100}
                         value={totalHeight}
-                        warnText="A high threshold may impact performance"
+                        onChange={onChangeTotalHeight}
+                        invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
+                        warnText="Warn Text"
                     />
                     <InputDivider />
-                    <InputLabel>Section {divided} - Upper Outside Diameter</InputLabel>
+                    <InputLabel>Section {divided} - Upper Outside Diameter (mm)</InputLabel>
                     <SliderCustom>
                         <Slider
                             id="Slider_topUpperOutDia"
-                            max={8000}
                             min={3000}
+                            max={8000}
                             step={50}
                             value={topUpperOutDia}
                             onChange={onChangeTopUpperOutDia}
                             style={{ fontSize: '3rem' }}
+                            invalid={!validTopBottom}
                         />
                     </SliderCustom>
                     <InputDivider />
-                    <InputLabel>Section 1 - Lower Outside Diameter</InputLabel>
+                    <InputLabel>Section 1 - Lower Outside Diameter (mm)</InputLabel>
                     <SliderCustom>
                         <Slider
                             id="Slider_bottomLowerOutDia"
                             labelText=""
-                            max={8000}
                             min={3000}
+                            max={8000}
                             step={50}
                             value={bottomLowerOutDia}
                             onChange={onChangeBottomLowerOutDia}
+                            invalid={!validTopBottom}
                         />
                     </SliderCustom>
+                    <InputDivider />
+                    <InputLabel>Number of Tower Section (mm)</InputLabel>
+                    <SliderCustom>
+                        <Slider
+                            id="Slider_initialDivided"
+                            labelText=""
+                            min={1}
+                            max={10}
+                            step={1}
+                            value={divided}
+                            onChange={onChangeDevided}
+                        />
+                    </SliderCustom>
+                    <InputDivider />
+
+                    <Button
+                        renderIcon={CheckmarkOutline32}
+                        onClick={onClickSetSectionsInitData}
+                        disabled={!validInitialData}
+                    >
+                        SAVE : Tower Initial Design
+                    </Button>
+
                     <SectionDivider />
+                    {!validInitialData && (
+                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                            Invalid Value Exist. Check input value
+                        </div>
+                    )}
+
+                    <div style={{ float: 'right', paddingBottom: '100px' }}>
+                        <Button
+                            kind="tertiary"
+                            renderIcon={ArrowRight32}
+                            disabled={!validNextStep}
+                            as={NavLink}
+                            to={`/workspace/${workspace}/model/section`}
+                        >
+                            NEXT
+                        </Button>
+                    </div>
                 </SettingView>
             </SettingWrap>
         </FlexWrap>

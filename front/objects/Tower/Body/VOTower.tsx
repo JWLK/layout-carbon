@@ -13,7 +13,7 @@ import Square from '@objects/Element/Square'
 import Guide from '@objects/Element/Guide'
 
 /*CONSTANT*/
-let INIT_CENTER: ObjPoint = { x: 10, y: 50 }
+let INIT_CENTER: ObjPoint = { x: 20, y: 50 }
 
 let LINE_COLOR = '#aaa'
 let LINE_COLOR_ACTIVE = '#fff'
@@ -83,7 +83,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
         setEachObject(object)
     }, [draws, objHeight, objWidth, totalHeight, windowHeight])
 
-    console.log('eachObject', eachObject)
+    // console.log('eachObject', eachObject)
 
     const realPointStackArray: number[] = useMemo(
         () =>
@@ -166,7 +166,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                         indicator={(realPointStackArray[index] / 1000).toFixed(2)}
                         activeColor={currentIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'}
                         label={''}
-                        value={draws[index].height / 1000}
+                        value={draws[index]?.height / 1000}
                         unit={''}
                     />
                 </g>

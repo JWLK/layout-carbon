@@ -83,7 +83,7 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
         setEachObject(object)
     }, [draws, objHeight, objWidth, totalHeight, windowHeight])
 
-    console.log('eachObject', eachObject)
+    // console.log('eachObject', eachObject)
 
     const realPointStackArray: number[] = useMemo(
         () =>

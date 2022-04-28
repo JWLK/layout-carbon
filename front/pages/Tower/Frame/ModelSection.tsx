@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
 /* @objects/Data */
-import { RawData } from '@objects/Data/InitValue'
+import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
@@ -30,6 +30,7 @@ import {
     TWSectors,
     ObjSector,
     TWSector,
+    TWFlange,
 } from 'typings/object'
 
 //CSS
@@ -41,9 +42,15 @@ import {
     GraphicViewOrigin,
     GraphicViewHarf,
     SettingView,
-} from './styles'
-import { Fade32 } from '@carbon/icons-react'
-import { Grid, Row, Column, Button, TextInput } from 'carbon-components-react'
+    SettingTitle,
+    InputLabel,
+    InputDivider,
+    /* Custom Carbon Design Component */
+    NumberInputCustom,
+    SliderCustom,
+} from '@pages/Tower/Frame/styles'
+import { Fade32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
+import { Grid, Row, Column, Button, TextInput, NumberInput, Slider } from 'carbon-components-react'
 
 const Frame = () => {
     /* Param */
@@ -63,7 +70,7 @@ const Frame = () => {
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
-    const [flangeData, setFlangeData] = useState([] as TWFlanges[])
+    const [flangesData, setFlangesData] = useState([] as TWFlanges[])
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
 
     /* Current Page Mode Swicher */
@@ -72,9 +79,10 @@ const Frame = () => {
         setModeSwicher(e.name)
     }, [])
 
+    /* STEP 0 - All Position */
     /* Section Parameter : Current(Selected) Section Index State */
     const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
-    const onChaneSelectedIndex = useCallback(
+    const onChaneSectionIndex = useCallback(
         (value) => {
             setCurrentSectionIndex(value)
             /* Link to Section Index */
@@ -82,44 +90,46 @@ const Frame = () => {
         },
         [partsData],
     )
-    useEffect(() => {
-        sectionData.map((v, index) => {
-            if (index == currentSectionIndex) {
-                // setScaleViewBox(onChangeScale(v.section.height))
-            }
-        })
-    }, [currentSectionIndex, initData.totalHeight, sectionData])
 
-    /* Section Parameter : Section Thickness State*/
-    const [defaultThick, setDefaultThick] = useState(1)
-    const onChangeDefaultThickness = useCallback(
+    /* STEP 1 - Mass Check */
+    /* Section Parameter : Each Section Mass Setting value */
+    const [totalThickness, setTotalThickness] = useState(0)
+    const onChangeTotalThickness = useCallback(
         (e) => {
-            partsData[currentSectionIndex].parts.map((v) => (v.thickness = e.value))
-            updateFlangeThicknessSync(e.value)
-            rawData.partsData = partsData
+            const valueNumber = parseInt(e.value)
+            var partObject = [] as TWPart[]
+            var flangeObject = [] as TWFlange[]
+            setTotalThickness(valueNumber)
+            //Set each part -> thickness
+            partObject = partsData[currentSectionIndex].parts.map((v) => {
+                v.thickness = valueNumber
+                return v
+            })
+            //Set each Flange -> neckWidth
+            flangeObject = flangesData[currentSectionIndex].flanges.map((v) => {
+                v.flange.neckWidth = valueNumber
+                return v
+            })
+
+            //Set RawData Sync
+            rawData.partsData[currentSectionIndex].parts = partObject
+            rawData.flangesData[currentSectionIndex].flanges = flangeObject
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            mutate()
         },
-        [currentSectionIndex, keyRawData, partsData, rawData],
+        [partsData, currentSectionIndex, flangesData, rawData, keyRawData],
     )
 
-    /* Section Parmeter : Section Divided State */
-    const [divided, setDivided] = useState(1)
+    /* STEP 2 - Each Section -> Part & Each Part Value Check */
+    /* Part Parameter */
+    const [currentPartIndex, setCurrentPartIndex] = useState(0)
+    const [divided, setDivided] = useState(1) // part divided
+    const onChanePartIndex = useCallback((value) => {
+        setCurrentPartIndex(value)
+        /* Link to Part Index */
+    }, [])
     const onChangeDevided = useCallback((e) => {
         setDivided(e.value)
     }, [])
-
-    /* Flange Parameter : updateFlangeThickness */
-    const updateFlangeThicknessSync = (thickness: number) => {
-        //Set Upper Flange Thickness
-        //Set Lower Flange Thickness
-        // rawData.flangeData[currentSectionIndex] = flangeData[currentSectionIndex]
-        // localStorage.setItem(keyRawData, JSON.stringify(rawData))
-        // mutate()
-    }
-
-    /* Part Parameter */
-    const [currentPartIndex, setCurrentPartIndex] = useState(0)
 
     /*
     ** Data Renewal
@@ -137,11 +147,19 @@ const Frame = () => {
             // console.log(TD)
             setRawData(TD)
             setInitData(TD.initial)
+            //SectionData
             setSectionData(TD.sectionData)
+            //PartsData
             setPartsData(TD.partsData)
-            setSectorsData(TD.sectorsData)
-            setFlangeData(TD.flangeData)
+            //Section & Parts
+            setTotalThickness(TD.partsData[currentSectionIndex].parts[currentPartIndex].thickness)
             setDivided(TD.partsData[currentSectionIndex].divided)
+
+            //SectorsData
+            setSectorsData(TD.sectorsData)
+            //FlangesData
+            setFlangesData(TD.flangesData)
+
             // setThinckness(TD.partsData[currentSectionIndex].parts[currentPartIndex].thickness)
         }
     }, [TD])
@@ -185,7 +203,38 @@ const Frame = () => {
             </GraphicWrap>
 
             <SettingWrap>
-                <SettingView></SettingView>
+                <SettingView>
+                    <SettingTitle>
+                        Section Safety Mass Check
+                        <div style={{ float: 'right', paddingBottom: '100px' }}>
+                            <Button
+                                kind="tertiary"
+                                renderIcon={ArrowRight32}
+                                // disabled={!validNextStep}
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </SettingTitle>
+                    {/* {!validInitialData && (
+                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                            Invalid Value Exist. Check input value
+                        </div>
+                    )} */}
+                    <SectionDivider />
+                    <InputLabel>Tower Total Thickness (mm)</InputLabel>
+                    <SliderCustom>
+                        <Slider
+                            id="Slider_totalThickness"
+                            labelText=""
+                            min={10}
+                            max={100}
+                            step={1}
+                            value={totalThickness}
+                            onChange={onChangeTotalThickness}
+                        />
+                    </SliderCustom>
+                </SettingView>
             </SettingWrap>
         </FlexWrap>
     )

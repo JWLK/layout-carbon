@@ -154,11 +154,11 @@ const Frame = () => {
         <FlexWrap>
             <GraphicWrap>
                 <GraphicViewOrigin>
-                    {sectionData.length && (
-                        <VOTower
-                            draws={sectionData.map((v) => v.section)}
-                            currentIndex={currentSectionIndex}
-                            setCurrentIndex={setCurrentSectionIndex}
+                    {partsData.length && (
+                        <VOSection
+                            draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                            currentPartIndex={currentPartIndex}
+                            setCurrentPartIndex={setCurrentPartIndex}
                         />
                     )}
                 </GraphicViewOrigin>

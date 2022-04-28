@@ -14,10 +14,16 @@ interface Props {
     guideLineColor?: string
     guideLineWidth?: number
     guideTextSize?: number
+    guideFloat?: number
+    guideTextMargin?: number
+    guideTextAlgin?: 'middle' | 'start' | 'end'
     fixedMargin?: number
-    label?: string
+    title?: string
     indicator?: string
     activeColor?: string
+    label?: string
+    value?: number
+    unit?: string
 }
 
 const Square: FC<Props> = ({
@@ -31,10 +37,16 @@ const Square: FC<Props> = ({
     guideLineColor,
     guideLineWidth,
     guideTextSize,
+    guideFloat,
+    guideTextMargin,
+    guideTextAlgin,
     fixedMargin,
-    label,
+    title,
     indicator,
     activeColor,
+    label,
+    value,
+    unit,
 }) => {
     // console.log(point)
     var point: ObjPoint[] = []
@@ -81,7 +93,13 @@ const Square: FC<Props> = ({
                     guideLineColor={guideLineColor!}
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
+                    guideFloat={guideFloat!}
+                    guideTextMargin={guideTextMargin!}
+                    guideTextAlgin={guideTextAlgin!}
                     fixedMargin={index == 1 ? fixedMargin! : undefined}
+                    label={label!}
+                    value={value!}
+                    unit={unit!}
                 />
             ))}
             <g transform={`translate(${center.x}, ${-center.y})`}>
@@ -101,7 +119,7 @@ const Square: FC<Props> = ({
                     dominant-baseline="bottom"
                     text-anchor="middle"
                 >
-                    {label}
+                    {title}
                 </text>
             </g>
             {indicator !== undefined && (

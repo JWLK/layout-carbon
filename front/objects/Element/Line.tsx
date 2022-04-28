@@ -14,9 +14,12 @@ interface Props {
     guideLineColor?: string
     guideLineWidth?: number
     guideTextSize?: number
-    fixedMargin?: number
     guideFloat?: number
+    guideTextMargin?: number
+    guideTextAlgin?: 'middle' | 'start' | 'end'
+    fixedMargin?: number
     label?: string
+    value?: number
     unit?: string
     dashEnable?: boolean
 }
@@ -32,9 +35,12 @@ const Line: FC<Props> = ({
     guideLineColor,
     guideLineWidth,
     guideTextSize,
-    fixedMargin,
     guideFloat,
+    guideTextMargin,
+    guideTextAlgin,
+    fixedMargin,
     label,
+    value,
     unit,
     dashEnable,
 }) => {
@@ -70,7 +76,10 @@ const Line: FC<Props> = ({
                         guideLineWidth={guideLineWidth!}
                         guideTextSize={guideTextSize!}
                         guideFloat={guideFloat!}
+                        guideTextMargin={guideTextMargin!}
+                        guideTextAlgin={guideTextAlgin!}
                         label={label}
+                        value={value}
                         unit={unit}
                     />
                 </g>

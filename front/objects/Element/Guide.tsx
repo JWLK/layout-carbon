@@ -33,16 +33,16 @@ const Guide: FC<Props> = ({
     value,
     unit,
 }) => {
+    if (guideFloat == undefined) {
+        guideFloat = 1
+    } else {
+        guideFloat = Math.pow(10, guideFloat)
+    }
     if (guideTextMargin == undefined) {
         guideTextMargin = 0
     }
     if (guideTextAlgin == undefined) {
         guideTextAlgin = 'middle'
-    }
-    if (guideFloat == undefined) {
-        guideFloat = 1
-    } else {
-        guideFloat = Math.pow(10, guideFloat)
     }
     if (label == undefined) {
         label = ''

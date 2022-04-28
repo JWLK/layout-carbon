@@ -112,7 +112,7 @@ const EachSection: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }
                         guideLineWidth={GUIDE_LINE_WIDTH}
                         guideTextSize={GUIDE_TEXT_SIZE}
                         fixedMargin={(Math.abs(draw.top - draw.bottom) / 2) * index}
-                        label={`Part-${index + 1}`}
+                        title={`Part-${index + 1}`}
                         indicator={(realPointStackArray[index] / 1000).toFixed(2)}
                         activeColor={
                             currentPartIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'

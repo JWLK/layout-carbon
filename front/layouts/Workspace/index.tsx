@@ -20,8 +20,8 @@ const Project = loadable(() => import('@pages/Workspace/Project'))
 const Model_01 = loadable(() => import('@pages/Tower/01_'))
 const Model_02 = loadable(() => import('@pages/Tower/02_'))
 const Frame = loadable(() => import('@pages/Tower/Frame'))
-const ModelTower = loadable(() => import('@pages/Tower/Frame/modelTower'))
-const ModelSection = loadable(() => import('@pages/Tower/Frame/modelSection'))
+const ModelTower = loadable(() => import('@pages/Tower/Frame/tower'))
+const ModelSection = loadable(() => import('@pages/Tower/Frame/section'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'

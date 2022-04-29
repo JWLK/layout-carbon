@@ -57,7 +57,7 @@ export const SettingWrap = styled.div`
     @media (max-width: 1000px) {
         width: 100%;
         max-width: 100%;
-        height: 600px;
+        height: auto;
         padding: 10px 15px;
     }
 `

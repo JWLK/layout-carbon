@@ -471,9 +471,9 @@ const Frame = () => {
 
             <SettingWrapSide>
                 <SettingView>
-                    <SettingTitle>Manufacturer Capacity</SettingTitle>
+                    <SettingTitle>Manufacturer</SettingTitle>
+                    <SectionDivider />
                 </SettingView>
-                <SectionDivider />
                 {/* <Table>
                     <TableHead>
                         <TableRow>

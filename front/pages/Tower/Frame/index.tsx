@@ -31,7 +31,7 @@ import {
     TWSectors,
     ObjSector,
     TWSector,
-} from 'typings/object'
+} from '@typings/object'
 
 //CSS
 import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'

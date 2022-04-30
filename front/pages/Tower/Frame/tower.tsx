@@ -7,15 +7,15 @@ import { useParams } from 'react-router'
 import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
+/* Component */
+import MfrTable from '@components/Tower/MfrTable'
+
 /* @objects/Data */
 import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
-import VOrigin from '@objects/Tower/Body/VOrigin'
 import VOTower from '@objects/Tower/Body/VOTower'
-import VOSection from '@objects/Tower/Body/VOSection'
-import VHalf from '@objects/Tower/Body/VHalf'
 
 /* @typings */
 import {
@@ -31,7 +31,7 @@ import {
     TWSectors,
     ObjSector,
     TWSector,
-} from 'typings/object'
+} from '@typings/object'
 
 //CSS
 import { PageTypeWide, Header, Section, SectionDivider } from '@pages/Common/ContentsLayout/styles'
@@ -48,27 +48,9 @@ import {
     /* Custom Carbon Design Component */
     NumberInputCustom,
     SliderCustom,
-    SettingWrapSide,
 } from '@pages/Tower/Frame/styles'
 import { Fade32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
-import {
-    Grid,
-    Row,
-    Column,
-    Button,
-    TextInput,
-    NumberInput,
-    Slider,
-    DataTable,
-    Table,
-    TableHead,
-    TableRow,
-    TableHeader,
-    TableBody,
-    TableCell,
-} from 'carbon-components-react'
-
-import { headers, rows } from './dataMfr'
+import { Grid, Row, Column, Button, TextInput, NumberInput, Slider } from 'carbon-components-react'
 
 const Frame = () => {
     /* Param */
@@ -361,28 +343,18 @@ const Frame = () => {
                     />
                 </GraphicViewOrigin>
             </GraphicWrap>
+
             <SettingWrap>
                 <SettingView>
-                    <SettingTitle>
-                        Tower Initial Design
-                        <div style={{ float: 'right', paddingBottom: '100px' }}>
-                            <Button
-                                kind="tertiary"
-                                renderIcon={ArrowRight32}
-                                disabled={!validNextStep}
-                                as={NavLink}
-                                to={`/workspace/${workspace}/model/section`}
-                            >
-                                NEXT
-                            </Button>
-                        </div>
-                    </SettingTitle>
+                    <SettingTitle>Select manufacturer</SettingTitle>
+                    <SectionDivider />
+                    <MfrTable />
+                </SettingView>
+            </SettingWrap>
 
-                    {!validInitialData && (
-                        <div style={{ width: '100%', color: '#fa4d56' }}>
-                            Invalid Value Exist. Check input value
-                        </div>
-                    )}
+            <SettingWrap>
+                <SettingView>
+                    <SettingTitle>Tower Initial Design</SettingTitle>
                     <SectionDivider />
                     <InputLabel>Tower Total Height (mm)</InputLabel>
                     <NumberInputCustom
@@ -451,48 +423,33 @@ const Frame = () => {
                     <SectionDivider />
                     {!validInitialData && (
                         <div style={{ width: '100%', color: '#fa4d56' }}>
-                            Invalid Value Exist. Check input value
+                            Invalid Value Exist. Check input value.
                         </div>
                     )}
 
-                    <div style={{ float: 'right', paddingBottom: '100px' }}>
+                    <div
+                        style={{
+                            display: 'inline-block',
+                            width: '100%',
+                            height: 'auto',
+                            position: 'relative',
+                            paddingBlock: '1rem',
+                            marginBottom: '100px',
+                        }}
+                    >
                         <Button
                             kind="tertiary"
                             renderIcon={ArrowRight32}
                             disabled={!validNextStep}
                             as={NavLink}
                             to={`/workspace/${workspace}/model/section`}
+                            style={{ float: 'right' }}
                         >
                             NEXT
                         </Button>
                     </div>
                 </SettingView>
             </SettingWrap>
-
-            <SettingWrapSide>
-                <SettingView>
-                    <SettingTitle>Manufacturer</SettingTitle>
-                    <SectionDivider />
-                </SettingView>
-                {/* <Table>
-                    <TableHead>
-                        <TableRow>
-                            {headers.map((header) => (
-                                <TableHeader>{header.header}</TableHeader>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    {/* <TableBody>
-                            {rows.map((row) => (
-                                <TableRow>
-                                    {Object.entries(row).map((value) => (
-                                        <TableCell key={value[0]}>{value[1]}</TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                </Table> */}
-            </SettingWrapSide>
         </FlexWrap>
     )
 }

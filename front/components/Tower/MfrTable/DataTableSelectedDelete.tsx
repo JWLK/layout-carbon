@@ -1,6 +1,6 @@
 import React, { FC, useState, useCallback } from 'react'
 
-import { column, row, sortInfo } from '@typings/table'
+import { column, rowProtocol, sortInfo } from '@typings/table'
 import { useGlobal } from '@hooks/useGlobal'
 import {
     useFilteredRows,
@@ -33,16 +33,17 @@ import {
     TableToolbarSearch,
 } from 'carbon-components-react'
 
-import { Edit32, Settings32, TrashCan32 } from '@carbon/icons-react'
+import { Edit32, EditOff32, Settings32, TrashCan32 } from '@carbon/icons-react'
 
 interface Props {
     columns: column[]
-    rows: row[]
+    rows: rowProtocol[]
     sortInfo: sortInfo
     hasSelection: boolean
     pageSize: number
     start: number
-    onShowModal: () => void
+    onShowModal?: () => void
+    update?: () => void
 }
 
 const CustomDataTable: FC<Props> = ({
@@ -53,6 +54,7 @@ const CustomDataTable: FC<Props> = ({
     pageSize: propPageSize,
     start: propStart,
     onShowModal,
+    update,
 }) => {
     const { windowWidth } = useGlobal()
     const [hasSelection, setHasSelection] = useState(propHasSelection)
@@ -136,10 +138,7 @@ const CustomDataTable: FC<Props> = ({
 
     /* eslint-disable no-script-url */
     return (
-        <TableContainer
-            title="Manufacturer List"
-            description="Check and select each company's production capacity."
-        >
+        <TableContainer title="Data Table" description="Using Data Setting Button">
             <TableToolbar>
                 <TableBatchActions
                     shouldShowBatchActions={hasBatchActions}
@@ -160,14 +159,34 @@ const CustomDataTable: FC<Props> = ({
                         tabIndex={hasBatchActions ? -1 : 0}
                         onChange={handleChangeSearchString}
                     />
-                    <TableToolbarMenu tabIndex={hasBatchActions ? -1 : 0} renderIcon={Edit32}>
+                    {/* <TableToolbarMenu tabIndex={hasBatchActions ? -1 : 0} renderIcon={Edit32}>
                         <TableToolbarAction onClick={() => setHasSelection(!hasSelection)}>
                             Edit
                         </TableToolbarAction>
-                    </TableToolbarMenu>
-                    <Button kind="ghost" onClick={onShowModal} renderIcon={Settings32}>
-                        Data Setting
-                    </Button>
+                    </TableToolbarMenu> */}
+                    {hasSelection ? (
+                        <Button
+                            kind="ghost"
+                            iconDescription="Edit Table List"
+                            hasIconOnly
+                            renderIcon={EditOff32}
+                            onClick={() => setHasSelection(!hasSelection)}
+                        />
+                    ) : (
+                        <Button
+                            kind="ghost"
+                            iconDescription="Edit Table List"
+                            hasIconOnly
+                            renderIcon={Edit32}
+                            onClick={() => setHasSelection(!hasSelection)}
+                        />
+                    )}
+
+                    {onShowModal && (
+                        <Button kind="secondary" onClick={onShowModal} renderIcon={Settings32}>
+                            Data Setting
+                        </Button>
+                    )}
                 </TableToolbarContent>
             </TableToolbar>
             <Table size={'lg'} isSortable>
@@ -242,7 +261,7 @@ const CustomDataTable: FC<Props> = ({
                     <PaginationNav
                         itemsShown={windowWidth > 1500 ? 7 : 5}
                         onChange={handleChangeStart}
-                        totalItems={Math.ceil(filteredRows.length / pageSize / 10) * 10}
+                        totalItems={Math.ceil(filteredRows.length / pageSize)}
                     />
                 ) : (
                     <Pagination

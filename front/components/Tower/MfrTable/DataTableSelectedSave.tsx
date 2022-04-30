@@ -1,7 +1,9 @@
-import React, { FC, useState, useCallback } from 'react'
+import React, { FC, useState, useCallback, useEffect } from 'react'
+//Current Page Parameter
+import { useParams } from 'react-router'
 
+import { column, rowProtocol, sortInfo, protocolList } from '@typings/table'
 import { useGlobal } from '@hooks/useGlobal'
-import { column, rowProtocol, sortInfo } from '@typings/table'
 import {
     useFilteredRows,
     usePageInfo,
@@ -12,6 +14,7 @@ import {
 } from '@hooks/useTable'
 import { doesRowMatchSearchString, TABLE_SORT_DIRECTION } from '@hooks/useTable/misc'
 import {
+    Button,
     Pagination,
     PaginationNav,
     Table,
@@ -32,7 +35,7 @@ import {
     TableToolbarSearch,
 } from 'carbon-components-react'
 
-import { Settings32 } from '@carbon/icons-react'
+import { Edit32, EditOff32, Settings32, TrashCan32, Save32 } from '@carbon/icons-react'
 
 interface Props {
     columns: column[]
@@ -41,17 +44,30 @@ interface Props {
     hasSelection: boolean
     pageSize: number
     start: number
+    onShowModal?: () => void
+    update?: () => void
 }
 
 const CustomDataTable: FC<Props> = ({
     columns,
     rows: propRows,
     sortInfo: propSortInfo,
-    hasSelection,
+    hasSelection: propHasSelection,
     pageSize: propPageSize,
     start: propStart,
+    onShowModal,
+    update,
 }) => {
+    /* Param */
+    const { workspace } = useParams<{ workspace?: string }>()
+    /* Localstorage */
+    const keyRawData = `${workspace}-protocalData`
+    if (localStorage.getItem(keyRawData) === null) {
+        alert(`${keyRawData} Data Load Error`)
+    }
+
     const { windowWidth } = useGlobal()
+    const [hasSelection, setHasSelection] = useState(propHasSelection)
     const [rows, setRows] = useState(propRows)
     const [sortInfo, setSortInfo] = useSortInfo(propSortInfo)
     const [filteredRows, searchString, setSearchString] = useFilteredRows(rows)
@@ -67,21 +83,30 @@ const CustomDataTable: FC<Props> = ({
     const selectedRowsCountInFiltered = filteredRows.filter(({ selected }: any) => selected).length
     const selectedAllInFiltered =
         selectedRowsCountInFiltered > 0 && filteredRows.length === selectedRowsCountInFiltered
-    const hasBatchActions = hasSelection && selectedRowsCountInFiltered > 0
+    // Only Data Selected -> BatchAction Active - Using Delete Item
+    // const hasBatchActions = hasSelection && selectedRowsCountInFiltered > 0
+
+    // If not Data Selcted -> BatchAction Passive Active Link to hasSelection State -> Using Edit Seleted Item
+    const hasBatchActions = hasSelection
+    const [batchActionsInit, setBatchActionInit] = useState(false)
+    const [beforeRows, setBeforeRows] = useState(propRows)
     const { columnId: sortColumnId, direction: sortDirection } = sortInfo
     const selectionAllName = !hasSelection
         ? undefined
         : `__custom-data-table_select-all_${elementId}`
-
-    const handleCancelSelection = useCallback(() => {
-        setRowSelection(undefined, false)
-    }, [setRowSelection])
 
     const handleChangeSearchString = useCallback(
         ({ target }) => {
             setSearchString(target.value)
         },
         [setSearchString],
+    )
+
+    const buttonChangeSelection = useCallback(
+        (rowId, checked) => {
+            setRowSelection(Number(rowId), !checked)
+        },
+        [setRowSelection],
     )
 
     const handleChangeSelection = useCallback(
@@ -102,6 +127,40 @@ const CustomDataTable: FC<Props> = ({
         [setRowSelection],
     )
 
+    //Using Edit Seleted Item
+    useEffect(() => {
+        if (batchActionsInit === false) {
+            setBatchActionInit(true)
+            setBeforeRows(rows)
+        }
+    }, [batchActionsInit, rows])
+
+    const handleCancelSelection = useCallback(() => {
+        setRows(beforeRows)
+        setBatchActionInit(false)
+        setHasSelection(false)
+    }, [beforeRows])
+
+    const handleSaveRows = useCallback(() => {
+        setBatchActionInit(false)
+        setHasSelection(false)
+        //LocalStorage Sync
+        var protocolDataObject = {} as protocolList
+        protocolDataObject.total = rows
+        protocolDataObject.selected = rows.filter((row) => row.selected)
+        localStorage.setItem(keyRawData, JSON.stringify(protocolDataObject))
+        update && update()
+    }, [keyRawData, rows])
+
+    //Using Delete Item
+    // const handleCancelSelection = useCallback(() => {
+    //     setRowSelection(undefined, false)
+    // }, [setRowSelection])
+
+    // const handleDeleteRows = useCallback(() => {
+    //     setRows(rows.filter((row) => !row.selected || !doesRowMatchSearchString(row, searchString)))
+    // }, [rows, searchString])
+
     const handleChangeSort = useCallback(
         (event) => {
             const { currentTarget } = event
@@ -113,8 +172,6 @@ const CustomDataTable: FC<Props> = ({
 
     const handleChangePageSize = useCallback(
         ({ page, pageSize }) => {
-            console.log(page)
-            console.log(pageSize)
             setPageSize(pageSize)
             setStart(pageSize * (page - 1))
         },
@@ -128,13 +185,9 @@ const CustomDataTable: FC<Props> = ({
         [pageSize, setStart],
     )
 
-    const handleDeleteRows = useCallback(() => {
-        setRows(rows.filter((row) => !row.selected || !doesRowMatchSearchString(row, searchString)))
-    }, [rows, searchString])
-
     /* eslint-disable no-script-url */
     return (
-        <TableContainer title="DataTable" description="Fully customized">
+        <TableContainer>
             <TableToolbar>
                 <TableBatchActions
                     shouldShowBatchActions={hasBatchActions}
@@ -143,28 +196,46 @@ const CustomDataTable: FC<Props> = ({
                 >
                     <TableBatchAction
                         tabIndex={hasBatchActions ? 0 : -1}
-                        renderIcon={Settings32}
-                        onClick={handleDeleteRows}
+                        renderIcon={Save32}
+                        onClick={handleSaveRows}
                     >
-                        Delete
+                        Save
                     </TableBatchAction>
                 </TableBatchActions>
+
                 <TableToolbarContent>
                     <TableToolbarSearch
                         tabIndex={hasBatchActions ? -1 : 0}
                         onChange={handleChangeSearchString}
                     />
-                    <TableToolbarMenu tabIndex={hasBatchActions ? -1 : 0}>
-                        <TableToolbarAction onClick={() => alert('Alert 1')}>
-                            Action 1
+                    {/* <TableToolbarMenu tabIndex={hasBatchActions ? -1 : 0} renderIcon={Edit32}>
+                        <TableToolbarAction onClick={() => setHasSelection(!hasSelection)}>
+                            Edit
                         </TableToolbarAction>
-                        <TableToolbarAction onClick={() => alert('Alert 2')}>
-                            Action 2
-                        </TableToolbarAction>
-                        <TableToolbarAction onClick={() => alert('Alert 3')}>
-                            Action 3
-                        </TableToolbarAction>
-                    </TableToolbarMenu>
+                    </TableToolbarMenu> */}
+                    {hasSelection ? (
+                        <Button
+                            kind="ghost"
+                            iconDescription="Edit Table List"
+                            hasIconOnly
+                            renderIcon={EditOff32}
+                            onClick={() => setHasSelection(!hasSelection)}
+                        />
+                    ) : (
+                        <Button
+                            kind="ghost"
+                            iconDescription="Edit Table List"
+                            hasIconOnly
+                            renderIcon={Edit32}
+                            onClick={() => setHasSelection(!hasSelection)}
+                        />
+                    )}
+
+                    {onShowModal && (
+                        <Button kind="secondary" onClick={onShowModal} renderIcon={Settings32}>
+                            Data Setting
+                        </Button>
+                    )}
                 </TableToolbarContent>
             </TableToolbar>
             <Table size={'lg'} isSortable>
@@ -226,20 +297,46 @@ const CustomDataTable: FC<Props> = ({
                                         onSelect={handleChangeSelection}
                                     />
                                 )}
-                                {columns.map(({ id: columnId }) => (
-                                    <TableCell key={columnId}>{row[columnId]}</TableCell>
-                                ))}
+                                {columns.map(({ id: columnId }) =>
+                                    columnId !== 'status' ? (
+                                        <TableCell key={columnId}>{row[columnId]}</TableCell>
+                                    ) : (
+                                        <TableCell key={columnId}>
+                                            {row['selected'] == true ? (
+                                                <Button
+                                                    kind="ghost"
+                                                    style={{ color: '#22ff00' }}
+                                                    onClick={() =>
+                                                        buttonChangeSelection(rowId, selected)
+                                                    }
+                                                >
+                                                    Selected
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    kind="ghost"
+                                                    style={{ color: '#ccc' }}
+                                                    onClick={() =>
+                                                        buttonChangeSelection(rowId, selected)
+                                                    }
+                                                >
+                                                    Not Selected
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    ),
+                                )}
                             </TableRow>
                         )
                     })}
                 </TableBody>
             </Table>
             {typeof pageSize !== 'undefined' &&
-                (windowWidth > 1000 ? (
+                (windowWidth > 671 ? (
                     <PaginationNav
-                        itemsShown={windowWidth > 1500 ? 7 : 5}
+                        itemsShown={10}
                         onChange={handleChangeStart}
-                        totalItems={filteredRows.length / pageSize}
+                        totalItems={Math.ceil(filteredRows.length / pageSize)}
                     />
                 ) : (
                     <Pagination

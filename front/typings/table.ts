@@ -4,7 +4,7 @@ export interface column {
     sortCycle?: string | undefined
 }
 
-export interface row {
+export interface rowProtocol {
     id: number
     name: string
     protocol: string
@@ -17,11 +17,16 @@ export interface sortInfo {
     direction: string
 }
 
+export interface protocolList {
+    selected: rowProtocol[]
+    total: rowProtocol[]
+}
+
 export interface CustomDataTable {
     id: string
     collator: Intl.Collator
     columns: column[]
-    rows: row[]
+    rows: rowProtocol[]
     hasSelection: boolean
     pageSize: number
     size: string

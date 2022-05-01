@@ -350,11 +350,27 @@ const Frame = () => {
                     <SectionDivider />
                     <MfrTable />
                 </SettingView>
-            </SettingWrap>
-
-            <SettingWrap>
                 <SettingView>
-                    <SettingTitle>Tower Initial Design</SettingTitle>
+                    <SettingTitle>
+                        Tower Initial Design
+                        <div style={{ float: 'right', paddingBottom: '100px' }}>
+                            <Button
+                                kind="tertiary"
+                                renderIcon={ArrowRight32}
+                                disabled={!validNextStep}
+                                as={NavLink}
+                                to={`/workspace/${workspace}/model/section`}
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </SettingTitle>
+
+                    {!validInitialData && (
+                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                            Invalid Value Exist. Check input value
+                        </div>
+                    )}
                     <SectionDivider />
                     <InputLabel>Tower Total Height (mm)</InputLabel>
                     <NumberInputCustom

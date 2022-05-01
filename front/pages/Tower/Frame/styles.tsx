@@ -44,10 +44,10 @@ export const SettingWrap = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: wrap;
     overflow-y: auto;
-    width: 40%;
+    width: 70%;
     max-width: 1000px;
     min-height: 600px;
     height: calc(100vh - 48px);
@@ -64,7 +64,8 @@ export const SettingWrap = styled.div`
 
 export const SettingView = styled.div`
     width: 100%;
-    height: calc(100% - 20px);
+    height: auto;
+    margin-bottom: 50px;
     // border: 0.1px solid #eee;
 `
 

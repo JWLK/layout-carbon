@@ -10,6 +10,8 @@ export interface rowProtocol {
     protocol: string
     port: number
     selected?: boolean | undefined
+    expanded?: boolean | undefined
+    detail: string
 }
 
 export interface sortInfo {

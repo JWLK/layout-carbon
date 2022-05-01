@@ -343,6 +343,7 @@ const CustomDataTable: FC<Props> = ({
                 </TableBody>
             </Table>
             {typeof pageSize !== 'undefined' &&
+                Math.ceil(filteredRows.length / pageSize) > 1 &&
                 (windowWidth > 671 ? (
                     <PaginationNav
                         itemsShown={10}

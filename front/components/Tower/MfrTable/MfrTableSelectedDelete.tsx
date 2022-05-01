@@ -143,7 +143,7 @@ const CustomDataTable: FC<Props> = ({
 
     /* eslint-disable no-script-url */
     return (
-        <TableContainer title="Data Table" description="Using Data Setting Button">
+        <TableContainer>
             <TableToolbar>
                 <TableBatchActions
                     shouldShowBatchActions={hasBatchActions}
@@ -194,7 +194,7 @@ const CustomDataTable: FC<Props> = ({
                     )}
                 </TableToolbarContent>
             </TableToolbar>
-            <Table size={'lg'} isSortable>
+            <Table size={'md'} isSortable>
                 <TableHead>
                     <TableRow>
                         {hasSelection && (

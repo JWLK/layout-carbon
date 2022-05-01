@@ -45,12 +45,14 @@ export const rows = [
         name: 'Load Balancer 1',
         protocol: 'HTTP',
         port: 80,
+        detail: 'Expanded Detail Data : Load Balancer 1',
     },
     {
         id: 1,
         name: 'Load Balancer 2',
         protocol: 'HTTPS',
         port: 443,
+        detail: 'Expanded Detail Data : Load Balancer 2',
     },
     {
         id: 2,
@@ -58,6 +60,7 @@ export const rows = [
         protocol: 'HTTP',
         port: 80,
         selected: true,
+        detail: 'Expanded Detail Data : Load Balancer 3',
     },
 ]
 
@@ -68,6 +71,7 @@ export const rowsInitProtocol = {
             name: 'Load Balancer 3',
             protocol: 'HTTP',
             port: 80,
+            detail: 'Expanded Detail Data',
         },
     ],
     total: [
@@ -76,12 +80,14 @@ export const rowsInitProtocol = {
             name: 'Load Balancer 1',
             protocol: 'HTTP',
             port: 80,
+            detail: 'Expanded Detail Data : Load Balancer 1',
         },
         {
             id: 1,
             name: 'Load Balancer 2',
             protocol: 'HTTPS',
             port: 443,
+            detail: 'Expanded Detail Data : Load Balancer 2',
         },
         {
             id: 2,
@@ -89,6 +95,7 @@ export const rowsInitProtocol = {
             protocol: 'HTTP',
             port: 80,
             selected: true,
+            detail: 'Expanded Detail Data : Load Balancer 3',
         },
     ],
 }

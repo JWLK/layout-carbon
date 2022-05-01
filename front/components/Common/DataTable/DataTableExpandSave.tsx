@@ -23,6 +23,9 @@ import {
     TableBody,
     TableCell,
     TableContainer,
+    TableExpandedRow,
+    TableExpandHeader,
+    TableExpandRow,
     TableHead,
     TableHeader,
     TableRow,
@@ -36,6 +39,7 @@ import {
 } from 'carbon-components-react'
 
 import { Edit32, EditOff32, Settings32, TrashCan32, Save32 } from '@carbon/icons-react'
+import useRowExpand from '@hooks/useTable/useRowExpand'
 
 interface Props {
     columns: column[]
@@ -72,6 +76,7 @@ const CustomDataTable: FC<Props> = ({
     const [sortInfo, setSortInfo] = useSortInfo(propSortInfo)
     const [filteredRows, searchString, setSearchString] = useFilteredRows(rows)
     const [setRowSelection] = useRowSelection(filteredRows, searchString, setRows)
+    const [setRowExpand] = useRowExpand(filteredRows, searchString, setRows)
     const [sortedRows] = useSortedRows(filteredRows, sortInfo, new Intl.Collator())
     const [start, pageSize, setStart, setPageSize] = usePageInfo(
         propStart,
@@ -100,6 +105,17 @@ const CustomDataTable: FC<Props> = ({
             setSearchString(target.value)
         },
         [setSearchString],
+    )
+
+    const handleChangeExpand = useCallback(
+        (event, expanded) => {
+            const { currentTarget } = event
+            const row = currentTarget.closest('tr')
+            if (row) {
+                setRowExpand(Number(row.dataset.rowId), !expanded)
+            }
+        },
+        [setRowExpand],
     )
 
     const buttonChangeSelection = useCallback(
@@ -252,6 +268,7 @@ const CustomDataTable: FC<Props> = ({
             <Table size={'lg'} isSortable>
                 <TableHead>
                     <TableRow>
+                        <TableExpandHeader />
                         {hasSelection && (
                             <TableSelectAll
                                 id={`${elementId}--select-all`}
@@ -289,60 +306,70 @@ const CustomDataTable: FC<Props> = ({
                 </TableHead>
                 <TableBody>
                     {sortedRows.slice(start, start + pageSize).map((row: any) => {
-                        const { id: rowId, selected } = row
+                        const { id: rowId, selected, expanded } = row
                         const selectionName = !hasSelection
                             ? undefined
                             : `__custom-data-table_${elementId}_${rowId}`
                         return (
-                            <TableRow
-                                key={rowId}
-                                isSelected={hasSelection && selected}
-                                data-row-id={rowId}
-                            >
-                                {hasSelection && (
-                                    <TableSelectRow
-                                        id={`${elementId}--select-${rowId}`}
-                                        checked={Boolean(selected)}
-                                        name={selectionName!}
-                                        ariaLabel="Select row"
-                                        onSelect={handleChangeSelection}
-                                    />
+                            <>
+                                <TableExpandRow
+                                    key={rowId}
+                                    isSelected={hasSelection && selected}
+                                    data-row-id={rowId}
+                                    isExpanded={expanded}
+                                    onExpand={(e) => handleChangeExpand(e, expanded)}
+                                >
+                                    {hasSelection && (
+                                        <TableSelectRow
+                                            id={`${elementId}--select-${rowId}`}
+                                            checked={Boolean(selected)}
+                                            name={selectionName!}
+                                            ariaLabel="Select row"
+                                            onSelect={handleChangeSelection}
+                                        />
+                                    )}
+                                    {columns.map(({ id: columnId }) =>
+                                        columnId !== 'status' ? (
+                                            <TableCell key={columnId}>{row[columnId]}</TableCell>
+                                        ) : (
+                                            <TableCell key={columnId}>
+                                                {row['selected'] == true ? (
+                                                    <Button
+                                                        kind="ghost"
+                                                        style={{ color: '#22ff00' }}
+                                                        onClick={() =>
+                                                            buttonChangeSelection(rowId, selected)
+                                                        }
+                                                    >
+                                                        Selected
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        kind="ghost"
+                                                        style={{ color: '#ccc' }}
+                                                        onClick={() =>
+                                                            buttonChangeSelection(rowId, selected)
+                                                        }
+                                                    >
+                                                        Not Selected
+                                                    </Button>
+                                                )}
+                                            </TableCell>
+                                        ),
+                                    )}
+                                </TableExpandRow>
+                                {expanded && (
+                                    <TableExpandedRow colSpan={columns.length + 1}>
+                                        {row.detail}
+                                    </TableExpandedRow>
                                 )}
-                                {columns.map(({ id: columnId }) =>
-                                    columnId !== 'status' ? (
-                                        <TableCell key={columnId}>{row[columnId]}</TableCell>
-                                    ) : (
-                                        <TableCell key={columnId}>
-                                            {row['selected'] == true ? (
-                                                <Button
-                                                    kind="ghost"
-                                                    style={{ color: '#22ff00' }}
-                                                    onClick={() =>
-                                                        buttonChangeSelection(rowId, selected)
-                                                    }
-                                                >
-                                                    Selected
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    kind="ghost"
-                                                    style={{ color: '#ccc' }}
-                                                    onClick={() =>
-                                                        buttonChangeSelection(rowId, selected)
-                                                    }
-                                                >
-                                                    Not Selected
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    ),
-                                )}
-                            </TableRow>
+                            </>
                         )
                     })}
                 </TableBody>
             </Table>
             {typeof pageSize !== 'undefined' &&
+                Math.ceil(filteredRows.length / pageSize) > 1 &&
                 (windowWidth > 671 ? (
                     <PaginationNav
                         itemsShown={10}

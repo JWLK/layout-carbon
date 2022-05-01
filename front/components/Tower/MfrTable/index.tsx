@@ -8,15 +8,15 @@ import fetchStore from '@utils/store'
 /* @typings */
 import { rowProtocol, protocolList } from '@typings/table'
 
-import DataTableSelectedDelete from './DataTableSelectedDelete'
-import DataTableModal from './DataTableModal'
-import DataTableSelectedSave from './DataTableSelectedSave'
+import DataTableSelectedDelete from './MfrTableSelectedDelete'
+import DataTableModal from './MfrTableModal'
+import DataTableSelectedSave from './MfrTableSelectedSave'
 import {
     rowsInitProtocol,
     columns as columnsDefault,
     columWithStatus,
     sortInfo as sortInfoDefault,
-} from './table-data'
+} from './mfr-data'
 
 const CustomTable = () => {
     /* Param */

@@ -17,7 +17,7 @@ export const columns = [
     },
 ]
 
-export const columnsProtocol = [
+export const columWithStatus = [
     {
         id: 'name',
         title: 'Name',
@@ -30,6 +30,11 @@ export const columnsProtocol = [
     {
         id: 'port',
         title: 'Port',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'status',
+        title: 'Status',
         sortCycle: 'tri-states-from-ascending',
     },
 ]
@@ -55,6 +60,38 @@ export const rows = [
         selected: true,
     },
 ]
+
+export const rowsInitProtocol = {
+    selected: [
+        {
+            id: 2,
+            name: 'Load Balancer 3',
+            protocol: 'HTTP',
+            port: 80,
+        },
+    ],
+    total: [
+        {
+            id: 0,
+            name: 'Load Balancer 1',
+            protocol: 'HTTP',
+            port: 80,
+        },
+        {
+            id: 1,
+            name: 'Load Balancer 2',
+            protocol: 'HTTPS',
+            port: 443,
+        },
+        {
+            id: 2,
+            name: 'Load Balancer 3',
+            protocol: 'HTTP',
+            port: 80,
+            selected: true,
+        },
+    ],
+}
 
 export const rowsMany = Array.from(new Array(50))
     .map((_item, i) =>

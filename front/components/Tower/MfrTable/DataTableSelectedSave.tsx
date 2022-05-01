@@ -104,9 +104,12 @@ const CustomDataTable: FC<Props> = ({
 
     const buttonChangeSelection = useCallback(
         (rowId, checked) => {
+            if (hasSelection === false) {
+                setHasSelection(true)
+            }
             setRowSelection(Number(rowId), !checked)
         },
-        [setRowSelection],
+        [hasSelection, setRowSelection],
     )
 
     const handleChangeSelection = useCallback(
@@ -145,13 +148,16 @@ const CustomDataTable: FC<Props> = ({
         setBatchActionInit(false)
         setHasSelection(false)
         //LocalStorage Sync
+        tableDataSaveSync(rows)
+    }, [rows])
+
+    const tableDataSaveSync = (rowsData: rowProtocol[]) => {
         var protocolDataObject = {} as protocolList
-        protocolDataObject.total = rows
-        protocolDataObject.selected = rows.filter((row) => row.selected)
+        protocolDataObject.total = rowsData
+        protocolDataObject.selected = rowsData.filter((row) => row.selected)
         localStorage.setItem(keyRawData, JSON.stringify(protocolDataObject))
         update && update()
-    }, [keyRawData, rows])
-
+    }
     //Using Delete Item
     // const handleCancelSelection = useCallback(() => {
     //     setRowSelection(undefined, false)
@@ -184,6 +190,11 @@ const CustomDataTable: FC<Props> = ({
         },
         [pageSize, setStart],
     )
+
+    /* Sync Data */
+    useEffect(() => {
+        setRows(propRows)
+    }, [propRows])
 
     /* eslint-disable no-script-url */
     return (

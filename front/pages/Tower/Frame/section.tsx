@@ -41,7 +41,7 @@ import {
     SettingWrap,
     GraphicViewOrigin,
     GraphicViewHarf,
-    SettingView,
+    SettingViewCorver,
     SettingTitle,
     InputLabel,
     InputDivider,
@@ -203,7 +203,7 @@ const Frame = () => {
             </GraphicWrap>
 
             <SettingWrap>
-                <SettingView>
+                <SettingViewCorver>
                     <SettingTitle>
                         Section Safety Mass Check
                         <div style={{ float: 'right', paddingBottom: '100px' }}>
@@ -234,7 +234,7 @@ const Frame = () => {
                             onChange={onChangeTotalThickness}
                         />
                     </SliderCustom>
-                </SettingView>
+                </SettingViewCorver>
             </SettingWrap>
         </FlexWrap>
     )

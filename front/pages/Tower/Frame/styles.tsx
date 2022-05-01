@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { NumberInput, Slider } from 'carbon-components-react'
+import { NumberInput, Slider, AccordionItem } from 'carbon-components-react'
 
 export const FlexWrap = styled.div`
     display: flex;
@@ -42,7 +42,7 @@ export const GraphicViewHarf = styled.div`
 
 export const SettingWrap = styled.div`
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
@@ -52,21 +52,46 @@ export const SettingWrap = styled.div`
     min-height: 600px;
     height: calc(100vh - 48px);
     background: rgba(0, 100, 0, 0);
-    padding: 1rem 25px;
+    padding: 0;
 
     @media (max-width: 1000px) {
         width: 100%;
         max-width: 100%;
         height: auto;
-        padding: 10px 15px;
     }
 `
 
-export const SettingView = styled.div`
+export const SettingViewCorver = styled.div`
     width: 100%;
-    height: auto;
+    height: 100%;
+    padding: 0 25px;
     margin-bottom: 50px;
     // border: 0.1px solid #eee;
+
+    @media (max-width: 1000px) {
+        padding: 10px 15px;
+    }
+`
+export const SettingViewFit = styled.div`
+    width: 100%;
+    height: auto;
+    padding: 0 25px;
+    margin-bottom: 50px;
+    // border: 0.1px solid #eee;
+
+    @media (max-width: 1000px) {
+        padding: 10px 15px;
+    }
+`
+export const SettingViewWide = styled.div`
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin-bottom: 50px;
+    // border: 0.1px solid #eee;
+
+    @media (max-width: 1000px) {
+    }
 `
 
 /* Setting Component */
@@ -74,7 +99,7 @@ export const SettingTitle = styled.div`
     font-size: 1.5rem;
     font-weight: bold;
     line-height: 1.3;
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
     margin-bottom: 1rem;
 `
 
@@ -89,7 +114,7 @@ export const InputDivider = styled.div`
     width: 100%;
     height: 1px;
     margin: 1.3rem auto 1.5rem auto;
-    background-color: #393939;
+    background-color: rgba(0, 0, 0, 0);
 `
 
 /* Custom Carbon Design Component */
@@ -126,5 +151,11 @@ export const SliderCustom = styled.div`
         .bx--slider {
             min-width: 5rem;
         }
+    }
+`
+
+export const AccordionItemCustom = styled(AccordionItem)`
+    .bx--accordion__content {
+        padding-right: 25px;
     }
 `

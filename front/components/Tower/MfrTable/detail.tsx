@@ -8,7 +8,6 @@ import fetchStore from '@utils/store'
 /* @typings */
 import { rowProtocol, protocolList } from '@typings/table'
 
-import DataTableView from './MfrTableViewCapcity'
 import DataTableSelectedDelete from './MfrTableSelectedDelete'
 import DataTableModal from './MfrTableModal'
 import DataTableSelectedSave from './MfrTableSelectedSave'
@@ -46,14 +45,26 @@ const CustomTable = () => {
 
     return (
         <>
-            <DataTableView
+            <DataTableSelectedDelete
                 columns={columnsDefault}
                 rows={PD.selected}
                 sortInfo={sortInfoDefault}
                 hasSelection={false}
                 pageSize={10}
                 start={0}
+                onShowModal={onClickAddDataTableModal}
             />
+            <DataTableModal show={showDataTableModal} onCloseModal={onCloseModal}>
+                <DataTableSelectedSave
+                    columns={columWithStatus}
+                    rows={PD.total}
+                    sortInfo={sortInfoDefault}
+                    hasSelection={false}
+                    pageSize={10}
+                    start={0}
+                    update={mutatePD}
+                />
+            </DataTableModal>
         </>
     )
 }

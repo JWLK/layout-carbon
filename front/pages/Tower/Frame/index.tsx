@@ -41,7 +41,7 @@ import {
     SettingWrap,
     GraphicViewOrigin,
     GraphicViewHarf,
-    SettingView,
+    SettingViewCorver,
     SettingTitle,
     InputLabel,
     InputDivider,
@@ -344,7 +344,7 @@ const Frame = () => {
                 </GraphicViewOrigin>
             </GraphicWrap>
             <SettingWrap>
-                <SettingView>
+                <SettingViewCorver>
                     <SettingTitle>
                         Tower Initial Design
                         <div style={{ float: 'right', paddingBottom: '100px' }}>
@@ -448,7 +448,7 @@ const Frame = () => {
                             NEXT
                         </Button>
                     </div>
-                </SettingView>
+                </SettingViewCorver>
             </SettingWrap>
         </FlexWrap>
     )

@@ -8,7 +8,8 @@ import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
 /* Component */
-import MfrTable from '@components/Tower/MfrTable'
+import MfrTableView from '@components/Tower/MfrTable'
+import MfrTableDetail from '@components/Tower/MfrTable/detail'
 
 /* @objects/Data */
 import { RawData, InitSector } from '@objects/Data/InitValue'
@@ -41,16 +42,32 @@ import {
     SettingWrap,
     GraphicViewOrigin,
     GraphicViewHarf,
-    SettingView,
+    SettingViewFit,
+    SettingViewWide,
     SettingTitle,
     InputLabel,
     InputDivider,
     /* Custom Carbon Design Component */
     NumberInputCustom,
     SliderCustom,
+    AccordionItemCustom,
 } from '@pages/Tower/Frame/styles'
 import { Fade32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
-import { Grid, Row, Column, Button, TextInput, NumberInput, Slider } from 'carbon-components-react'
+import {
+    Grid,
+    Row,
+    Column,
+    Button,
+    TextInput,
+    NumberInput,
+    Slider,
+    ExpandableTile,
+    TileAboveTheFoldContent,
+    TileBelowTheFoldContent,
+    AspectRatio,
+    Accordion,
+    AccordionItem,
+} from 'carbon-components-react'
 
 const Frame = () => {
     /* Param */
@@ -345,12 +362,22 @@ const Frame = () => {
             </GraphicWrap>
 
             <SettingWrap>
-                <SettingView>
-                    <SettingTitle>Select manufacturer</SettingTitle>
-                    <SectionDivider />
-                    <MfrTable />
-                </SettingView>
-                <SettingView>
+                <SettingViewWide>
+                    <Accordion align="start">
+                        <AccordionItemCustom title="Production Capacity">
+                            <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
+                                Current Capcity
+                            </div>
+                            <MfrTableView />
+                            <div style={{ marginTop: '30px', fontSize: '1.2rem' }}>
+                                Selected Manufacturer List
+                            </div>
+                            <MfrTableDetail />
+                        </AccordionItemCustom>
+                    </Accordion>
+                </SettingViewWide>
+
+                <SettingViewFit>
                     <SettingTitle>
                         Tower Initial Design
                         <div style={{ float: 'right', paddingBottom: '100px' }}>
@@ -464,7 +491,7 @@ const Frame = () => {
                             NEXT
                         </Button>
                     </div>
-                </SettingView>
+                </SettingViewFit>
             </SettingWrap>
         </FlexWrap>
     )

@@ -25,19 +25,34 @@ export const GraphicWrap = styled.div`
         padding: 10px 15px;
     }
 `
+export const GraphicWrapHarf = styled.div`
+    display: flex;
+    flex-direction: row;
+    @media (max-width: 1000px) {
+        flex-direction: column;
+    }
+`
 export const GraphicViewOrigin = styled.div`
     width: 100%;
     height: calc(100% - 20px);
     max-width: 320px;
     max-height: 1000px;
+    background: rgba(0, 0, 0, 1);
     // border: 0.1px solid #eee;
 `
 export const GraphicViewHarf = styled.div`
-    width: 100%;
-    height: calc(50% - 10px);
+    width: 50%;
+    height: 100%;
     max-width: 320px;
-    max-height: 500px;
-    border: 0.1px solid #eee;
+    max-height: 520px;
+    background: rgba(0, 0, 0, 1);
+    // border: 0.1px solid #eee;
+    @media (max-width: 1000px) {
+        width: 100%;
+        max-width: 100%;
+        height: 520px;
+        padding: 10px 15px;
+    }
 `
 
 export const SettingWrap = styled.div`
@@ -84,6 +99,8 @@ export const SettingViewFit = styled.div`
     }
 `
 export const SettingViewWide = styled.div`
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: auto;
     padding: 0;
@@ -92,6 +109,10 @@ export const SettingViewWide = styled.div`
 
     @media (max-width: 1000px) {
     }
+`
+export const SettingViewWideInner = styled.div`
+    width: 100%;
+    padding: 0 25px;
 `
 
 /* Setting Component */

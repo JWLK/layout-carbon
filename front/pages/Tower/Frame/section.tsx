@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import { NavLinkProps, NavLink } from 'react-router-dom'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
@@ -6,17 +7,24 @@ import { useParams } from 'react-router'
 import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
+/* Component */
+import MfrTableDefault from '@components/Tower/MfrTable/ViewDefault'
+import MfrTableSelected from '@components/Tower/MfrTable/ViewSelected'
+
+/* Table Init Data */
+import { rowsInit } from '@components/Tower/MfrTable/mfr-data'
+
 /* @objects/Data */
 import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
-import VOrigin from '@objects/Tower/Body/VOrigin'
 import VOTower from '@objects/Tower/Body/VOTower'
 import VOSection from '@objects/Tower/Body/VOSection'
-import VHalf from '@objects/Tower/Body/VHalf'
+import VHFlange from '@objects/Tower/Body/VHFlange'
 
 /* @typings */
+import { dataListMfr } from '@typings/table'
 import {
     ObjPoint,
     ObjSquare,
@@ -25,12 +33,12 @@ import {
     TWSection,
     TWParts,
     TWPart,
+    TWFlange,
     TWFlanges,
     ObjFlange,
     TWSectors,
     ObjSector,
     TWSector,
-    TWFlange,
 } from '@typings/object'
 
 //CSS
@@ -41,27 +49,66 @@ import {
     SettingWrap,
     GraphicViewOrigin,
     GraphicViewHarf,
-    SettingViewCorver,
+    SettingViewFit,
+    SettingViewWide,
     SettingTitle,
     InputLabel,
     InputDivider,
     /* Custom Carbon Design Component */
     NumberInputCustom,
     SliderCustom,
+    AccordionItemCustom,
+    TextWrapTableCell,
+    GraphicWrapHarf,
+    SettingViewWideInner,
 } from '@pages/Tower/Frame/styles'
-import { Fade32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
-import { Grid, Row, Column, Button, TextInput, NumberInput, Slider } from 'carbon-components-react'
+import {
+    Fade32,
+    ArrowUp32,
+    ArrowDown32,
+    ArrowLeft32,
+    ArrowRight32,
+    Save32,
+    CheckmarkOutline32,
+} from '@carbon/icons-react'
+import {
+    Grid,
+    Row,
+    Column,
+    ButtonSet,
+    Button,
+    TextInput,
+    NumberInput,
+    Slider,
+    ExpandableTile,
+    TileAboveTheFoldContent,
+    TileBelowTheFoldContent,
+    AspectRatio,
+    Accordion,
+    AccordionItem,
+    Table,
+    TableHead,
+    TableRow,
+    TableHeader,
+    TableBody,
+    TableCell,
+} from 'carbon-components-react'
 
 const Frame = () => {
     /* Param */
     const { workspace } = useParams<{ workspace?: string }>()
     /* Localstorage */
     const keyRawData = `${workspace}-towerData`
+    const keyCapData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
         localStorage.setItem(keyRawData, JSON.stringify(RawData))
     }
+    if (localStorage.getItem(keyCapData) === null) {
+        localStorage.setItem(keyCapData, JSON.stringify(rowsInit))
+    }
     /* SWR */
     const { data: TD, mutate } = useSWR<TWRawData>(keyRawData, fetchStore)
+    const { data: MfrD, mutate: mutateMfr } = useSWR<dataListMfr>(keyCapData, fetchStore)
 
     /*
      ** localStorage & SWR Data Sync useState
@@ -164,7 +211,7 @@ const Frame = () => {
         }
     }, [TD])
 
-    if (TD === undefined) {
+    if (TD === undefined || MfrD === undefined) {
         return <div>Loading...</div>
     }
 
@@ -175,37 +222,32 @@ const Frame = () => {
                     {partsData.length && (
                         <VOSection
                             draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
-                            currentPartIndex={currentPartIndex}
-                            setCurrentPartIndex={setCurrentPartIndex}
+                            currentIndex={currentPartIndex}
+                            setCurrentIndex={setCurrentPartIndex}
                         />
                     )}
                 </GraphicViewOrigin>
             </GraphicWrap>
-            <GraphicWrap>
-                <GraphicViewHarf>
-                    {partsData.length && (
-                        <VHalf
-                            draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
-                            currentPartIndex={currentPartIndex}
-                            setCurrentPartIndex={setCurrentPartIndex}
-                        />
-                    )}
-                </GraphicViewHarf>
-                <GraphicViewHarf>
-                    {partsData.length && (
-                        <VHalf
-                            draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
-                            currentPartIndex={currentPartIndex}
-                            setCurrentPartIndex={setCurrentPartIndex}
-                        />
-                    )}
-                </GraphicViewHarf>
-            </GraphicWrap>
 
             <SettingWrap>
-                <SettingViewCorver>
+                <SettingViewWide>
+                    <Accordion align="start">
+                        <AccordionItemCustom title="Capacity Setting">
+                            <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
+                                Production Capcity
+                            </div>
+                            <MfrTableDefault />
+                            <div style={{ marginTop: '30px', fontSize: '1.2rem' }}>
+                                Selected Manufacturer List
+                            </div>
+                            <MfrTableSelected />
+                        </AccordionItemCustom>
+                    </Accordion>
+                </SettingViewWide>
+
+                <SettingViewFit>
                     <SettingTitle>
-                        Section Safety Mass Check
+                        {`Section ${currentSectionIndex + 1} - Production Check`}
                         <div style={{ float: 'right', paddingBottom: '100px' }}>
                             <Button
                                 kind="tertiary"
@@ -216,6 +258,7 @@ const Frame = () => {
                             </Button>
                         </div>
                     </SettingTitle>
+                    <InputLabel>= Lower Flange : Section 2</InputLabel>
                     {/* {!validInitialData && (
                         <div style={{ width: '100%', color: '#fa4d56' }}>
                             Invalid Value Exist. Check input value
@@ -234,7 +277,77 @@ const Frame = () => {
                             onChange={onChangeTotalThickness}
                         />
                     </SliderCustom>
-                </SettingViewCorver>
+                </SettingViewFit>
+
+                <SectionDivider />
+
+                {/* STEP : Flange Upper */}
+                <SettingViewWide>
+                    <SettingViewWideInner>
+                        <SettingTitle>Upper Flange : Section 1</SettingTitle>
+                        <InputLabel>= Lower Flange : Section 2</InputLabel>
+                    </SettingViewWideInner>
+                    <GraphicWrapHarf>
+                        <GraphicViewHarf>
+                            {partsData.length && (
+                                <VHFlange
+                                    draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                                    currentPartIndex={currentPartIndex}
+                                    setCurrentPartIndex={setCurrentPartIndex}
+                                />
+                            )}
+                        </GraphicViewHarf>
+                        <SettingViewFit>
+                            <InputLabel>Tower Total Thickness (mm)</InputLabel>
+                            <SliderCustom>
+                                <Slider
+                                    id="Slider_totalThickness"
+                                    labelText=""
+                                    min={10}
+                                    max={100}
+                                    step={1}
+                                    value={totalThickness}
+                                    onChange={onChangeTotalThickness}
+                                />
+                            </SliderCustom>
+                        </SettingViewFit>
+                    </GraphicWrapHarf>
+                </SettingViewWide>
+
+                <SectionDivider />
+
+                {/* STEP : Flange Lower */}
+                <SettingViewWide>
+                    <SettingViewWideInner>
+                        <SettingTitle>Lower Flange : Section 1</SettingTitle>
+                        <InputLabel></InputLabel>
+                    </SettingViewWideInner>
+                    <GraphicWrapHarf>
+                        <GraphicViewHarf>
+                            {partsData.length && (
+                                <VHFlange
+                                    draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                                    currentPartIndex={currentPartIndex}
+                                    setCurrentPartIndex={setCurrentPartIndex}
+                                />
+                            )}
+                        </GraphicViewHarf>
+                        <SettingViewFit>
+                            <InputLabel>Tower Total Thickness (mm)</InputLabel>
+                            <SliderCustom>
+                                <Slider
+                                    id="Slider_totalThickness"
+                                    labelText=""
+                                    min={10}
+                                    max={100}
+                                    step={1}
+                                    value={totalThickness}
+                                    onChange={onChangeTotalThickness}
+                                />
+                            </SliderCustom>
+                        </SettingViewFit>
+                    </GraphicWrapHarf>
+                </SettingViewWide>
             </SettingWrap>
         </FlexWrap>
     )

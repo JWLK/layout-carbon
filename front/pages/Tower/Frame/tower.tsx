@@ -3,8 +3,6 @@ import { NavLinkProps, NavLink } from 'react-router-dom'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
-//Dbounce
-import { debounce } from 'lodash'
 //Request
 import useSWR from 'swr'
 import fetchStore from '@utils/store'
@@ -65,6 +63,7 @@ import {
     ArrowDown32,
     ArrowLeft32,
     ArrowRight32,
+    Save32,
     CheckmarkOutline32,
 } from '@carbon/icons-react'
 import {
@@ -126,6 +125,7 @@ const Frame = () => {
     const [topUpperOutDia, setTopUpperOutDia] = useState(0)
     const [bottomLowerOutDia, setBottomLowerOutDia] = useState(0)
     const [totalHeight, setTotalHeight] = useState(0)
+    const [maxHeight, setMaxHeight] = useState(0)
     const [divided, setDivided] = useState(1)
 
     const onChangeTopUpperOutDia = useCallback(
@@ -152,7 +152,9 @@ const Frame = () => {
                 e.imaginaryTarget.value !== '' ? e.imaginaryTarget.value : 0,
             )
             setTotalHeight(valueNumber)
+            setMaxHeight(valueNumber)
             initData.totalHeight = valueNumber
+            initData.maxHeight = valueNumber
             rawData.initial = initData
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
@@ -164,26 +166,50 @@ const Frame = () => {
 
     /* Initial Parameter : Validation Check */
     const [currentStep, setCurrentStep] = useState(sectionData.length > 1 ? 1 : 0)
-    const [validFirstStep, setValidFirstStep] = useState(false)
-    const [validSecondStep, setValidSecondStep] = useState(false)
-    //Valid Parmeter
+    //Valid Parmeter : STEP 1
     const [validHeight, setValidHeight] = useState(totalHeight >= 5000 && totalHeight <= 200000)
     const [validTopBottom, setValidTopBottom] = useState(
         bottomLowerOutDia >= topUpperOutDia ? true : false,
     )
-    const [invalidTableCheck, setInvalidTableCheck] = useState(true)
+    const [validFirstStep, setValidFirstStep] = useState(validHeight && validTopBottom)
     //Valid Button Event
-    const [validInitialData, setValidInitialData] = useState(validHeight && validTopBottom)
+    //Valid useEffect STEP 1
     useEffect(() => {
         setValidHeight(totalHeight >= 5000 && totalHeight <= 200000)
         setValidTopBottom(bottomLowerOutDia >= topUpperOutDia ? true : false)
         if (validHeight && validTopBottom) {
-            setValidInitialData(true)
+            setValidFirstStep(true)
         } else {
-            setValidInitialData(false)
+            setValidFirstStep(false)
         }
-        setValidFirstStep(false)
     }, [bottomLowerOutDia, topUpperOutDia, totalHeight, validHeight, validTopBottom, divided])
+
+    //Valid Parmeter : STEP 2
+    const [validSecondStep, setValidSecondStep] = useState(false)
+    const [invalidTableCheck, setInvalidTableCheck] = useState(false)
+    //Valid Button Event
+    //Valid useEffect STEP 2
+    useEffect(() => {
+        let invalidList = sectionData
+            .slice(0)
+            .reverse()
+            .map((v) => {
+                const invalidCheckLength = v.section.height > MfrD!.capacity[0].length * 1000
+                const invalidTopBottom = v.section.top > v.section.bottom
+                const invalidCheckTop = v.section.top > MfrD!.capacity[0].diameter * 1000
+                const invalidCheckBottom = v.section.bottom > MfrD!.capacity[0].diameter * 1000
+
+                return (
+                    invalidCheckLength || invalidTopBottom || invalidCheckTop || invalidCheckBottom
+                )
+            })
+        invalidList.push(
+            sectionData.map((v) => v.section.height).reduce((prev, curr) => prev + curr, 0) !=
+                initData.maxHeight,
+        )
+
+        setInvalidTableCheck(invalidList.filter((v) => v).length > 0)
+    }, [MfrD, initData.maxHeight, sectionData])
 
     /* STEP 0 */
     const onClickSetSectionsInitData = useCallback(
@@ -198,13 +224,12 @@ const Frame = () => {
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
-                var eachSectionHeight = Math.round(totalHeight / divided)
+                var eachSectionHeight = Math.round(maxHeight / divided)
                 var eachPartHeight =
                     eachSectionHeight - 2 * (defaultFlangeHeight + defaultNeckHeight)
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
-                var eachHypo =
-                    Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
-                var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+                var eachHypo = Math.sqrt(Math.pow(triBottom, 2) + Math.pow(maxHeight, 2)) / divided
+                var radian = Math.PI / 2 - Math.atan(maxHeight / triBottom)
 
                 // console.log('eachHeight', eachHeight)
                 // console.log('triBottom', triBottom)
@@ -316,6 +341,7 @@ const Frame = () => {
                 }
             }
 
+            initData.totalHeight = maxHeight
             initData.divided = divided
             rawData.initial = initData
             rawData.sectionData = sectionsObject
@@ -333,7 +359,7 @@ const Frame = () => {
             setValidFirstStep(true)
             setValidSecondStep(false)
         },
-        [divided, initData, rawData, keyRawData, totalHeight, topUpperOutDia, bottomLowerOutDia],
+        [divided, initData, rawData, keyRawData, maxHeight, topUpperOutDia, bottomLowerOutDia],
     )
 
     /* STEP 1 */
@@ -432,8 +458,6 @@ const Frame = () => {
                     v.section[`${typeObject}`] = parseInt(
                         e.target.value !== '' ? e.target.value : 0,
                     )
-                    setInvalidTableCheck(invalid)
-                    console.log('invalid', invalid)
                 }
                 return v
             })
@@ -490,6 +514,7 @@ const Frame = () => {
             //InitialData
             setInitData(TD.initial)
             setTotalHeight(TD.initial.totalHeight)
+            setMaxHeight(TD.initial.maxHeight)
             setTopUpperOutDia(TD.initial.topUpperOutDia)
             setBottomLowerOutDia(TD.initial.bottomLowerOutDia)
             setDivided(TD.initial.divided)
@@ -516,11 +541,11 @@ const Frame = () => {
     const headers = [
         {
             key: 'no',
-            header: 'Secion',
+            header: 'Secion No',
         },
         {
             key: 'length',
-            header: 'Length [mm]',
+            header: 'Length',
         },
         {
             key: 'type',
@@ -528,11 +553,11 @@ const Frame = () => {
         },
         {
             key: 'top',
-            header: 'Up Diameter [mm]',
+            header: 'Up Diameter',
         },
         {
             key: 'bottom',
-            header: 'Low Diameter [mm]',
+            header: 'Low Diameter',
         },
     ]
 
@@ -588,7 +613,7 @@ const Frame = () => {
                             </div>
                         </SettingTitle>
 
-                        {!validInitialData && (
+                        {!validFirstStep && (
                             <div style={{ width: '100%', color: '#fa4d56' }}>
                                 Invalid Value Exist. Check input value
                             </div>
@@ -604,7 +629,7 @@ const Frame = () => {
                             min={5000}
                             max={200000}
                             step={100}
-                            value={totalHeight}
+                            value={maxHeight}
                             onChange={onChangeTotalHeight}
                             invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
                             warnText="Warn Text"
@@ -665,7 +690,7 @@ const Frame = () => {
                             />
                         </SliderCustom>
 
-                        {!validInitialData && (
+                        {!validFirstStep && (
                             <>
                                 <InputDivider />
                                 <div style={{ width: '100%', color: '#fa4d56' }}>
@@ -677,9 +702,9 @@ const Frame = () => {
                         <InputDivider />
                         <Button
                             kind="primary"
-                            renderIcon={CheckmarkOutline32}
+                            renderIcon={Save32}
                             onClick={onClickSetSectionsInitData}
-                            disabled={!validInitialData}
+                            disabled={!validFirstStep}
                         >
                             STEP1 : SAVE
                         </Button>
@@ -705,7 +730,7 @@ const Frame = () => {
 
                         <SectionDivider />
                         <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
-                            Production Capcity
+                            Production Capcity [mm]
                         </div>
                         <Table>
                             <TableHead>
@@ -747,7 +772,7 @@ const Frame = () => {
                         </Table>
                         <InputDivider />
                         <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
-                            Each Section Parameter
+                            Each Section Parameter [mm]
                         </div>
                         <Table>
                             <TableHead>
@@ -765,7 +790,7 @@ const Frame = () => {
                                 {sectionData
                                     .slice(0)
                                     .reverse()
-                                    .map((v, index) => {
+                                    .map((v) => {
                                         const notSaveValidation = divided !== sectionData.length
                                         const linearTypeValidationNotLastSection =
                                             !v.tapered && v.index !== sectionData.length - 1
@@ -789,7 +814,6 @@ const Frame = () => {
                                                 ? invalidTextDiameter
                                                 : `Diamter <= ${v.section.bottom}`
                                         const invalidTextBottom = invalidTextDiameter
-                                        console.log('invalidCheckLength', index, invalidCheckLength)
                                         return (
                                             <TableRow
                                                 key={`section-${v.index}`}
@@ -893,27 +917,61 @@ const Frame = () => {
                                     })}
                             </TableBody>
                         </Table>
+                        <br />
+                        <Table size="lg">
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>
+                                        <TextWrapTableCell width={5}>
+                                            <div style={{ color: '#fff' }}>Total</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            <TextInput
+                                                id={`section-total-height`}
+                                                labelText=""
+                                                name="total-height"
+                                                invalid={
+                                                    sectionData
+                                                        .map((v) => v.section.height)
+                                                        .reduce((prev, curr) => prev + curr, 0) !=
+                                                    initData.maxHeight
+                                                }
+                                                invalidText={`Total = ${initData.maxHeight}`}
+                                                value={sectionData
+                                                    .map((v) => v.section.height)
+                                                    .reduce((prev, curr) => prev + curr, 0)}
+                                                disabled={divided !== sectionData.length}
+                                            />
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={24}>
+                                            {`Tower Total Height ${initData.maxHeight}mm (= ${
+                                                initData.maxHeight / 1000
+                                            }m) `}
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
 
+                        <InputDivider />
                         {divided !== sectionData.length && (
-                            <>
-                                <InputDivider />
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Please, Click the STEP1 SAVE Button
-                                </div>
-                            </>
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Please, Click the STEP1 SAVE Button
+                            </div>
                         )}
                         {invalidTableCheck && (
-                            <>
-                                <InputDivider />
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value.
-                                </div>
-                            </>
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Invalid Value Exist. Check input value.
+                            </div>
                         )}
                         <InputDivider />
                         <Button
                             kind="primary"
-                            renderIcon={CheckmarkOutline32}
+                            renderIcon={Save32}
                             onClick={onClickSetSectionsFinalData}
                             disabled={invalidTableCheck}
                         >

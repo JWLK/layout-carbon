@@ -2,8 +2,8 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 
 interface Props {
     draws: ObjSquare[]
-    currentPartIndex: number
-    setCurrentPartIndex: (flag: number) => void
+    currentIndex: number
+    setCurrentIndex: (flag: number) => void
 }
 
 /*IMPORT*/
@@ -13,7 +13,7 @@ import Square from '@objects/Element/Square'
 import Guide from '@objects/Element/Guide'
 
 /*CONSTANT*/
-let INIT_CENTER: ObjPoint = { x: 0, y: 50 }
+let INIT_CENTER: ObjPoint = { x: 20, y: 50 }
 
 let LINE_COLOR = '#aaa'
 let LINE_COLOR_ACTIVE = '#fff'
@@ -34,7 +34,7 @@ let TOTAL_GUIDE_COLOR = '#ffff00'
 let TOTAL_GUIDE_LINE_WIDTH = 0
 let TOTAL_GUIDE_TEXT_SIZE = 0
 
-const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
+const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
     /*SIZE CHECK*/
     const { windowWidth, windowHeight } = useGlobal()
     /*VIEW BOX*/
@@ -131,13 +131,13 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
     return (
         <svg viewBox={`${viewCenterMarginX} ${viewCenterMarginY} ${viewWidth} ${viewHeight}`}>
             {/* View Guide */}
-            <Square
+            {/* <Square
                 center={{ x: 0, y: 0 }}
                 draw={{ top: 320, bottom: 320, height: viewHeight }}
                 lineColor={LINE_COLOR}
                 lineWidth={LINE_WIDTH}
                 guideEnable={false}
-            />
+            /> */}
             {/* Element */}
             {/* <Square
                 center={{ x: 0, y: 0 }}
@@ -148,13 +148,13 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
                 guideTextSize={GUIDE_TEXT_SIZE}
             /> */}
             {eachObject.map((draw, index) => (
-                <g onClick={() => setCurrentPartIndex(index)}>
+                <g onClick={() => setCurrentIndex(index)}>
                     <Square
-                        key={`each-section-${index}`}
+                        key={`each-part-${index}`}
                         center={centerPointStackArray[index]}
                         draw={eachObject[index]}
-                        lineColor={currentPartIndex === index ? LINE_COLOR_ACTIVE : LINE_COLOR}
-                        lineWidth={currentPartIndex === index ? LINE_WIDTH_ACTIVE : LINE_WIDTH}
+                        lineColor={currentIndex === index ? LINE_COLOR_ACTIVE : LINE_COLOR}
+                        lineWidth={currentIndex === index ? LINE_WIDTH_ACTIVE : LINE_WIDTH}
                         guideEnable={GUIDE_ENABLE}
                         guideMargin={GUIDE_MARGIN}
                         guidePositon={GUIDE_POSITION}
@@ -162,13 +162,11 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
                         guideLineWidth={GUIDE_LINE_WIDTH}
                         guideTextSize={GUIDE_TEXT_SIZE}
                         fixedMargin={(Math.abs(draw.top - draw.bottom) / 2) * index}
-                        title={`Part-${index + 1}`}
+                        title={`Part ${index + 1}`}
                         indicator={(realPointStackArray[index] / 1000).toFixed(2)}
-                        activeColor={
-                            currentPartIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'
-                        }
+                        activeColor={currentIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'}
                         label={''}
-                        value={draws[index].height / 1000}
+                        value={draws[index]?.height / 1000}
                         unit={''}
                     />
                 </g>
@@ -205,7 +203,7 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
                             }}
                             guideMargin={GUIDE_MARGIN}
                             guidePositon={'positive'}
-                            guideLineColor={TOTAL_GUIDE_COLOR}
+                            guideLineColor={'#42be65'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
                             value={draws[draws.length - 1]?.top / 1000}
@@ -224,7 +222,7 @@ const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
                             }}
                             guideMargin={GUIDE_MARGIN}
                             guidePositon={'negative'}
-                            guideLineColor={TOTAL_GUIDE_COLOR}
+                            guideLineColor={'#be95ff'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
                             value={draws[0]?.bottom / 1000}

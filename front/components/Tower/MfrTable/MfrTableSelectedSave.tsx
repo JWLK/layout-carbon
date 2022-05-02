@@ -40,6 +40,7 @@ import {
 
 import { Edit32, EditOff32, Settings32, TrashCan32, Save32 } from '@carbon/icons-react'
 import useRowExpand from '@hooks/useTable/useRowExpand'
+import { rowsInit } from './mfr-data'
 
 interface Props {
     columns: column[]
@@ -67,7 +68,7 @@ const CustomDataTable: FC<Props> = ({
     /* Localstorage */
     const keyRawData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
-        alert(`${keyRawData} Data Load Error`)
+        localStorage.setItem(keyRawData, JSON.stringify(rowsInit))
     }
 
     const { windowWidth } = useGlobal()

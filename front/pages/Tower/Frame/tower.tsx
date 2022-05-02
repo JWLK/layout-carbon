@@ -11,6 +11,9 @@ import fetchStore from '@utils/store'
 import MfrTableDefault from '@components/Tower/MfrTable/ViewDefault'
 import MfrTableSelected from '@components/Tower/MfrTable/ViewSelected'
 
+/* Table Init Data */
+import { rowsInit } from '@components/Tower/MfrTable/mfr-data'
+
 /* @objects/Data */
 import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
@@ -85,6 +88,9 @@ const Frame = () => {
     const keyCapData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
         localStorage.setItem(keyRawData, JSON.stringify(RawData))
+    }
+    if (localStorage.getItem(keyCapData) === null) {
+        localStorage.setItem(keyCapData, JSON.stringify(rowsInit))
     }
     /* SWR */
     const { data: TD, mutate } = useSWR<TWRawData>(keyRawData, fetchStore)

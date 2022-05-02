@@ -7,12 +7,33 @@ export const columns = [
         sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 'protocol',
-        title: 'Protocol',
+        id: 'country',
+        title: 'Country',
+        sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 'port',
-        title: 'Port',
+        id: 'length',
+        title: 'Length [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'diameter',
+        title: 'Diameter [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'weight',
+        title: 'Weight [Ton]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'extraWeight',
+        title: 'Extra Weight [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'thickness',
+        title: 'Thickness [mm]',
         sortCycle: 'tri-states-from-ascending',
     },
 ]
@@ -24,12 +45,33 @@ export const columWithStatus = [
         sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 'protocol',
-        title: 'Protocol',
+        id: 'country',
+        title: 'Country',
+        sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 'port',
-        title: 'Port',
+        id: 'length',
+        title: 'Length [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'diameter',
+        title: 'Diameter [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'weight',
+        title: 'Weight [Ton]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'extraWeight',
+        title: 'Extra Weight [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'thickness',
+        title: 'Thickness [mm]',
         sortCycle: 'tri-states-from-ascending',
     },
     {
@@ -39,65 +81,173 @@ export const columWithStatus = [
     },
 ]
 
-export const rows = [
+export const columMaxInfo = [
     {
-        id: 0,
-        name: 'Load Balancer 1',
-        protocol: 'HTTP',
-        port: 80,
-        detail: 'Expanded Detail Data : Load Balancer 1',
+        id: 'name',
+        title: 'Name',
+        sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 1,
-        name: 'Load Balancer 2',
-        protocol: 'HTTPS',
-        port: 443,
-        detail: 'Expanded Detail Data : Load Balancer 2',
+        id: 'country',
+        title: 'Country',
+        sortCycle: 'bi-states-from-ascending',
     },
     {
-        id: 2,
-        name: 'Load Balancer 3',
-        protocol: 'HTTP',
-        port: 80,
-        selected: true,
-        detail: 'Expanded Detail Data : Load Balancer 3',
+        id: 'length',
+        title: 'Length [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'diameter',
+        title: 'Diameter [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'weight',
+        title: 'Weight [Ton]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'extraWeight',
+        title: 'Extra Weight [m]',
+        sortCycle: 'tri-states-from-ascending',
+    },
+    {
+        id: 'thickness',
+        title: 'Thickness [mm]',
+        sortCycle: 'tri-states-from-ascending',
     },
 ]
 
-export const rowsInitProtocol = {
-    selected: [
-        {
-            id: 2,
-            name: 'Load Balancer 3',
-            protocol: 'HTTP',
-            port: 80,
-            detail: 'Expanded Detail Data',
-        },
-    ],
-    total: [
-        {
-            id: 0,
-            name: 'Load Balancer 1',
-            protocol: 'HTTP',
-            port: 80,
-            detail: 'Expanded Detail Data : Load Balancer 1',
-        },
-        {
-            id: 1,
-            name: 'Load Balancer 2',
-            protocol: 'HTTPS',
-            port: 443,
-            detail: 'Expanded Detail Data : Load Balancer 2',
-        },
-        {
-            id: 2,
-            name: 'Load Balancer 3',
-            protocol: 'HTTP',
-            port: 80,
-            selected: true,
-            detail: 'Expanded Detail Data : Load Balancer 3',
-        },
-    ],
+export const sortInfo = {
+    columnId: 'country',
+    direction: TABLE_SORT_DIRECTION.DESCENDING,
+}
+
+export const rows = [
+    {
+        id: 0,
+        name: 'Dongkuk S&C',
+        country: 'KR',
+        length: 35,
+        diameter: 6,
+        weight: 100,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '외부크레인 없이 가능',
+        selected: true,
+    },
+    {
+        id: 1,
+        name: 'CS Wind',
+        country: 'KR',
+        length: 42,
+        diameter: 10,
+        weight: 200,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '공장에서 항구까지 운반 조건 포함',
+        selected: true,
+    },
+    {
+        id: 2,
+        name: 'Steel Flower',
+        country: 'KR',
+        length: 0,
+        diameter: 6,
+        weight: 60,
+        extraWeight: 0,
+        thickness: 100,
+        remark: '',
+    },
+    {
+        id: 3,
+        name: 'Win&P',
+        country: 'KR',
+        length: 32,
+        diameter: 6.3,
+        weight: 60,
+        extraWeight: 150,
+        thickness: 100,
+        remark: '외부크레인 사용시 150Ton 까지 운반가능',
+    },
+    {
+        id: 4,
+        name: 'Chengxi',
+        country: 'CN',
+        length: 42,
+        diameter: 8,
+        weight: 260,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '36m length의 Painting room 8개 보유, 단, 2개씩 연결 되어있어 80m length의 room이 4개라 봐도 됨',
+        selected: true,
+    },
+    {
+        id: 5,
+        name: 'Chengxi Shipyard',
+        country: 'CN',
+        length: 50,
+        diameter: 8,
+        weight: 200,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '',
+        selected: true,
+    },
+    {
+        id: 6,
+        name: 'Qingdao Tianneng',
+        country: 'CN',
+        length: 42,
+        diameter: 10,
+        weight: 200,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '',
+    },
+    {
+        id: 7,
+        name: 'Qingdao Wuxiao',
+        country: 'CN',
+        length: 31,
+        diameter: 7.5,
+        weight: 120,
+        extraWeight: 0,
+        thickness: 0,
+        remark: '',
+    },
+]
+
+export const rowCapcity = [
+    {
+        id: 0,
+        name: 'Production Capcity',
+        country: Array.from(
+            new Set(rows.filter((row) => row.selected).map((r) => r.country)),
+        ).toString(),
+        length: Math.min(
+            ...rows.filter((row) => row.selected && row.length > 0).map((r) => r.length),
+        ),
+        diameter: Math.min(
+            ...rows.filter((row) => row.selected && row.diameter > 0).map((r) => r.diameter),
+        ),
+        weight: Math.min(
+            ...rows.filter((row) => row.selected && row.weight > 0).map((r) => r.weight),
+        ),
+        extraWeight: Math.min(
+            ...rows.filter((row) => row.selected && row.extraWeight > 0).map((r) => r.extraWeight),
+        ),
+        thickness: Math.min(
+            ...rows.filter((row) => row.selected && row.thickness > 0).map((r) => r.thickness),
+        ),
+        remark: '',
+    },
+]
+export const rowsInit = {
+    capacity: rowCapcity,
+    selected: rows.filter((row) => row.selected),
+    total: rows,
 }
 
 export const rowsMany = Array.from(new Array(50))
@@ -109,8 +259,3 @@ export const rowsMany = Array.from(new Array(50))
         })),
     )
     .flat()
-
-export const sortInfo = {
-    columnId: 'name',
-    direction: TABLE_SORT_DIRECTION.ASCENDING,
-}

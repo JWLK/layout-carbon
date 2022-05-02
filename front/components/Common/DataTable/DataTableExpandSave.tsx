@@ -359,7 +359,7 @@ const CustomDataTable: FC<Props> = ({
                                     )}
                                 </TableExpandRow>
                                 {expanded && (
-                                    <TableExpandedRow colSpan={columns.length + 1}>
+                                    <TableExpandedRow colSpan={columns.length + 2}>
                                         {row.detail}
                                     </TableExpandedRow>
                                 )}

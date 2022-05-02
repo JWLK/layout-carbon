@@ -203,7 +203,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                             }}
                             guideMargin={GUIDE_MARGIN}
                             guidePositon={'positive'}
-                            guideLineColor={TOTAL_GUIDE_COLOR}
+                            guideLineColor={'#42be65'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
                             value={draws[draws.length - 1]?.top / 1000}
@@ -222,7 +222,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                             }}
                             guideMargin={GUIDE_MARGIN}
                             guidePositon={'negative'}
-                            guideLineColor={TOTAL_GUIDE_COLOR}
+                            guideLineColor={'#be95ff'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
                             value={draws[0]?.bottom / 1000}

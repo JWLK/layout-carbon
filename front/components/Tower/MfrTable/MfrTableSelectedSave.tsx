@@ -2,7 +2,7 @@ import React, { FC, useState, useCallback, useEffect } from 'react'
 //Current Page Parameter
 import { useParams } from 'react-router'
 
-import { column, rowProtocol, sortInfo, protocolList } from '@typings/table'
+import { column, rowMfr, sortInfo, dataListMfr } from '@typings/table'
 import { useGlobal } from '@hooks/useGlobal'
 import {
     useFilteredRows,
@@ -43,7 +43,7 @@ import useRowExpand from '@hooks/useTable/useRowExpand'
 
 interface Props {
     columns: column[]
-    rows: rowProtocol[]
+    rows: rowMfr[]
     sortInfo: sortInfo
     hasSelection: boolean
     pageSize: number
@@ -65,7 +65,7 @@ const CustomDataTable: FC<Props> = ({
     /* Param */
     const { workspace } = useParams<{ workspace?: string }>()
     /* Localstorage */
-    const keyRawData = `${workspace}-protocalData`
+    const keyRawData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
         alert(`${keyRawData} Data Load Error`)
     }
@@ -167,11 +167,42 @@ const CustomDataTable: FC<Props> = ({
         tableDataSaveSync(rows)
     }, [rows])
 
-    const tableDataSaveSync = (rowsData: rowProtocol[]) => {
-        var protocolDataObject = {} as protocolList
-        protocolDataObject.total = rowsData
-        protocolDataObject.selected = rowsData.filter((row) => row.selected)
-        localStorage.setItem(keyRawData, JSON.stringify(protocolDataObject))
+    const tableDataSaveSync = (rowsData: rowMfr[]) => {
+        var dataList = {} as dataListMfr
+        dataList.capacity = [
+            {
+                id: 0,
+                name: 'Production Capcity',
+                country: Array.from(
+                    new Set(rows.filter((row) => row.selected).map((r) => r.country)),
+                ).toString(),
+                length: Math.min(
+                    ...rows.filter((row) => row.selected && row.length > 0).map((r) => r.length),
+                ),
+                diameter: Math.min(
+                    ...rows
+                        .filter((row) => row.selected && row.diameter > 0)
+                        .map((r) => r.diameter),
+                ),
+                weight: Math.min(
+                    ...rows.filter((row) => row.selected && row.weight > 0).map((r) => r.weight),
+                ),
+                extraWeight: Math.min(
+                    ...rows
+                        .filter((row) => row.selected && row.extraWeight > 0)
+                        .map((r) => r.extraWeight),
+                ),
+                thickness: Math.min(
+                    ...rows
+                        .filter((row) => row.selected && row.thickness > 0)
+                        .map((r) => r.thickness),
+                ),
+                remark: '',
+            },
+        ]
+        dataList.total = rowsData
+        dataList.selected = rowsData.filter((row) => row.selected)
+        localStorage.setItem(keyRawData, JSON.stringify(dataList))
         update && update()
     }
     //Using Delete Item
@@ -330,7 +361,9 @@ const CustomDataTable: FC<Props> = ({
                                     )}
                                     {columns.map(({ id: columnId }) =>
                                         columnId !== 'status' ? (
-                                            <TableCell key={columnId}>{row[columnId]}</TableCell>
+                                            <TableCell key={columnId}>
+                                                {row[columnId] !== 0 ? row[columnId] : '-'}
+                                            </TableCell>
                                         ) : (
                                             <TableCell key={columnId}>
                                                 {row['selected'] == true ? (
@@ -359,8 +392,8 @@ const CustomDataTable: FC<Props> = ({
                                     )}
                                 </TableExpandRow>
                                 {expanded && (
-                                    <TableExpandedRow colSpan={columns.length + 1}>
-                                        {row.detail}
+                                    <TableExpandedRow colSpan={columns.length + 2}>
+                                        {row.remark}
                                     </TableExpandedRow>
                                 )}
                             </>

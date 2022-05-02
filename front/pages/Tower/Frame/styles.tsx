@@ -43,7 +43,7 @@ export const GraphicViewHarf = styled.div`
 export const SettingWrap = styled.div`
     display: flex;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
     overflow-y: auto;

@@ -1,6 +1,6 @@
 import React, { FC, useState, useCallback, useEffect } from 'react'
 
-import { column, rowProtocol, sortInfo } from '@typings/table'
+import { column, rowMfr, sortInfo } from '@typings/table'
 import { useGlobal } from '@hooks/useGlobal'
 import {
     useFilteredRows,
@@ -37,7 +37,7 @@ import { Edit32, EditOff32, Settings32, TrashCan32 } from '@carbon/icons-react'
 
 interface Props {
     columns: column[]
-    rows: rowProtocol[]
+    rows: rowMfr[]
     sortInfo: sortInfo
     hasSelection: boolean
     pageSize: number
@@ -169,7 +169,7 @@ const CustomDataTable: FC<Props> = ({
                             Edit
                         </TableToolbarAction>
                     </TableToolbarMenu> */}
-                    {hasSelection ? (
+                    {/* {hasSelection ? (
                         <Button
                             kind="ghost"
                             iconDescription="Edit Table List"
@@ -185,7 +185,7 @@ const CustomDataTable: FC<Props> = ({
                             renderIcon={Edit32}
                             onClick={() => setHasSelection(!hasSelection)}
                         />
-                    )}
+                    )} */}
 
                     {onShowModal && (
                         <Button kind="secondary" onClick={onShowModal} renderIcon={Settings32}>
@@ -194,7 +194,7 @@ const CustomDataTable: FC<Props> = ({
                     )}
                 </TableToolbarContent>
             </TableToolbar>
-            <Table size={'md'} isSortable>
+            <Table size={'lg'} isSortable>
                 <TableHead>
                     <TableRow>
                         {hasSelection && (
@@ -254,7 +254,9 @@ const CustomDataTable: FC<Props> = ({
                                     />
                                 )}
                                 {columns.map(({ id: columnId }) => (
-                                    <TableCell key={columnId}>{row[columnId]}</TableCell>
+                                    <TableCell key={columnId}>
+                                        {row[columnId] !== 0 ? row[columnId] : '-'}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         )

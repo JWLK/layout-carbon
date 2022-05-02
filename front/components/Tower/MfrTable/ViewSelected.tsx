@@ -6,13 +6,13 @@ import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
 /* @typings */
-import { rowProtocol, protocolList } from '@typings/table'
+import { rowMfr, dataListMfr } from '@typings/table'
 
 import DataTableSelectedDelete from './MfrTableSelectedDelete'
 import DataTableModal from './MfrTableModal'
 import DataTableSelectedSave from './MfrTableSelectedSave'
 import {
-    rowsInitProtocol,
+    rowsInit,
     columns as columnsDefault,
     columWithStatus,
     sortInfo as sortInfoDefault,
@@ -22,12 +22,12 @@ const CustomTable = () => {
     /* Param */
     const { workspace } = useParams<{ workspace?: string }>()
     /* Localstorage */
-    const keyRawData = `${workspace}-protocalData`
+    const keyRawData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
-        localStorage.setItem(keyRawData, JSON.stringify(rowsInitProtocol))
+        localStorage.setItem(keyRawData, JSON.stringify(rowsInit))
     }
     /* SWR */
-    const { data: PD, mutate: mutatePD } = useSWR(keyRawData, fetchStore)
+    const { data: MfrD, mutate: mutateMfrD } = useSWR(keyRawData, fetchStore)
 
     /* Modal */
     const onCloseModal = useCallback(() => {
@@ -39,7 +39,7 @@ const CustomTable = () => {
         setShowDataTableModal(true)
     }, [])
 
-    if (PD === undefined) {
+    if (MfrD === undefined) {
         return <div>Loading...</div>
     }
 
@@ -47,7 +47,7 @@ const CustomTable = () => {
         <>
             <DataTableSelectedDelete
                 columns={columnsDefault}
-                rows={PD.selected}
+                rows={MfrD.selected}
                 sortInfo={sortInfoDefault}
                 hasSelection={false}
                 pageSize={10}
@@ -57,12 +57,12 @@ const CustomTable = () => {
             <DataTableModal show={showDataTableModal} onCloseModal={onCloseModal}>
                 <DataTableSelectedSave
                     columns={columWithStatus}
-                    rows={PD.total}
+                    rows={MfrD.total}
                     sortInfo={sortInfoDefault}
                     hasSelection={false}
                     pageSize={10}
                     start={0}
-                    update={mutatePD}
+                    update={mutateMfrD}
                 />
             </DataTableModal>
         </>

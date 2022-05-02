@@ -6,16 +6,16 @@ import useSWR from 'swr'
 import fetchStore from '@utils/store'
 
 /* @typings */
-import { rowProtocol, protocolList } from '@typings/table'
+import { rowMfr, dataListMfr } from '@typings/table'
 
-import DataTableView from './MfrTableViewCapcity'
+import DataTableView from './MfrTableListCapcity'
 import DataTableSelectedDelete from './MfrTableSelectedDelete'
 import DataTableModal from './MfrTableModal'
 import DataTableSelectedSave from './MfrTableSelectedSave'
 import {
-    rowsInitProtocol,
+    rowsInit,
     columns as columnsDefault,
-    columWithStatus,
+    columMaxInfo,
     sortInfo as sortInfoDefault,
 } from './mfr-data'
 
@@ -23,12 +23,12 @@ const CustomTable = () => {
     /* Param */
     const { workspace } = useParams<{ workspace?: string }>()
     /* Localstorage */
-    const keyRawData = `${workspace}-protocalData`
+    const keyRawData = `${workspace}-mfrData`
     if (localStorage.getItem(keyRawData) === null) {
-        localStorage.setItem(keyRawData, JSON.stringify(rowsInitProtocol))
+        localStorage.setItem(keyRawData, JSON.stringify(rowsInit))
     }
     /* SWR */
-    const { data: PD, mutate: mutatePD } = useSWR(keyRawData, fetchStore)
+    const { data: MfrD, mutate: mutateMfrD } = useSWR(keyRawData, fetchStore)
 
     /* Modal */
     const onCloseModal = useCallback(() => {
@@ -40,15 +40,15 @@ const CustomTable = () => {
         setShowDataTableModal(true)
     }, [])
 
-    if (PD === undefined) {
+    if (MfrD === undefined) {
         return <div>Loading...</div>
     }
 
     return (
         <>
             <DataTableView
-                columns={columnsDefault}
-                rows={PD.selected}
+                columns={columMaxInfo}
+                rows={MfrD.capacity}
                 sortInfo={sortInfoDefault}
                 hasSelection={false}
                 pageSize={10}

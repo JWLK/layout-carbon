@@ -258,12 +258,13 @@ const Frame = () => {
                             </Button>
                         </div>
                     </SettingTitle>
-                    <InputLabel>= Lower Flange : Section 2</InputLabel>
                     {/* {!validInitialData && (
                         <div style={{ width: '100%', color: '#fa4d56' }}>
                             Invalid Value Exist. Check input value
                         </div>
                     )} */}
+                    <SectionDivider />
+                    <InputLabel>Tower Total Thickness (mm)</InputLabel>
                     <SectionDivider />
                     <InputLabel>Tower Total Thickness (mm)</InputLabel>
                     <SliderCustom>
@@ -348,6 +349,49 @@ const Frame = () => {
                         </SettingViewFit>
                     </GraphicWrapHarf>
                 </SettingViewWide>
+
+                <SettingViewFit>
+                    <>
+                        {/* <InputDivider />
+                        {divided !== sectionData.length && (
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Please, Click the STEP1 SAVE Button
+                            </div>
+                        )}
+                        {invalidTableCheck && (
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Invalid Value Exist. Check input value.
+                            </div>
+                        )}
+                        <InputDivider />
+                        <Button
+                            kind="primary"
+                            renderIcon={Save32}
+                            onClick={onClickSetSectionsFinalData}
+                            disabled={invalidTableCheck}
+                        >
+                            STEP2 : SAVE
+                        </Button> */}
+                        <SectionDivider />
+                        <div
+                            style={{
+                                paddingBlock: '1rem',
+                                marginBottom: '100px',
+                                float: 'right',
+                            }}
+                        >
+                            <Button
+                                kind="tertiary"
+                                renderIcon={ArrowRight32}
+                                disabled={!true}
+                                as={NavLink}
+                                to={`/workspace/${workspace}/model/section`}
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </>
+                </SettingViewFit>
             </SettingWrap>
         </FlexWrap>
     )

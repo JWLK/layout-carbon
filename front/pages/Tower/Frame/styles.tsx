@@ -104,7 +104,7 @@ export const SettingViewWide = styled.div`
     width: 100%;
     height: auto;
     padding: 0;
-    margin-bottom: 50px;
+    margin-bottom: 10px;
     // border: 0.1px solid #eee;
 
     @media (max-width: 1000px) {

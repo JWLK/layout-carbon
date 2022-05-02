@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { NumberInput, Slider, AccordionItem } from 'carbon-components-react'
+import { NumberInput, Slider, AccordionItem, TextInput } from 'carbon-components-react'
 
 export const FlexWrap = styled.div`
     display: flex;
@@ -158,4 +158,13 @@ export const AccordionItemCustom = styled(AccordionItem)`
     .bx--accordion__content {
         padding-right: 25px;
     }
+`
+
+export const TextWrapTableCell = styled.div<{ width: number }>`
+    ${({ width }) =>
+        `
+        width: ${width}rem;
+    `};
+    fontsize: 0.8rem;
+    textalign: center;
 `

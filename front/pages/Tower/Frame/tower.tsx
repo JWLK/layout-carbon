@@ -3,6 +3,8 @@ import { NavLinkProps, NavLink } from 'react-router-dom'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
+//Dbounce
+import { debounce } from 'lodash'
 //Request
 import useSWR from 'swr'
 import fetchStore from '@utils/store'
@@ -55,8 +57,16 @@ import {
     NumberInputCustom,
     SliderCustom,
     AccordionItemCustom,
+    TextWrapTableCell,
 } from '@pages/Tower/Frame/styles'
-import { Fade32, ArrowLeft32, ArrowRight32, CheckmarkOutline32 } from '@carbon/icons-react'
+import {
+    Fade32,
+    ArrowUp32,
+    ArrowDown32,
+    ArrowLeft32,
+    ArrowRight32,
+    CheckmarkOutline32,
+} from '@carbon/icons-react'
 import {
     Grid,
     Row,
@@ -161,7 +171,7 @@ const Frame = () => {
     const [validTopBottom, setValidTopBottom] = useState(
         bottomLowerOutDia >= topUpperOutDia ? true : false,
     )
-    const [validTableCheck, setValidTableCheck] = useState(true)
+    const [invalidTableCheck, setInvalidTableCheck] = useState(true)
     //Valid Button Event
     const [validInitialData, setValidInitialData] = useState(validHeight && validTopBottom)
     useEffect(() => {
@@ -178,7 +188,6 @@ const Frame = () => {
     /* STEP 0 */
     const onClickSetSectionsInitData = useCallback(
         (e) => {
-            e.preventDefault()
             setCurrentSectionIndex(0)
             var sectionsObject = [] as TWSection[]
             var partsObject = [] as TWParts[]
@@ -347,49 +356,21 @@ const Frame = () => {
         [keyRawData, rawData, sectionData],
     )
 
-    type typeObjSquare = 'top' | 'bottom' | 'height'
-    const onChangeSectionData = useCallback(
-        (e, index) => {
-            const section = sectionData.map((v) => {
-                const typeObject: typeObjSquare = e.target.name
-                if (v.index === index) {
-                    v.section[`${typeObject}`] = parseInt(
-                        e.target.value !== '' ? e.target.value : 0,
-                    )
-                    typeof MfrD !== 'undefined' &&
-                        setValidTableCheck(v.section.height <= MfrD.capacity[0].length * 1000)
-                    typeof MfrD !== 'undefined' &&
-                        setValidTableCheck(v.section.top <= MfrD.capacity[0].diameter * 1000)
-                    typeof MfrD !== 'undefined' &&
-                        setValidTableCheck(v.section.bottom <= MfrD.capacity[0].diameter * 1000)
-                }
+    const updateInitialSync = useCallback(
+        (sections: TWSection[]) => {
+            var totalHeight = 0
+            for (var i = 0; i < sections.length; i++) {
+                totalHeight += sections[i].section.height
+            }
+            initData.topUpperOutDia = sections[sections.length - 1].section.top
+            initData.bottomLowerOutDia = sections[0].section.bottom
+            initData.totalHeight = totalHeight
 
-                return v
-            })
-
-            const updateInitial = updateInitialSync(section)
-            const updateSection = updateSectionsTaperedSync(section)
-
-            rawData.initial = updateInitial
-            rawData.sectionData = updateSection
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            mutate()
-            setValidSecondStep(false)
+            return initData
         },
-        [keyRawData, rawData, sectionData],
+        [initData],
     )
 
-    const updateInitialSync = (sections: TWSection[]) => {
-        var totalHeight = 0
-        for (var i = 0; i < sections.length; i++) {
-            totalHeight += sections[i].section.height
-        }
-        initData.topUpperOutDia = sections[sections.length - 1].section.top
-        initData.bottomLowerOutDia = sections[0].section.bottom
-        initData.totalHeight = totalHeight
-
-        return initData
-    }
     const updateSectionsTaperedSync = (sections: TWSection[]) => {
         if (sections[0].tapered === false) {
             sections[0].section.top = sections[0].section.bottom
@@ -442,9 +423,35 @@ const Frame = () => {
         return TWParts
     }
 
+    type typeObjSquare = 'top' | 'bottom' | 'height'
+    const onChangeSectionTableData = useCallback(
+        (e, index, invalid) => {
+            const section = sectionData.map((v) => {
+                const typeObject: typeObjSquare = e.target.name
+                if (v.index === index) {
+                    v.section[`${typeObject}`] = parseInt(
+                        e.target.value !== '' ? e.target.value : 0,
+                    )
+                    setInvalidTableCheck(invalid)
+                    console.log('invalid', invalid)
+                }
+                return v
+            })
+            const updateInitial = updateInitialSync(section)
+            const updateSection = updateSectionsTaperedSync(section)
+
+            rawData.initial = updateInitial
+            rawData.sectionData = updateSection
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            mutate()
+            setValidSecondStep(false)
+        },
+        [keyRawData, mutate, rawData, sectionData, updateInitialSync],
+    )
+    useEffect(() => {}, [])
+
     const onClickSetSectionsFinalData = useCallback(
         (e) => {
-            e.preventDefault()
             const updateInitial = updateInitialSync(sectionData)
             const updateSection = updateSectionsTaperedSync(sectionData)
             const updateParts = updatePartsSync(updateSection, partsData)
@@ -559,348 +566,12 @@ const Frame = () => {
 
                 <SettingViewFit>
                     {/* 
-                        STEP 0
-                    */}
-                    {currentStep == 0 && (
-                        <>
-                            <SettingTitle>
-                                Initial Design : STEP 1
-                                <div style={{ float: 'right', paddingBottom: '100px' }}>
-                                    <Button
-                                        kind="tertiary"
-                                        renderIcon={ArrowRight32}
-                                        disabled={!validFirstStep}
-                                        onClick={() => setCurrentStep(1)}
-                                    >
-                                        NEXT
-                                    </Button>
-                                </div>
-                            </SettingTitle>
-
-                            {!validInitialData && (
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value
-                                </div>
-                            )}
-                            <SectionDivider />
-                            <InputLabel>
-                                <span style={{ color: '#ffff00' }}>Tower Total Height (mm)</span>
-                            </InputLabel>
-                            <NumberInputCustom
-                                id="NumberInput_totalHeight"
-                                label=""
-                                size="lg"
-                                min={5000}
-                                max={200000}
-                                step={100}
-                                value={totalHeight}
-                                onChange={onChangeTotalHeight}
-                                invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
-                                warnText="Warn Text"
-                            />
-                            <InputDivider />
-                            <InputLabel>
-                                <span style={{ color: '#42be65' }}>
-                                    Section {divided} - Upper Outside Diameter (mm)
-                                </span>
-                            </InputLabel>
-                            <SliderCustom>
-                                <Slider
-                                    id="Slider_topUpperOutDia"
-                                    min={3000}
-                                    max={MfrD.capacity[0].diameter * 1000}
-                                    step={50}
-                                    value={topUpperOutDia}
-                                    onChange={onChangeTopUpperOutDia}
-                                    style={{ fontSize: '3rem' }}
-                                    invalid={!validTopBottom}
-                                />
-                            </SliderCustom>
-                            <InputDivider />
-                            <InputLabel>
-                                <span style={{ color: '#be95ff' }}>
-                                    Section 1- Lower Outside Diameter (mm)
-                                </span>
-                            </InputLabel>
-                            <SliderCustom>
-                                <Slider
-                                    id="Slider_bottomLowerOutDia"
-                                    labelText=""
-                                    min={3000}
-                                    max={MfrD.capacity[0].diameter * 1000}
-                                    step={50}
-                                    value={bottomLowerOutDia}
-                                    onChange={onChangeBottomLowerOutDia}
-                                    invalid={!validTopBottom}
-                                />
-                            </SliderCustom>
-                            <InputDivider />
-                            <InputLabel>Number of Tower Section (mm)</InputLabel>
-                            <SliderCustom>
-                                <Slider
-                                    id="Slider_initialDivided"
-                                    labelText=""
-                                    min={1}
-                                    max={10}
-                                    step={1}
-                                    value={divided}
-                                    onChange={onChangeDevided}
-                                />
-                            </SliderCustom>
-                            <InputDivider />
-
-                            <Button
-                                kind="primary"
-                                renderIcon={CheckmarkOutline32}
-                                onClick={onClickSetSectionsInitData}
-                                disabled={!validInitialData}
-                            >
-                                SAVE
-                            </Button>
-
-                            <SectionDivider />
-                            {!validInitialData && (
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value.
-                                </div>
-                            )}
-
-                            <div
-                                style={{
-                                    paddingBlock: '1rem',
-                                    marginBottom: '100px',
-                                    float: 'right',
-                                }}
-                            >
-                                <Button
-                                    kind="tertiary"
-                                    renderIcon={ArrowRight32}
-                                    disabled={!validFirstStep}
-                                    onClick={() => setCurrentStep(1)}
-                                >
-                                    NEXT
-                                </Button>
-                            </div>
-                        </>
-                    )}
-
-                    {/* 
                         STEP 1
                     */}
-                    {currentStep == 1 && (
-                        <>
-                            <SettingTitle>
-                                Initial Design : STEP 2
-                                <div style={{ float: 'right' }}>
-                                    <Button
-                                        kind="tertiary"
-                                        renderIcon={ArrowLeft32}
-                                        hasIconOnly
-                                        iconDescription="BACK"
-                                        // as={NavLink}
-                                        // to={`/workspace/${workspace}/model/section`}
-                                        onClick={() => setCurrentStep(0)}
-                                    />
-                                    <Button
-                                        kind="tertiary"
-                                        renderIcon={ArrowRight32}
-                                        disabled={!validSecondStep}
-                                        as={NavLink}
-                                        to={
-                                            validSecondStep
-                                                ? `/workspace/${workspace}/model/section`
-                                                : ''
-                                        }
-                                    >
-                                        NEXT
-                                    </Button>
-                                </div>
-                            </SettingTitle>
-
-                            {!validTableCheck && (
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value
-                                </div>
-                            )}
-                            <SectionDivider />
-
-                            <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
-                                Production Capcity
-                            </div>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        {headers.map((header) => (
-                                            <TableHeader key={header.key}>
-                                                <div style={{ marginLeft: '10px' }}>
-                                                    {header.header}
-                                                </div>
-                                            </TableHeader>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>Capacity</TableCell>
-                                        <TableCell>
-                                            <TextInput
-                                                value={MfrD.capacity[0].length * 1000}
-                                                id={'capacity-length'}
-                                                labelText={''}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button disabled={true}>Not Defined</Button>
-                                        </TableCell>
-                                        <TableCell>{MfrD.capacity[0].diameter * 1000}</TableCell>
-                                        <TableCell>{MfrD.capacity[0].diameter * 1000}</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <InputDivider />
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        {headers.map((header) => (
-                                            <TableHeader key={header.key}>
-                                                <div style={{ marginLeft: '10px' }}>
-                                                    {header.header}
-                                                </div>
-                                            </TableHeader>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {sectionData
-                                        .slice(0)
-                                        .reverse()
-                                        .map((v) => (
-                                            <TableRow
-                                                key={`section-${v.index}`}
-                                                style={{ textAlign: 'end' }}
-                                            >
-                                                <TableCell>{initData.divided - v.index}</TableCell>
-                                                <TableCell>
-                                                    <TextInput
-                                                        id={`section-height-${v.index}`}
-                                                        labelText=""
-                                                        name="height"
-                                                        onChange={(e) =>
-                                                            onChangeSectionData(e, v.index)
-                                                        }
-                                                        invalid={
-                                                            v.section.height >
-                                                            MfrD.capacity[0].length * 1000
-                                                        }
-                                                        invalidText={`Length <= ${
-                                                            MfrD.capacity[0].length * 1000
-                                                        }`}
-                                                        value={v.section.height}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        kind="ghost"
-                                                        onClick={(e) => onClickTypeToggle(v.index)}
-                                                        style={{
-                                                            width: '5rem',
-                                                            fontSize: '0.8rem',
-                                                            textAlign: 'center',
-
-                                                            color: v.tapered
-                                                                ? '#00fe33'
-                                                                : '#ffff00',
-                                                        }}
-                                                    >
-                                                        {v.tapered ? 'Tapered' : 'Linear'}
-                                                    </Button>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <TextInput
-                                                        id={`section-top-${v.index}`}
-                                                        labelText=""
-                                                        name="top"
-                                                        onChange={(e) =>
-                                                            onChangeSectionData(e, v.index)
-                                                        }
-                                                        invalid={
-                                                            v.section.top >
-                                                                MfrD.capacity[0].diameter * 1000 ||
-                                                            v.section.top > v.section.bottom
-                                                        }
-                                                        invalidText={
-                                                            v.section.top >
-                                                            MfrD.capacity[0].diameter * 1000
-                                                                ? `Diamter <= ${
-                                                                      MfrD.capacity[0].diameter *
-                                                                      1000
-                                                                  }`
-                                                                : `Diamter < ${v.section.bottom}`
-                                                        }
-                                                        value={v.section.top}
-                                                        disabled={!v.tapered}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>
-                                                    <TextInput
-                                                        id={`section-bottom-${v.index}`}
-                                                        labelText=""
-                                                        name="bottom"
-                                                        onChange={(e) =>
-                                                            onChangeSectionData(e, v.index)
-                                                        }
-                                                        invalid={
-                                                            v.section.bottom >
-                                                            MfrD.capacity[0].diameter * 1000
-                                                        }
-                                                        invalidText={`Diamter <= ${
-                                                            MfrD.capacity[0].diameter * 1000
-                                                        }`}
-                                                        value={v.section.bottom}
-                                                        disabled={
-                                                            !v.tapered &&
-                                                            v.index !== sectionData.length - 1
-                                                        }
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                </TableBody>
-                            </Table>
-                            <InputDivider />
-
-                            <Button
-                                kind="primary"
-                                renderIcon={CheckmarkOutline32}
-                                onClick={onClickSetSectionsFinalData}
-                                disabled={!validTableCheck}
-                            >
-                                SAVE
-                            </Button>
-
-                            <SectionDivider />
-                            {!validTableCheck && (
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value.
-                                </div>
-                            )}
-
-                            <div
-                                style={{
-                                    paddingBlock: '1rem',
-                                    marginBottom: '100px',
-                                    float: 'right',
-                                }}
-                            >
-                                <Button
-                                    kind="tertiary"
-                                    renderIcon={ArrowLeft32}
-                                    hasIconOnly
-                                    iconDescription="BACK"
-                                    // as={NavLink}
-                                    // to={`/workspace/${workspace}/model/section`}
-                                    onClick={() => setCurrentStep(0)}
-                                />
+                    <>
+                        <SettingTitle>
+                            STEP 1 : Initial Design
+                            <div style={{ float: 'right', paddingBottom: '100px' }}>
                                 <Button
                                     kind="tertiary"
                                     renderIcon={ArrowRight32}
@@ -915,8 +586,358 @@ const Frame = () => {
                                     NEXT
                                 </Button>
                             </div>
-                        </>
-                    )}
+                        </SettingTitle>
+
+                        {!validInitialData && (
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Invalid Value Exist. Check input value
+                            </div>
+                        )}
+                        <SectionDivider />
+                        <InputLabel>
+                            <span style={{ color: '#ffff00' }}>Tower Total Height (mm)</span>
+                        </InputLabel>
+                        <NumberInputCustom
+                            id="NumberInput_totalHeight"
+                            label=""
+                            size="lg"
+                            min={5000}
+                            max={200000}
+                            step={100}
+                            value={totalHeight}
+                            onChange={onChangeTotalHeight}
+                            invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
+                            warnText="Warn Text"
+                        />
+                        <InputDivider />
+                        <InputLabel>
+                            <span style={{ color: '#42be65' }}>
+                                Section {divided} - Upper Outside Diameter (mm)
+                            </span>
+                        </InputLabel>
+                        <SliderCustom>
+                            <Slider
+                                id="Slider_topUpperOutDia"
+                                min={3000}
+                                max={MfrD.capacity[0].diameter * 1000}
+                                step={50}
+                                value={topUpperOutDia}
+                                onChange={onChangeTopUpperOutDia}
+                                style={{ fontSize: '3rem' }}
+                                invalid={
+                                    !validTopBottom ||
+                                    topUpperOutDia > MfrD.capacity[0].diameter * 1000
+                                }
+                            />
+                        </SliderCustom>
+                        <InputDivider />
+                        <InputLabel>
+                            <span style={{ color: '#be95ff' }}>
+                                Section 1- Lower Outside Diameter (mm)
+                            </span>
+                        </InputLabel>
+                        <SliderCustom>
+                            <Slider
+                                id="Slider_bottomLowerOutDia"
+                                labelText=""
+                                min={3000}
+                                max={MfrD.capacity[0].diameter * 1000}
+                                step={50}
+                                value={bottomLowerOutDia}
+                                onChange={onChangeBottomLowerOutDia}
+                                invalid={
+                                    !validTopBottom ||
+                                    bottomLowerOutDia > MfrD.capacity[0].diameter * 1000
+                                }
+                            />
+                        </SliderCustom>
+                        <InputDivider />
+                        <InputLabel>Number of Tower Section</InputLabel>
+                        <SliderCustom>
+                            <Slider
+                                id="Slider_initialDivided"
+                                labelText=""
+                                min={1}
+                                max={10}
+                                step={1}
+                                value={divided}
+                                onChange={onChangeDevided}
+                            />
+                        </SliderCustom>
+
+                        {!validInitialData && (
+                            <>
+                                <InputDivider />
+                                <div style={{ width: '100%', color: '#fa4d56' }}>
+                                    Invalid Value Exist. Check input value.
+                                </div>
+                            </>
+                        )}
+
+                        <InputDivider />
+                        <Button
+                            kind="primary"
+                            renderIcon={CheckmarkOutline32}
+                            onClick={onClickSetSectionsInitData}
+                            disabled={!validInitialData}
+                        >
+                            STEP1 : SAVE
+                        </Button>
+
+                        <SectionDivider />
+                    </>
+
+                    {/* 
+                        STEP 2
+                    */}
+                    <>
+                        <SettingTitle>STEP 2 : Each Section Setting</SettingTitle>
+                        {divided !== sectionData.length && (
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Please, Click the STEP1 SAVE Button
+                            </div>
+                        )}
+                        {invalidTableCheck && (
+                            <div style={{ width: '100%', color: '#fa4d56' }}>
+                                Invalid Value Exist. Check input value
+                            </div>
+                        )}
+
+                        <SectionDivider />
+                        <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
+                            Production Capcity
+                        </div>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    {headers.map((header) => (
+                                        <TableHeader key={header.key}>
+                                            <div style={{ marginLeft: '10px' }}>
+                                                {header.header}
+                                            </div>
+                                        </TableHeader>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>Capacity</TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            {MfrD.capacity[0].length * 1000}
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={5}>Not Defined</TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            {MfrD.capacity[0].diameter * 1000}
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            {MfrD.capacity[0].diameter * 1000}
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                        <InputDivider />
+                        <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
+                            Each Section Parameter
+                        </div>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    {headers.map((header) => (
+                                        <TableHeader key={header.key}>
+                                            <div style={{ marginLeft: '10px' }}>
+                                                {header.header}
+                                            </div>
+                                        </TableHeader>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {sectionData
+                                    .slice(0)
+                                    .reverse()
+                                    .map((v, index) => {
+                                        const notSaveValidation = divided !== sectionData.length
+                                        const linearTypeValidationNotLastSection =
+                                            !v.tapered && v.index !== sectionData.length - 1
+                                        const invalidCheckLength =
+                                            v.section.height > MfrD.capacity[0].length * 1000
+                                        const invalidTextLength = `Length <= ${
+                                            MfrD.capacity[0].length * 1000
+                                        }`
+                                        const invalidTopBottom = v.section.top > v.section.bottom
+                                        const invalidCheckTop =
+                                            v.section.top > MfrD.capacity[0].diameter * 1000
+                                        const invalidCheckBottom =
+                                            v.section.bottom > MfrD.capacity[0].diameter * 1000
+
+                                        const invalidTextDiameter = `Diamter <= ${
+                                            MfrD.capacity[0].diameter * 1000
+                                        }`
+
+                                        const invalidTextTop =
+                                            v.section.top > MfrD.capacity[0].diameter * 1000
+                                                ? invalidTextDiameter
+                                                : `Diamter <= ${v.section.bottom}`
+                                        const invalidTextBottom = invalidTextDiameter
+                                        console.log('invalidCheckLength', index, invalidCheckLength)
+                                        return (
+                                            <TableRow
+                                                key={`section-${v.index}`}
+                                                style={{ textAlign: 'end' }}
+                                            >
+                                                <TableCell>
+                                                    <TextWrapTableCell width={3}>
+                                                        {initData.divided - v.index}
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-height-${v.index}`}
+                                                            labelText=""
+                                                            name="height"
+                                                            onChange={(e) =>
+                                                                onChangeSectionTableData(
+                                                                    e,
+                                                                    v.index,
+                                                                    v.section.height >
+                                                                        MfrD.capacity[0].length *
+                                                                            1000,
+                                                                )
+                                                            }
+                                                            invalid={invalidCheckLength}
+                                                            invalidText={invalidTextLength}
+                                                            value={v.section.height}
+                                                            disabled={notSaveValidation}
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={5}>
+                                                        <Button
+                                                            kind="ghost"
+                                                            onClick={(e) =>
+                                                                onClickTypeToggle(v.index)
+                                                            }
+                                                            style={{
+                                                                color: v.tapered
+                                                                    ? '#00fe33'
+                                                                    : '#ffff00',
+                                                            }}
+                                                            disabled={notSaveValidation}
+                                                        >
+                                                            {v.tapered ? 'Tapered' : 'Linear'}
+                                                        </Button>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-top-${v.index}`}
+                                                            labelText=""
+                                                            name="top"
+                                                            onChange={(e) =>
+                                                                onChangeSectionTableData(
+                                                                    e,
+                                                                    v.index,
+                                                                    invalidCheckTop ||
+                                                                        invalidTopBottom,
+                                                                )
+                                                            }
+                                                            invalid={
+                                                                invalidCheckTop || invalidTopBottom
+                                                            }
+                                                            invalidText={invalidTextTop}
+                                                            value={v.section.top}
+                                                            disabled={
+                                                                !v.tapered || notSaveValidation
+                                                            }
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-bottom-${v.index}`}
+                                                            labelText=""
+                                                            name="bottom"
+                                                            onChange={(e) =>
+                                                                onChangeSectionTableData(
+                                                                    e,
+                                                                    v.index,
+                                                                    invalidCheckBottom,
+                                                                )
+                                                            }
+                                                            invalid={invalidCheckBottom}
+                                                            invalidText={invalidTextBottom}
+                                                            value={v.section.bottom}
+                                                            disabled={
+                                                                linearTypeValidationNotLastSection ||
+                                                                notSaveValidation
+                                                            }
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                            </TableBody>
+                        </Table>
+
+                        {divided !== sectionData.length && (
+                            <>
+                                <InputDivider />
+                                <div style={{ width: '100%', color: '#fa4d56' }}>
+                                    Please, Click the STEP1 SAVE Button
+                                </div>
+                            </>
+                        )}
+                        {invalidTableCheck && (
+                            <>
+                                <InputDivider />
+                                <div style={{ width: '100%', color: '#fa4d56' }}>
+                                    Invalid Value Exist. Check input value.
+                                </div>
+                            </>
+                        )}
+                        <InputDivider />
+                        <Button
+                            kind="primary"
+                            renderIcon={CheckmarkOutline32}
+                            onClick={onClickSetSectionsFinalData}
+                            disabled={invalidTableCheck}
+                        >
+                            STEP2 : SAVE
+                        </Button>
+                        <SectionDivider />
+                        <div
+                            style={{
+                                paddingBlock: '1rem',
+                                marginBottom: '100px',
+                                float: 'right',
+                            }}
+                        >
+                            <Button
+                                kind="tertiary"
+                                renderIcon={ArrowRight32}
+                                disabled={!validSecondStep}
+                                as={NavLink}
+                                to={validSecondStep ? `/workspace/${workspace}/model/section` : ''}
+                            >
+                                NEXT
+                            </Button>
+                        </div>
+                    </>
                 </SettingViewFit>
             </SettingWrap>
         </FlexWrap>

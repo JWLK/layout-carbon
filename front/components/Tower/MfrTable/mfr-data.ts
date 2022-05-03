@@ -1,5 +1,10 @@
 import { TABLE_SORT_DIRECTION } from '@hooks/useTable/misc'
 
+export const sortInfo = {
+    columnId: 'country',
+    direction: TABLE_SORT_DIRECTION.DESCENDING,
+}
+
 export const columns = [
     {
         id: 'name',
@@ -118,11 +123,6 @@ export const columMaxInfo = [
         sortCycle: 'tri-states-from-ascending',
     },
 ]
-
-export const sortInfo = {
-    columnId: 'country',
-    direction: TABLE_SORT_DIRECTION.DESCENDING,
-}
 
 export const rows = [
     {

@@ -428,7 +428,7 @@ const Frame = () => {
         return sections
     }
 
-    const updatePartsSync = (sections: TWSection[], TWParts: TWParts[]) => {
+    const updatePartsSync = (sections: TWSection[], TWParts: TWParts[], TWFlanges: TWFlanges[]) => {
         for (var i = 0; i < sections.length; i++) {
             TWParts[i] = {
                 index: TWParts[i].index,
@@ -438,7 +438,12 @@ const Frame = () => {
                         part: {
                             top: sections[i].section.top,
                             bottom: sections[i].section.bottom,
-                            height: sections[i].section.height,
+                            height:
+                                sections[i].section.height -
+                                (TWFlanges[i].flanges[0].flange.flangeHeight +
+                                    TWFlanges[i].flanges[0].flange.neckHeight) -
+                                (TWFlanges[i].flanges[1].flange.flangeHeight +
+                                    TWFlanges[i].flanges[1].flange.neckHeight),
                         },
                         thickness: TWParts[i].parts[0].index,
                     },
@@ -478,7 +483,7 @@ const Frame = () => {
         (e) => {
             const updateInitial = updateInitialSync(sectionData)
             const updateSection = updateSectionsTaperedSync(sectionData)
-            const updateParts = updatePartsSync(updateSection, partsData)
+            const updateParts = updatePartsSync(updateSection, partsData, flangesData)
             rawData.initial = updateInitial
             rawData.sectionData = updateSection
             rawData.partsData = updateParts
@@ -486,7 +491,7 @@ const Frame = () => {
             mutate()
             setValidSecondStep(true)
         },
-        [keyRawData, partsData, rawData, sectionData, updateInitialSync],
+        [flangesData, keyRawData, partsData, rawData, sectionData, updateInitialSync],
     )
 
     /* Section Parameter : Current(Selected) Section Index State */

@@ -148,12 +148,12 @@ const Flange: FC<Props> = ({
                         x: flange.outDia,
                         y: (flange.flangeHeight + flange.neckHeight) * 10,
                     }}
-                    lineColor={lineColor}
-                    lineWidth={lineWidth}
+                    lineColor={'#ff00ff'}
+                    lineWidth={lineWidth * 5}
                     guideEnable={guideEnable}
                     guideMargin={guideMargin!}
                     guidePositon={'positive'}
-                    guideLineColor={guideLineColor!}
+                    guideLineColor={'#ff00ff'}
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
                     guideFloat={1}

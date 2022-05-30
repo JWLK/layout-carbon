@@ -1,73 +1,75 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-
-interface Props {
-    draws: ObjSquare[]
-    currentPartIndex: number
-    setCurrentPartIndex: (flag: number) => void
-}
+import React, { FC } from 'react'
 
 /*IMPORT*/
-import { useGlobal } from '@hooks/useGlobal'
-import { ObjPoint, ObjSquare } from '@typings/object'
-import Square from '@objects/Element/Square'
-import Guide from '@objects/Element/Guide'
+import { ObjPoint, ObjSquare, ObjFlange, TWFlange } from '@typings/object'
+import Flange from '@objects/Element/Flange'
+
+interface Props {
+    flanges: TWFlange[]
+    currentFlange: number
+    label: string
+    color: string
+}
 
 /*CONSTANT*/
-let INIT_CENTER: ObjPoint = { x: 0, y: 2000 }
+let INIT_CENTER: ObjPoint = { x: 0, y: 0 }
 
 let LINE_COLOR = '#aaa'
 let LINE_COLOR_ACTIVE = '#fff'
 let LINE_WIDTH = 0
 let LINE_WIDTH_ACTIVE = 0
 
-const GUIDE_ENABLE = false
+const GUIDE_ENABLE = true
 let GUIDE_MARGIN = 0
 const GUIDE_POSITION = 'positive'
 let GUIDE_COLOR = '#aaa'
 let GUIDE_LINE_WIDTH = 0
 let GUIDE_TEXT_SIZE = 0
 
-let TOTAL_GUIDE_POINT: ObjPoint[] = [INIT_CENTER, { x: INIT_CENTER.x, y: 0 }]
-let TOTAL_GUIDE_MARGIN = 0
-const TOTAL_GUIDE_POSITION = 'positive'
-let TOTAL_GUIDE_COLOR = '#ffff00'
-let TOTAL_GUIDE_LINE_WIDTH = 0
-let TOTAL_GUIDE_TEXT_SIZE = 0
-
-const View: FC<Props> = ({ draws, currentPartIndex, setCurrentPartIndex }) => {
-    /*Size Check*/
-    const { windowWidth, windowHeight } = useGlobal()
+const VHFlange: FC<Props> = ({ flanges, currentFlange, label, color }) => {
     /*VIEW BOX*/
-    const [viewHeight, setViewHeight] = useState(0)
-    const [viewWidth, setViewWidth] = useState(0)
-    const [viewCenterMarginX, setViewCenterMarginX] = useState(0)
-    const [viewCenterMarginY, setViewCenterMarginY] = useState(0)
-    useEffect(() => {
-        setViewHeight(270)
-
-        setViewWidth(320)
-        setViewCenterMarginX(-viewWidth * 0.5)
-        setViewCenterMarginY(-viewHeight)
-        // console.log(windowHeight)
-    }, [windowWidth, windowHeight, viewWidth, viewHeight])
-
-    /*GRAPHIC VALUE*/
-    LINE_WIDTH = viewWidth * 0.001
+    var viewWidth = flanges[currentFlange].flange.outDia * 1 // 1
+    var viewCalc =
+        (flanges[currentFlange].flange.flangeHeight + flanges[currentFlange].flange.neckHeight) * 10
+    var viewHeight = Math.round((viewCalc * 2.5) / 1000) * 1000 // 2
+    // const viewCenterMarginX = -viewWidth * 0 + flanges[currentFlange].outDia / 6
+    const viewCenterMarginX = -viewWidth * 0 + flanges[currentFlange].flange.outDia / 6
+    const viewCenterMarginY = -viewCalc * 1.5
+    /*Guide Text Line Element*/
+    LINE_WIDTH = viewWidth * 0.002
     LINE_WIDTH_ACTIVE = LINE_WIDTH * 3
+    //GUIDE
+    GUIDE_MARGIN = LINE_WIDTH * 50
+    GUIDE_LINE_WIDTH = LINE_WIDTH / 2
+    GUIDE_TEXT_SIZE = 200
 
     return (
-        <svg viewBox={`${viewCenterMarginX} ${viewCenterMarginY} ${viewWidth} ${viewHeight}`}>
-            {/* View Guide */}
-            <Square
-                center={{ x: 0, y: 0 }}
-                draw={{ top: 320, bottom: 320, height: viewHeight }}
+        <svg
+            viewBox={`${viewCenterMarginX} ${viewCenterMarginY} ${viewWidth} ${viewHeight}`}
+            fill="none"
+        >
+            <text
+                x={viewCenterMarginX + 100}
+                y={viewCenterMarginY + 200}
+                fill={color}
+                font-size="200"
+            >
+                {label}
+            </text>
+            <Flange
+                center={{ x: 0, y: -300 }}
+                flange={flanges[currentFlange].flange}
                 lineColor={LINE_COLOR}
                 lineWidth={LINE_WIDTH}
                 guideEnable={GUIDE_ENABLE}
+                guideMargin={GUIDE_MARGIN}
+                guidePositon={GUIDE_POSITION}
+                guideLineColor={GUIDE_COLOR}
+                guideLineWidth={GUIDE_LINE_WIDTH}
                 guideTextSize={GUIDE_TEXT_SIZE}
             />
         </svg>
     )
 }
 
-export default View
+export default VHFlange

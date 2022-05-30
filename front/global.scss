@@ -8,6 +8,8 @@ $carbon--theme: $carbon--theme--g100;
 
 html,
 body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     background-color: in;
     padding: 0;
     margin: 0;
@@ -21,6 +23,9 @@ body {
     font-variant-ligatures: common-ligatures;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+}
+body::-webkit-scrollbar {
+    display: none;
 }
 a {
     color: inherit;

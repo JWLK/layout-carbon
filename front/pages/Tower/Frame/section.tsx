@@ -358,368 +358,412 @@ const Frame = () => {
                 </SettingViewWide>
 
                 <SettingViewFit>
-                    <SettingTitle>
-                        {`Section ${currentSectionIndex + 1} - Production Check`}
-                        <div style={{ float: 'right', paddingBottom: '100px' }}>
-                            <Button
-                                kind="tertiary"
-                                renderIcon={ArrowRight32}
-                                // disabled={!validNextStep}
-                            >
-                                NEXT
-                            </Button>
-                        </div>
-                    </SettingTitle>
-                    {/* {!validInitialData && (
+                    {/* 
+                        STEP 1
+                    */}
+                    <>
+                        <SettingTitle>
+                            {`Section ${currentSectionIndex + 1} - Production Check`}
+                            <div style={{ float: 'right', paddingBottom: '100px' }}>
+                                <Button
+                                    kind="tertiary"
+                                    renderIcon={ArrowRight32}
+                                    // disabled={!validNextStep}
+                                >
+                                    NEXT
+                                </Button>
+                            </div>
+                        </SettingTitle>
+                        {/* {!validInitialData && (
                         <div style={{ width: '100%', color: '#fa4d56' }}>
                             Invalid Value Exist. Check input value
                         </div>
                     )} */}
-                    <SectionDivider />
-                    <InputLabel>Tower Total Thickness (mm)</InputLabel>
-                    <SliderCustom>
-                        <Slider
-                            id="Slider_totalThickness"
-                            labelText=""
-                            min={10}
-                            max={100}
-                            step={1}
-                            value={totalThickness}
-                            onChange={onChangeTotalThickness}
-                        />
-                    </SliderCustom>
+                        <SectionDivider />
+                        <InputLabel style={{ color: '#ff00ff' }}>
+                            Tower Total Thickness (mm)
+                        </InputLabel>
+                        <SliderCustom>
+                            <Slider
+                                id="Slider_totalThickness"
+                                labelText=""
+                                min={10}
+                                max={100}
+                                step={1}
+                                value={totalThickness}
+                                onChange={onChangeTotalThickness}
+                            />
+                        </SliderCustom>
 
-                    <SectionDivider />
-                    <InputLabel>Section Body Mass Check</InputLabel>
-                    <Table size="lg">
-                        <TableHead>
-                            <TableRow>
-                                <TableHeader>
-                                    <div style={{ color: '#eee', marginLeft: '0px' }}>Type</div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#42be65', marginLeft: '0px' }}>
-                                        Out,i_UPR
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#42be65', marginLeft: '0px' }}>
-                                        In,i_UPR
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#be95ff', marginLeft: '0px' }}>
-                                        Out,i_LWR
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#be95ff', marginLeft: '0px' }}>
-                                        In,i_LWR
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#ff00ff', marginLeft: '0px' }}>
-                                        Thickness
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ color: '#ffff00', marginLeft: '0px' }}>
-                                        Length
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ marginLeft: '0px' }}>Weight of Section (kg)</div>
-                                </TableHeader>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ fontSize: '0.7rem', color: '#fff' }}>
-                                            Part 1
+                        <SectionDivider />
+                        <InputLabel>Section Body Mass Check</InputLabel>
+                        <Table size="lg">
+                            <TableHead>
+                                <TableRow>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>Type</div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            Out,i_UPR
                                         </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>{checkDiaOutUPR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>{checkDiaInUPR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>
-                                            <div style={{ color: '#fff' }}>{checkDiaOutLWR}</div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            In,i_UPR
                                         </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            Out,i_LWR
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            In,i_LWR
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            Length
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            Thickness
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ marginLeft: '0px' }}>
+                                            Weight of Section (Ton)
+                                        </div>
+                                    </TableHeader>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ fontSize: '0.7rem', color: '#fff' }}>
+                                                Part 1
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#42be65' }}>{checkDiaOutUPR}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#fff' }}>{checkDiaInUPR}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#be95ff' }}>{checkDiaOutLWR}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
                                             <div style={{ color: '#fff' }}>{checkDiaInLWR}</div>
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>{totalThickness}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>{checkBodyHeight}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={3}>
-                                        <div style={{ color: '#fff' }}>
-                                            {Math.round(checkBodyMass * 1000) / 1000}
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#ffff00' }}>
+                                                {checkBodyHeight}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#fff' }}>
+                                                {Math.round(checkBodyMass) / 1000}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </>
                     <br />
-                    <InputLabel>Flange Mass Check</InputLabel>
-                    <Table size="lg">
-                        <TableHead>
-                            <TableRow>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            fontSize: '0.7rem',
-                                            color: '#eee',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Type
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Out Dia <br />
-                                        dₒ
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        In Dia <br />
-                                        dᵢ
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Flange Width
-                                        <br /> b_fi
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Flange Height
-                                        <br /> t_fi
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Neck Thickness
-                                        <br /> tₛ
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#fff',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Neck Height
-                                        <br /> tₜ
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div
-                                        style={{
-                                            color: '#ffff00',
-                                            fontSize: '0.7rem',
-                                            marginLeft: '0px',
-                                        }}
-                                    >
-                                        Total Length
-                                    </div>
-                                </TableHeader>
-                                <TableHeader>
-                                    <div style={{ fontSize: '0.7rem', marginLeft: '0px' }}>
-                                        Weight of Flange (kg)
-                                    </div>
-                                </TableHeader>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {/* Upper */}
-                            <TableRow>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ fontSize: '0.7rem', color: '#fff' }}>
-                                            Upper
+                    {/* 
+                        STEP 2
+                    */}
+                    <>
+                        <InputLabel>Flange Mass Check</InputLabel>
+                        <Table size="lg">
+                            <TableHead>
+                                <TableRow>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                fontSize: '0.7rem',
+                                                color: '#eee',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Type
                                         </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeDiaOutUPR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#42be65' }}>
-                                            {checkFlangeDiaInUPR}
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Out Dia <br />
+                                            dₒ
                                         </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeWidthUPR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            In Dia <br />
+                                            dᵢ
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Flange Width
+                                            <br /> b_fi
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Flange Height
+                                            <br /> t_fi
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Neck Height
+                                            <br /> tₜ
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Total Length
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div
+                                            style={{
+                                                color: '#fff',
+                                                fontSize: '0.7rem',
+                                                marginLeft: '0px',
+                                            }}
+                                        >
+                                            Neck Thickness
+                                            <br /> tₛ
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ fontSize: '0.7rem', marginLeft: '0px' }}>
+                                            Weight of Flange (Ton)
+                                        </div>
+                                    </TableHeader>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {/* Upper */}
+                                <TableRow>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ fontSize: '0.7rem', color: '#ED6E46' }}>
+                                                Upper
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#42be65' }}>
+                                                {checkFlangeDiaOutUPR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#fff' }}>
+                                                {checkFlangeDiaInUPR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#fff' }}>
+                                                {checkFlangeWidthUPR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
 
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
                                                 {checkFlangeHeightUPR}
                                             </div>
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
                                                 {checkNeckHeightUPR}
                                             </div>
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeTotalUPR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={5}>
-                                        <div style={{ color: '#fff' }}>
-                                            {Math.round(checkFlangeBodyMassUPR * 1000) / 1000}
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                            </TableRow>
-                            {/* Upper */}
-                            <TableRow>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ fontSize: '0.7rem', color: '#fff' }}>
-                                            Lower
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeDiaOutLWR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#be95ff' }}>
-                                            {checkFlangeDiaInLWR}
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeWidthLWR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#ffff00' }}>
+                                                {checkFlangeTotalUPR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={5}>
+                                            <div style={{ color: '#fff' }}>
+                                                {Math.round(checkFlangeBodyMassUPR) / 1000}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                </TableRow>
+                                {/* Upper */}
+                                <TableRow>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ fontSize: '0.7rem', color: '#1291b9' }}>
+                                                Lower
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#be95ff' }}>
+                                                {checkFlangeDiaOutLWR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#fff' }}>
+                                                {checkFlangeDiaInLWR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#fff' }}>
+                                                {checkFlangeWidthLWR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
 
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
-                                                {checkFlangeHeightLWR}
+                                                <div style={{ color: '#fff' }}>
+                                                    {checkFlangeHeightLWR}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
-                                                {checkNeckHeightUPR}
+                                                <div style={{ color: '#fff' }}>
+                                                    {checkNeckHeightLWR}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={2}>
-                                        <div style={{ color: '#fff' }}>{checkFlangeTotalLWR}</div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                                <TableCell>
-                                    <TextWrapTableCell width={5}>
-                                        <div style={{ color: '#fff' }}>
-                                            {Math.round(checkFlangeBodyMassLWR * 1000) / 1000}
-                                        </div>
-                                    </TextWrapTableCell>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#ffff00' }}>
+                                                {checkFlangeTotalLWR}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={2}>
+                                            <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={5}>
+                                            <div style={{ color: '#fff' }}>
+                                                {Math.round(checkFlangeBodyMassLWR) / 1000}
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                        <SettingViewWide>
+                            <GraphicWrapHarf>
+                                <GraphicViewHarf>
+                                    {partsData.length && (
+                                        <VHFlange
+                                            flanges={flangesData[currentSectionIndex].flanges}
+                                            currentFlange={1}
+                                            label="Upper Flange"
+                                            color="#ED6E46"
+                                        />
+                                    )}
+                                </GraphicViewHarf>
+                                <GraphicViewHarf>
+                                    {partsData.length && (
+                                        <VHFlange
+                                            flanges={flangesData[currentSectionIndex].flanges}
+                                            currentFlange={0}
+                                            label="Lower Flange"
+                                            color="#1291b9"
+                                        />
+                                    )}
+                                </GraphicViewHarf>
+                            </GraphicWrapHarf>
+                        </SettingViewWide>
+                    </>
                 </SettingViewFit>
 
                 {/* STEP : Flange Upper */}
@@ -732,10 +776,15 @@ const Frame = () => {
                     <GraphicWrapHarf>
                         <GraphicViewHarf>
                             {partsData.length && (
-                                <VHFlange
-                                    draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
-                                    currentPartIndex={currentPartIndex}
-                                    setCurrentPartIndex={setCurrentPartIndex}
+                                // <VHFlange
+                                //     draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                                //     currentPartIndex={currentPartIndex}
+                                //     setCurrentPartIndex={setCurrentPartIndex}
+                                // />
+
+                                <EachFlangeTypeL
+                                    flanges={flangesData[currentSectionIndex].flanges}
+                                    currentFlange={0}
                                 />
                             )}
                         </GraphicViewHarf>

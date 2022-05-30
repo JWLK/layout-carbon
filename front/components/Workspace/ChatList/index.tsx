@@ -27,7 +27,13 @@ const ChatList: FC<Props> = ({ scrollbarRef, isReachingEnd, isEmpty, chatSection
 
     return (
         <ChatZone>
-            <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
+            <Scrollbars
+                autoHide
+                ref={scrollbarRef}
+                onScrollFrame={onScroll}
+                autoHideTimeout={1000}
+                autoHideDuration={200}
+            >
                 {Object.entries(chatSections).map(([date, chats]) => {
                     return (
                         <Section className={`section-${date}`} key={date}>

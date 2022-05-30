@@ -13,7 +13,13 @@
     "plugins": ["@typescript-eslint"],
     "rules": {
         "no-undef": "off",
-        "no-unused-vars": ["warn", { "args": "none" }]
+        "no-unused-vars": ["warn", { "args": "none" }],
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ]
     },
     "settings": {
         "react": {

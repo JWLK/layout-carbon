@@ -41,12 +41,12 @@ export const GraphicViewOrigin = styled.div`
     // border: 0.1px solid #eee;
 `
 export const GraphicViewHarf = styled.div`
-    width: 50%;
+    width: 100%;
     height: 100%;
-    max-width: 320px;
+    // max-width: 400px;
     max-height: 520px;
     background: rgba(0, 0, 0, 1);
-    // border: 0.1px solid #eee;
+    border: 1px solid #333;
     @media (max-width: 1000px) {
         width: 100%;
         max-width: 100%;
@@ -74,6 +74,11 @@ export const SettingWrap = styled.div`
         max-width: 100%;
         height: auto;
     }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 `
 
 export const SettingViewCorver = styled.div`

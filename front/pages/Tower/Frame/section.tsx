@@ -219,11 +219,11 @@ const Frame = () => {
 
     const [checkFlangeHeightUPR, setCheckFlangeHeightUPR] = useState(0)
     const [checkNeckHeightUPR, setCheckNeckHeightUPR] = useState(0)
-    const [checkFlangeTotalUPR, setCheckFlangeTotalHeightUPR] = useState(0)
+    const [checkFlangeTotalHeightUPR, setCheckFlangeTotalHeightUPR] = useState(0)
 
     const [checkFlangeHeightLWR, setCheckFlangeHeightLWR] = useState(0)
     const [checkNeckHeightLWR, setCheckNeckHeightLWR] = useState(0)
-    const [checkFlangeTotalLWR, setCheckFlangeTotalHeightLWR] = useState(0)
+    const [checkFlangeTotalHeightLWR, setCheckFlangeTotalHeightLWR] = useState(0)
 
     const [checkFlangeBodyMassUPR, setCheckFlangeBodyMassUPR] = useState(0)
     const [checkFlangeBodyMassLWR, setCheckFlangeBodyMassLWR] = useState(0)
@@ -289,6 +289,80 @@ const Frame = () => {
     const onChangeDevided = useCallback((e) => {
         setDivided(e.value)
     }, [])
+
+    //
+    /* Table onChange Flange Init ata */
+    //
+    type typeObjFlange =
+        | 'outDia'
+        | 'inDia'
+        | 'flangeWidth'
+        | 'flangeHeight'
+        | 'neckWidth'
+        | 'neckHeight'
+        | 'minScrewWidth'
+        | 'pcDia'
+        | 'param_a'
+        | 'param_b'
+        | 'screwNumberOf'
+    const onChangeFlnageData = useCallback(
+        (e, selectedIndex) => {
+            // console.log(e.target.name, selectedIndex, currentSectionIndex)
+            // console.log('flangeData', flangesData[currentSectionIndex])
+            const flanges = flangesData[currentSectionIndex].flanges.map((v, index) => {
+                const typeObject: typeObjFlange = e.target.name
+                if (index === selectedIndex) {
+                    v.flange[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    if (typeObject == 'neckWidth') {
+                        v.flange.pcDia =
+                            v.flange.outDia -
+                            2 * parseInt(e.target.value !== '' ? e.target.value : 0) -
+                            2 * v.flange.minScrewWidth
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        v.flange.param_b =
+                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                    } else if (typeObject == 'minScrewWidth') {
+                        v.flange.pcDia =
+                            v.flange.outDia -
+                            2 * v.flange.neckWidth -
+                            2 * parseInt(e.target.value !== '' ? e.target.value : 0)
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        v.flange.param_b =
+                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                    } else if (typeObject == 'flangeWidth') {
+                        v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                    }
+                }
+                return v
+            })
+            console.log('flanges', flanges)
+
+            rawData.flangesData[currentSectionIndex].flanges = flanges
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            // localStorage.setItem(
+            //     keyRawData,
+            //     JSON.stringify(updateRawDatadSyncWithFlange(flange, selectedIndex)),
+            // )
+            mutate()
+        },
+        [currentSectionIndex, flangesData, keyRawData, rawData],
+    )
+
+    const updateRawDatadSyncWithFlange = (flanges: TWFlange[], flangeIndex: number) => {
+        //Out Diameter => part
+        // partsData[currentSectionIndex].parts[0].part.bottom = flanges[0].outDia
+        // partsData[currentSectionIndex].parts[partsData.length - 1].part.top = flanges[1].outDia
+        partsData[currentSectionIndex].parts[0].thickness = flanges[flangeIndex].flange.neckWidth
+        // partsData[currentSectionIndex].parts[partsData.length - 1].thickness = flanges[1].neckWidth
+
+        rawData.initial = initData
+        rawData.sectionData = sectionData
+        rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
+        rawData.flangesData[currentSectionIndex].flanges = flanges
+
+        return rawData
+    }
 
     /*
     ** Data Renewal
@@ -627,31 +701,46 @@ const Frame = () => {
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkFlangeWidthUPR}
-                                            </div>
+                                        <TextWrapTableCell width={4}>
+                                            <TextInput
+                                                style={{ width: '5rem' }}
+                                                id={`flange-flangeWidth-UPR`}
+                                                labelText=""
+                                                name="flangeWidth"
+                                                value={checkFlangeWidthUPR}
+                                                onChange={(e) => onChangeFlnageData(e, 1)}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
 
                                     <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkFlangeHeightUPR}
-                                            </div>
+                                        <TextWrapTableCell width={4}>
+                                            <TextInput
+                                                style={{ width: '5rem' }}
+                                                id={`flange-flangeHeight-UPR`}
+                                                labelText=""
+                                                name="flangeHeight"
+                                                value={checkFlangeHeightUPR}
+                                                onChange={(e) => onChangeFlnageData(e, 1)}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkNeckHeightUPR}
-                                            </div>
+                                        <TextWrapTableCell width={4}>
+                                            <TextInput
+                                                style={{ width: '5rem' }}
+                                                id={`flange-neckHeight-UPR`}
+                                                labelText=""
+                                                name="neckHeight"
+                                                value={checkNeckHeightUPR}
+                                                onChange={(e) => onChangeFlnageData(e, 1)}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
                                             <div style={{ color: '#ffff00' }}>
-                                                {checkFlangeTotalUPR}
+                                                {checkFlangeTotalHeightUPR}
                                             </div>
                                         </TextWrapTableCell>
                                     </TableCell>
@@ -702,25 +791,21 @@ const Frame = () => {
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
-                                                <div style={{ color: '#fff' }}>
-                                                    {checkFlangeHeightLWR}
-                                                </div>
+                                                {checkFlangeHeightLWR}
                                             </div>
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
                                             <div style={{ color: '#fff' }}>
-                                                <div style={{ color: '#fff' }}>
-                                                    {checkNeckHeightLWR}
-                                                </div>
+                                                {checkNeckHeightLWR}
                                             </div>
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
                                             <div style={{ color: '#ffff00' }}>
-                                                {checkFlangeTotalLWR}
+                                                {checkFlangeTotalHeightLWR}
                                             </div>
                                         </TextWrapTableCell>
                                     </TableCell>
@@ -742,11 +827,11 @@ const Frame = () => {
                         <SettingViewWide>
                             <GraphicWrapHarf>
                                 <GraphicViewHarf>
+                                    <div style={{ padding: '20px', color: '#ED6E46' }}> Upper </div>
                                     {partsData.length && (
                                         <VHFlange
                                             flanges={flangesData[currentSectionIndex].flanges}
                                             currentFlange={1}
-                                            label="Upper Flange"
                                             color="#ED6E46"
                                         />
                                     )}
@@ -756,7 +841,6 @@ const Frame = () => {
                                         <VHFlange
                                             flanges={flangesData[currentSectionIndex].flanges}
                                             currentFlange={0}
-                                            label="Lower Flange"
                                             color="#1291b9"
                                         />
                                     )}

@@ -111,12 +111,12 @@ const Flange: FC<Props> = ({
                 <Line
                     pointEnd={{ x: flange.outDia, y: 0 }}
                     pointStart={{ x: flange.outDia, y: flange.flangeHeight * 10 }}
-                    lineColor={lineColor}
+                    lineColor={'#ffff00'}
                     lineWidth={lineWidth * 2}
                     guideEnable={guideEnable}
                     guideMargin={guideMargin!}
                     guidePositon={'positive'}
-                    guideLineColor={guideLineColor!}
+                    guideLineColor={'#ffff00'}
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
                     guideFloat={1}
@@ -128,12 +128,12 @@ const Flange: FC<Props> = ({
                         x: flange.outDia,
                         y: (flange.flangeHeight + flange.neckHeight) * 10,
                     }}
-                    lineColor={lineColor}
+                    lineColor={'#ffff00'}
                     lineWidth={lineWidth}
                     guideEnable={guideEnable}
                     guideMargin={guideMargin!}
                     guidePositon={'positive'}
-                    guideLineColor={guideLineColor!}
+                    guideLineColor={'#ffff00'}
                     guideLineWidth={guideLineWidth!}
                     guideTextSize={guideTextSize!}
                     guideFloat={1}

@@ -125,9 +125,9 @@ const Square: FC<Props> = ({
             {indicator !== undefined && (
                 <>
                     <line
-                        x1={center.x - draw.bottom / 2 - guideMargin! / 2}
+                        x1={-fixedMargin! / 2 - guideMargin! / 2}
                         y1={-(center.y + draw.height)}
-                        x2={center.x - draw.bottom / 2 - guideMargin! * 2}
+                        x2={-fixedMargin! / 2 - guideMargin! * 2}
                         y2={-(center.y + draw.height)}
                         stroke={'#00ffff'}
                         strokeWidth={guideLineWidth!}
@@ -137,7 +137,7 @@ const Square: FC<Props> = ({
                         fill={'#00ffff'}
                         fontSize={guideTextSize}
                         transform={`translate(${
-                            center.x - draw.bottom / 2 - guideMargin! * 2 - guideTextSize!
+                            -fixedMargin! / 2 - guideMargin! * 2 - guideTextSize!
                         },${-(center.y + draw.height - guideTextSize! / 2)})`}
                         dominant-baseline="end"
                         text-anchor="end"

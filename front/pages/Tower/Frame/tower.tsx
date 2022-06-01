@@ -455,7 +455,7 @@ const Frame = () => {
     }
 
     const updateFlangesSync = (sections: TWSection[], TWFlanges: TWFlanges[]) => {
-        for (var i = 1; i < sections.length; i++) {
+        for (var i = 0; i < sections.length; i++) {
             // TWFlanges[i].flanges[0].flange.outDia = sections[i].section.bottom
             // TWFlanges[i].flanges[0].flange.inDia =
             //     sections[i].section.bottom - 2 * TWFlanges[i].flanges[0].flange.flangeWidth
@@ -502,26 +502,34 @@ const Frame = () => {
                     index: 1,
                     flange: {
                         outDia: sectionData[i].section.top,
-                        inDia: sectionData[i].section.top - 2 * 400, //= outDia - 2 * flangeWidth
-                        flangeWidth: 400,
-                        flangeHeight: 200,
-                        neckWidth: 50,
-                        neckHeight: 100,
-                        minScrewWidth: 80,
-                        pcDia: sectionData[i].section.top - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+                        inDia:
+                            sectionData[i].section.top -
+                            2 * TWFlanges[i].flanges[1].flange.flangeWidth, //= outDia - 2 * flangeWidth
+                        flangeWidth: TWFlanges[i].flanges[1].flange.flangeWidth,
+                        flangeHeight: TWFlanges[i].flanges[1].flange.flangeHeight,
+                        neckWidth: TWFlanges[i].flanges[1].flange.neckWidth,
+                        neckHeight: TWFlanges[i].flanges[1].flange.neckHeight,
+                        minScrewWidth: TWFlanges[i].flanges[1].flange.minScrewWidth,
+                        pcDia:
+                            sectionData[i].section.top -
+                            2 * TWFlanges[i].flanges[1].flange.neckWidth -
+                            2 * TWFlanges[i].flanges[1].flange.minScrewWidth, // = outDia - 2 * neckWidth - 2 * minScrewWidth
                         param_a:
-                            (sectionData[i].section.bottom -
-                                2 * 50 -
-                                2 * 80 -
-                                (sectionData[i].section.bottom - 2 * 400)) /
+                            (sectionData[i].section.top -
+                                2 * TWFlanges[i].flanges[1].flange.neckWidth -
+                                2 * TWFlanges[i].flanges[1].flange.minScrewWidth -
+                                (sectionData[i].section.top -
+                                    2 * TWFlanges[i].flanges[1].flange.flangeWidth)) /
                             2,
                         param_b:
-                            (sectionData[i].section.bottom -
-                                50 -
-                                (sectionData[i].section.bottom - 2 * 50 - 2 * 80)) /
+                            (sectionData[i].section.top -
+                                TWFlanges[i].flanges[1].flange.neckWidth -
+                                (sectionData[i].section.top -
+                                    2 * TWFlanges[i].flanges[1].flange.neckWidth -
+                                    2 * TWFlanges[i].flanges[1].flange.minScrewWidth)) /
                             2,
-                        screwWidth: 64,
-                        screwNumberOf: 150,
+                        screwWidth: TWFlanges[i].flanges[1].flange.screwWidth,
+                        screwNumberOf: TWFlanges[i].flanges[1].flange.screwNumberOf,
                     },
                 },
             ]
@@ -568,7 +576,15 @@ const Frame = () => {
             mutate()
             setValidSecondStep(true)
         },
-        [flangesData, keyRawData, partsData, rawData, sectionData, updateInitialSync],
+        [
+            flangesData,
+            keyRawData,
+            partsData,
+            rawData,
+            sectionData,
+            updateFlangesSync,
+            updateInitialSync,
+        ],
     )
 
     /* Section Parameter : Current(Selected) Section Index State */

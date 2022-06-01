@@ -28,7 +28,8 @@ export const GraphicWrap = styled.div`
 export const GraphicWrapHarf = styled.div`
     display: flex;
     flex-direction: row;
-    padding-top: 20px;
+    background: rgba(0, 0, 0, 1);
+    border: 1px solid #333;
     @media (max-width: 1000px) {
         flex-direction: column;
     }
@@ -47,7 +48,6 @@ export const GraphicViewHarf = styled.div`
     // max-width: 400px;
     // max-height: 520px;
     background: rgba(0, 0, 0, 1);
-    border: 1px solid #333;
     @media (max-width: 1000px) {
         width: 100%;
         max-width: 100%;
@@ -154,6 +154,7 @@ export const NumberInputCustom = styled(NumberInput)`
     }
 `
 export const SliderCustom = styled.div`
+    flex: 1;
     .bx--slider-container {
         width: 100%;
     }

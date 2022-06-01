@@ -66,18 +66,29 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
 
     /*Element Calc*/
     var totalHeight = 0
+    var totalHeightText = 0
     var getDivided = draws.length
     var [eachObject, setEachObject] = useState([] as ObjSquare[])
 
     //Get totalHeight
     draws.slice(0, draws.length).forEach((e) => {
-        totalHeight += e.height
+        if (e.height < 8000) {
+            totalHeight += 8000
+        } else {
+            totalHeight += e.height
+        }
+        totalHeightText += e.height
     })
     useEffect(() => {
         var object = draws.map((v) => {
             var top = (v.top / draws[0].bottom) * objWidth
             var bottom = (v.bottom / draws[0].bottom) * objWidth
-            var height = (v.height / totalHeight) * objHeight
+            var height = 0
+            if (v.height < 8000) {
+                height = (8000 / totalHeight) * objHeight
+            } else {
+                height = (v.height / totalHeight) * objHeight
+            }
             return { top, bottom, height }
         })
         setEachObject(object)
@@ -161,7 +172,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                         guideLineColor={GUIDE_COLOR}
                         guideLineWidth={GUIDE_LINE_WIDTH}
                         guideTextSize={GUIDE_TEXT_SIZE}
-                        fixedMargin={(Math.abs(draw.top - draw.bottom) / 2) * index}
+                        fixedMargin={eachObject[0].bottom / 2 + 20}
                         title={`Section ${index + 1}`}
                         indicator={(realPointStackArray[index] / 1000).toFixed(2)}
                         activeColor={currentIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'}
@@ -183,7 +194,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                             guideLineColor={TOTAL_GUIDE_COLOR}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
-                            value={totalHeight / 1000}
+                            value={totalHeightText / 1000}
                             unit={'m'}
                         />
 

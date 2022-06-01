@@ -7,7 +7,6 @@ import Flange from '@objects/Element/Flange'
 interface Props {
     flanges: TWFlange[]
     currentFlange: number
-    color: string
 }
 
 /*CONSTANT*/
@@ -25,7 +24,7 @@ let GUIDE_COLOR = '#aaa'
 let GUIDE_LINE_WIDTH = 0
 let GUIDE_TEXT_SIZE = 0
 
-const VHFlange: FC<Props> = ({ flanges, currentFlange, color }) => {
+const VHFlange: FC<Props> = ({ flanges, currentFlange }) => {
     /*VIEW BOX*/
     var viewWidth = flanges[currentFlange].flange.outDia * 1 // 1
     var viewCalc =

@@ -161,7 +161,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                         guideLineColor={GUIDE_COLOR}
                         guideLineWidth={GUIDE_LINE_WIDTH}
                         guideTextSize={GUIDE_TEXT_SIZE}
-                        fixedMargin={(Math.abs(draw.top - draw.bottom) / 2) * index}
+                        fixedMargin={eachObject[0].bottom / 2 + 20}
                         title={`Part ${index + 1}`}
                         indicator={(realPointStackArray[index] / 1000).toFixed(2)}
                         activeColor={currentIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'}

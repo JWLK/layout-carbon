@@ -291,7 +291,7 @@ const Frame = () => {
     }, [])
 
     //
-    /* Table onChange Flange Init ata */
+    /* Table onChange Flange Init data */
     //
     type typeObjFlange =
         | 'outDia'
@@ -360,6 +360,138 @@ const Frame = () => {
         rawData.sectionData = sectionData
         rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
         rawData.flangesData[currentSectionIndex].flanges = flanges
+
+        return rawData
+    }
+
+    const onClickSetPartsData = useCallback(
+        (e) => {
+            e.preventDefault()
+            setCurrentPartIndex(0)
+            var partArray = [] as TWPart[]
+            var sectorArray = [] as TWSector[]
+            var flangeArray = {} as TWFlanges
+            // var totalHeight = sectionData[currentSectionIndex].section.height
+
+            var totalHeight = checkBodyHeight
+            var topUpperOutDia = sectionData[currentSectionIndex].section.top
+            var bottomLowerOutDia = sectionData[currentSectionIndex].section.bottom
+
+            for (var i = 0; i < divided; i++) {
+                /* Init Value */
+                var eachHeight = Math.round(totalHeight / divided)
+                var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+                var eachHypo =
+                    Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
+                var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+
+                // console.log('eachHeight', eachHeight)
+                // console.log('triBottom', triBottom)
+                // console.log('eachHypo', eachHypo)
+                // console.log('angle', (180 / Math.PI) * angle)
+
+                /* Calc Value */
+                var sectionWidthTop = Math.round(
+                    topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
+                )
+                var sectionWidthBottom = Math.round(
+                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
+                )
+                // console.log(
+                //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
+                // )
+
+                //Inser Reverse
+                partArray[divided - 1 - i] = {
+                    index: i,
+                    part: {
+                        top: sectionWidthTop,
+                        bottom: sectionWidthBottom,
+                        height: eachHeight,
+                    },
+                    thickness: totalThickness,
+                }
+            }
+
+            rawData.partsData[currentSectionIndex].divided = divided
+            rawData.partsData[currentSectionIndex].parts = partArray
+            // rawData.sectorsData[currentSectionIndex].sectors = sectorArray
+            // rawData.flangesData[currentSectionIndex] = flangeArray
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+
+            //개별 업데이터
+            // setRawData(rawData)
+            // setSectionData(sectionsObject)
+
+            //한번에 업데이터
+            mutate()
+        },
+        [
+            checkBodyHeight,
+            sectionData,
+            currentSectionIndex,
+            divided,
+            rawData,
+            keyRawData,
+            totalThickness,
+        ],
+    )
+
+    //
+    /* Table onChange Each Part data */
+    //
+    type typeObjSquare = 'top' | 'bottom' | 'height' | 'thickness'
+    const onChangePartsData = useCallback(
+        (e, selectedIndex) => {
+            console.log(e.target.name, selectedIndex)
+            const parts = partsData[currentSectionIndex].parts.map((v, index) => {
+                const typeObject: typeObjSquare = e.target.name
+                if (index === selectedIndex) {
+                    if (typeObject !== 'thickness') {
+                        v.part[`${typeObject}`] = parseInt(
+                            e.target.value !== '' ? e.target.value : 0,
+                        )
+                    } else {
+                        v.thickness = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    }
+                }
+                return v
+            })
+
+            // const updateInitial = updateInitialSync(section)
+            // const updateParts = updatePartsTaperedSync(section)
+            // localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithParts(parts)))
+            rawData.partsData[currentSectionIndex].parts = parts
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            mutate()
+        },
+        [currentSectionIndex, keyRawData, mutate, partsData, rawData],
+    )
+
+    const updateRawDatadSyncWithParts = (parts: TWPart[]) => {
+        var totalHeight = 0
+        var sectionHeight = 0
+
+        for (var i = 0; i < partsData[currentSectionIndex].parts.length; i++) {
+            sectionHeight += partsData[currentSectionIndex].parts[i].part.height
+        }
+        sectionData[currentSectionIndex].section.height = sectionHeight
+
+        for (var l = 0; l < sectionData.length; l++) {
+            totalHeight += sectionData[l].section.height
+        }
+        initData.totalHeight = totalHeight
+
+        rawData.initial = initData
+        rawData.sectionData = sectionData
+        rawData.partsData[currentSectionIndex].parts = parts
+
+        // rawData.sectorsData[currentSectionIndex].sectors[currentPartIndex].sector =
+        //     sectorObjectUpdate(
+        //         parts[currentPartIndex].part.top,
+        //         parts[currentPartIndex].part.bottom,
+        //         parts[currentPartIndex].part.height,
+        //     )
 
         return rawData
     }
@@ -433,11 +565,11 @@ const Frame = () => {
 
                 <SettingViewFit>
                     {/* 
-                        STEP 1
+                        STEP 1 - 1
                     */}
                     <>
                         <SettingTitle>
-                            {`Section ${currentSectionIndex + 1} - Production Check`}
+                            {`Section ${currentSectionIndex + 1} - Mass Capacity Check`}
                             <div style={{ float: 'right', paddingBottom: '100px' }}>
                                 <Button
                                     kind="tertiary"
@@ -479,6 +611,11 @@ const Frame = () => {
                                     </TableHeader>
                                     <TableHeader>
                                         <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            Length
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
                                             Out,i_UPR
                                         </div>
                                     </TableHeader>
@@ -499,11 +636,6 @@ const Frame = () => {
                                     </TableHeader>
                                     <TableHeader>
                                         <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            Length
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
                                             Thickness
                                         </div>
                                     </TableHeader>
@@ -515,11 +647,19 @@ const Frame = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
+                                {/* Tower Parts */}
                                 <TableRow>
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
                                             <div style={{ fontSize: '0.7rem', color: '#fff' }}>
                                                 Part 1
+                                            </div>
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={3}>
+                                            <div style={{ color: '#ffff00' }}>
+                                                {checkBodyHeight}
                                             </div>
                                         </TextWrapTableCell>
                                     </TableCell>
@@ -545,13 +685,6 @@ const Frame = () => {
                                     </TableCell>
                                     <TableCell>
                                         <TextWrapTableCell width={3}>
-                                            <div style={{ color: '#ffff00' }}>
-                                                {checkBodyHeight}
-                                            </div>
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={3}>
                                             <div style={{ color: '#ff00ff' }}>{totalThickness}</div>
                                         </TextWrapTableCell>
                                     </TableCell>
@@ -568,7 +701,7 @@ const Frame = () => {
                     </>
                     <br />
                     {/* 
-                        STEP 2
+                        STEP 1 - 2
                     */}
                     <>
                         <InputLabel>Flange Mass Check</InputLabel>
@@ -701,9 +834,8 @@ const Frame = () => {
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={4}>
+                                        <TextWrapTableCell width={5}>
                                             <TextInput
-                                                style={{ width: '5rem' }}
                                                 id={`flange-flangeWidth-UPR`}
                                                 labelText=""
                                                 name="flangeWidth"
@@ -712,11 +844,9 @@ const Frame = () => {
                                             />
                                         </TextWrapTableCell>
                                     </TableCell>
-
                                     <TableCell>
-                                        <TextWrapTableCell width={4}>
+                                        <TextWrapTableCell width={5}>
                                             <TextInput
-                                                style={{ width: '5rem' }}
                                                 id={`flange-flangeHeight-UPR`}
                                                 labelText=""
                                                 name="flangeHeight"
@@ -726,9 +856,8 @@ const Frame = () => {
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={4}>
+                                        <TextWrapTableCell width={5}>
                                             <TextInput
-                                                style={{ width: '5rem' }}
                                                 id={`flange-neckHeight-UPR`}
                                                 labelText=""
                                                 name="neckHeight"
@@ -757,7 +886,8 @@ const Frame = () => {
                                         </TextWrapTableCell>
                                     </TableCell>
                                 </TableRow>
-                                {/* Upper */}
+
+                                {/* Lower */}
                                 <TableRow>
                                     <TableCell>
                                         <TextWrapTableCell width={2}>
@@ -781,25 +911,36 @@ const Frame = () => {
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkFlangeWidthLWR}
-                                            </div>
-                                        </TextWrapTableCell>
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkFlangeHeightLWR}
-                                            </div>
+                                        <TextWrapTableCell width={5}>
+                                            <TextInput
+                                                id={`flange-flangeWidth-LWR`}
+                                                labelText=""
+                                                name="flangeWidth"
+                                                value={checkFlangeWidthLWR}
+                                                onChange={(e) => onChangeFlnageData(e, 0)}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={2}>
-                                            <div style={{ color: '#fff' }}>
-                                                {checkNeckHeightLWR}
-                                            </div>
+                                        <TextWrapTableCell width={5}>
+                                            <TextInput
+                                                id={`flange-flangeHeight-LWR`}
+                                                labelText=""
+                                                name="flangeHeight"
+                                                value={checkFlangeHeightLWR}
+                                                onChange={(e) => onChangeFlnageData(e, 0)}
+                                            />
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={5}>
+                                            <TextInput
+                                                id={`flange-neckHeight-LWR`}
+                                                labelText=""
+                                                name="neckHeight"
+                                                value={checkNeckHeightLWR}
+                                                onChange={(e) => onChangeFlnageData(e, 0)}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
@@ -832,21 +973,455 @@ const Frame = () => {
                                         <VHFlange
                                             flanges={flangesData[currentSectionIndex].flanges}
                                             currentFlange={1}
-                                            color="#ED6E46"
                                         />
                                     )}
                                 </GraphicViewHarf>
+                                <div
+                                    style={{ width: '2px', height: 'auto', background: '#333' }}
+                                ></div>
                                 <GraphicViewHarf>
+                                    <div style={{ padding: '20px', color: '#1291b9' }}> Lower </div>
                                     {partsData.length && (
                                         <VHFlange
                                             flanges={flangesData[currentSectionIndex].flanges}
                                             currentFlange={0}
-                                            color="#1291b9"
                                         />
                                     )}
                                 </GraphicViewHarf>
                             </GraphicWrapHarf>
                         </SettingViewWide>
+
+                        {!false && (
+                            <>
+                                <InputDivider />
+                                <div style={{ width: '100%', color: '#fa4d56' }}>
+                                    Invalid Value Exist. Check input value.
+                                </div>
+                            </>
+                        )}
+
+                        <InputDivider />
+                        <Button
+                            kind="primary"
+                            renderIcon={Save32}
+                            // onClick={onClickSetSectionsInitData}
+                            // disabled={!validFirstStep}
+                        >
+                            Section 1 Mass Capacity : SAVE
+                        </Button>
+
+                        <SectionDivider />
+                    </>
+
+                    {/* 
+                        STEP 2 - 1
+                    */}
+                    <>
+                        <SettingTitle>
+                            {`Section ${currentSectionIndex + 1} - Each Part Mass Check`}
+                        </SettingTitle>
+                        <SectionDivider />
+                        <InputLabel style={{ color: '#fff' }}>Number of Tower Part</InputLabel>
+                        <Row
+                            style={{
+                                border: '0px solid #333',
+                                marginBlock: '0.5rem',
+                                padding: '1.5rem',
+                            }}
+                            narrow
+                        >
+                            <SliderCustom>
+                                <Slider
+                                    id="initial-divided"
+                                    labelText=""
+                                    max={20}
+                                    min={1}
+                                    step={1}
+                                    value={divided}
+                                    onChange={onChangeDevided}
+                                />
+                            </SliderCustom>
+                            <Button
+                                renderIcon={Save32}
+                                onClick={onClickSetPartsData}
+                                style={{ margin: '5px' }}
+                            >
+                                Set Parts
+                            </Button>
+                            <SectionDivider />
+                            <>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    Type.
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    Length
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    Out,i_UPR
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    In,i_UPR
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    Out,i_LWR
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    In,i_LWR
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                    Thickness
+                                                </div>
+                                            </TableHeader>
+                                            <TableHeader>
+                                                <div style={{ marginLeft: '0px' }}>Weight(Ton)</div>
+                                            </TableHeader>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {/* Upper Flange */}
+                                        <TableRow>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#ED6E46',
+                                                        }}
+                                                    >
+                                                        Upper Flange
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#ffff00' }}>
+                                                        {checkFlangeTotalHeightUPR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#42be65' }}>
+                                                        {checkFlangeDiaOutUPR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#fff' }}>
+                                                        {checkFlangeDiaInUPR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}></TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}></TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#ff00ff' }}>
+                                                        {totalThickness}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}>
+                                                    <div style={{ color: '#fff' }}>
+                                                        {Math.round(checkFlangeBodyMassUPR) / 1000}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                        </TableRow>
+
+                                        {/* Tower Parts */}
+                                        {partsData.length &&
+                                            partsData[currentSectionIndex].parts
+                                                .slice(0)
+                                                .reverse()
+                                                .map((v, index) => (
+                                                    <TableRow
+                                                        key={`section-${index}`}
+                                                        style={{
+                                                            textAlign: 'end',
+                                                        }}
+                                                    >
+                                                        <TableCell>
+                                                            <div
+                                                                style={{
+                                                                    fontSize: '0.7rem',
+                                                                    color: '#fff',
+                                                                }}
+                                                            >
+                                                                Part{' '}
+                                                                {partsData[currentSectionIndex]
+                                                                    .divided - index}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={5}>
+                                                                <TextInput
+                                                                    id={`section-height-${index}`}
+                                                                    labelText=""
+                                                                    name="height"
+                                                                    onChange={(e) =>
+                                                                        onChangePartsData(
+                                                                            e,
+                                                                            divided - index - 1,
+                                                                        )
+                                                                    }
+                                                                    value={v.part.height}
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+
+                                                        <TableCell>{v.part.top}</TableCell>
+
+                                                        <TableCell>
+                                                            {v.part.top - v.thickness * 2}
+                                                        </TableCell>
+
+                                                        <TableCell>{v.part.bottom}</TableCell>
+                                                        <TableCell>
+                                                            {v.part.bottom - v.thickness * 2}
+                                                        </TableCell>
+
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={5}>
+                                                                <TextInput
+                                                                    id={`section-thickness-${index}`}
+                                                                    labelText=""
+                                                                    name="thickness"
+                                                                    onChange={(e) =>
+                                                                        onChangePartsData(
+                                                                            e,
+                                                                            divided - index - 1,
+                                                                        )
+                                                                    }
+                                                                    value={v.thickness}
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                        {/* Lower Flange */}
+                                        <TableRow>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#1291b9',
+                                                        }}
+                                                    >
+                                                        Lower Flange
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#ffff00' }}>
+                                                        {checkFlangeTotalHeightLWR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}></TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}></TextWrapTableCell>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#be95ff' }}>
+                                                        {checkFlangeDiaOutLWR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#fff' }}>
+                                                        {checkFlangeDiaInLWR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div style={{ color: '#ff00ff' }}>
+                                                        {totalThickness}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}>
+                                                    <div style={{ color: '#fff' }}>
+                                                        {Math.round(checkFlangeBodyMassLWR) / 1000}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+
+                                {/* Sum of Section Data */}
+
+                                <InputDivider />
+                                {partsData.length && (
+                                    <Table size="lg">
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={2}>
+                                                        <div style={{ color: '#fff' }}>Total</div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-total-height`}
+                                                            labelText=""
+                                                            name="total-height"
+                                                            invalid={
+                                                                partsData[currentSectionIndex].parts
+                                                                    .map((v) => v.part.height)
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    ) +
+                                                                    flangesData[
+                                                                        currentSectionIndex
+                                                                    ].flanges
+                                                                        .map(
+                                                                            (v) =>
+                                                                                v.flange
+                                                                                    .flangeHeight +
+                                                                                v.flange.neckHeight,
+                                                                        )
+                                                                        .reduce(
+                                                                            (prev, curr) =>
+                                                                                prev + curr,
+                                                                            0,
+                                                                        ) !=
+                                                                sectionData[currentSectionIndex]
+                                                                    .section.height
+                                                            }
+                                                            invalidText={`Remaining = ${
+                                                                sectionData[currentSectionIndex]
+                                                                    .section.height -
+                                                                partsData[currentSectionIndex].parts
+                                                                    .map((v) => v.part.height)
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    ) -
+                                                                flangesData[
+                                                                    currentSectionIndex
+                                                                ].flanges
+                                                                    .map(
+                                                                        (v) =>
+                                                                            v.flange.flangeHeight +
+                                                                            v.flange.neckHeight,
+                                                                    )
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    )
+                                                            }`}
+                                                            value={
+                                                                partsData[currentSectionIndex].parts
+                                                                    .map((v) => v.part.height)
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    ) +
+                                                                flangesData[
+                                                                    currentSectionIndex
+                                                                ].flanges
+                                                                    .map(
+                                                                        (v) =>
+                                                                            v.flange.flangeHeight +
+                                                                            v.flange.neckHeight,
+                                                                    )
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    )
+                                                            }
+                                                            // disabled={
+                                                            //     divided !== sectionData.length
+                                                            // }
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={30}>
+                                                        {`Section ${
+                                                            currentSectionIndex + 1
+                                                        } - Total Height ${
+                                                            sectionData[currentSectionIndex].section
+                                                                .height
+                                                        }mm (= ${
+                                                            sectionData[currentSectionIndex].section
+                                                                .height / 1000
+                                                        }m) `}
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-total-height`}
+                                                            labelText=""
+                                                            name="total-height"
+                                                            invalid={
+                                                                sectionData
+                                                                    .map((v) => v.section.height)
+                                                                    .reduce(
+                                                                        (prev, curr) => prev + curr,
+                                                                        0,
+                                                                    ) != initData.maxHeight
+                                                            }
+                                                            invalidText={`Total = ${initData.maxHeight}`}
+                                                            value={sectionData
+                                                                .map((v) => v.section.height)
+                                                                .reduce(
+                                                                    (prev, curr) => prev + curr,
+                                                                    0,
+                                                                )}
+                                                            disabled={
+                                                                divided !== sectionData.length
+                                                            }
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                )}
+                            </>
+                        </Row>
                     </>
                 </SettingViewFit>
 

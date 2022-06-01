@@ -63,12 +63,10 @@ const Line: FC<Props> = ({
                         pointStart={
                             fixedMargin == undefined
                                 ? pointStart
-                                : { x: pointStart.x + fixedMargin!, y: pointStart.y }
+                                : { x: fixedMargin!, y: pointStart.y }
                         }
                         pointEnd={
-                            fixedMargin == undefined
-                                ? pointEnd
-                                : { x: pointStart.x + fixedMargin!, y: pointEnd.y }
+                            fixedMargin == undefined ? pointEnd : { x: fixedMargin!, y: pointEnd.y }
                         }
                         guideMargin={guideMargin!}
                         guidePositon={guidePositon!}

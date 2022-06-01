@@ -448,7 +448,7 @@ const Frame = () => {
                                 (TWFlanges[i].flanges[1].flange.flangeHeight +
                                     TWFlanges[i].flanges[1].flange.neckHeight),
                         },
-                        thickness: TWParts[i].parts[0].index,
+                        thickness: TWParts[i].parts[0].thickness,
                         weight: 0,
                     },
                 ],

@@ -198,6 +198,7 @@ const Frame = () => {
                                 height: eachPartHeight,
                             },
                             thickness: 50,
+                            weight: 0,
                         },
                     ],
                     divided: 1,
@@ -234,6 +235,7 @@ const Frame = () => {
                                 screwWidth: 64,
                                 screwNumberOf: 150,
                             },
+                            weight: 0,
                         },
                         {
                             index: 1,
@@ -260,6 +262,7 @@ const Frame = () => {
                                 screwWidth: 64,
                                 screwNumberOf: 150,
                             },
+                            weight: 0,
                         },
                     ],
                 }

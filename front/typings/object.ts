@@ -72,6 +72,7 @@ export interface TWPart {
     index: number
     part: ObjSquare
     thickness: number
+    weight: number
 }
 
 export interface TWParts {
@@ -93,6 +94,7 @@ export interface TWSectors {
 export interface TWFlange {
     index: number
     flange: ObjFlange
+    weight: number
 }
 
 export interface TWFlanges {

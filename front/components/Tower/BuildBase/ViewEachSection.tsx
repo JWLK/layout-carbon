@@ -252,6 +252,7 @@ const ViewEachSection = () => {
                         height: eachHeight,
                     },
                     thickness: 50,
+                    weight: 0,
                 }
                 sectorArray[divided - 1 - i] = {
                     index: i,
@@ -290,7 +291,9 @@ const ViewEachSection = () => {
                             screwWidth: 64,
                             screwNumberOf: 150,
                         },
+                        weight: 0,
                     },
+
                     {
                         index: 1,
                         flange: {
@@ -318,6 +321,7 @@ const ViewEachSection = () => {
                             screwWidth: 64,
                             screwNumberOf: 150,
                         },
+                        weight: 0,
                     },
                 ],
             }

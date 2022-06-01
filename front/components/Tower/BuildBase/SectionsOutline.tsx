@@ -190,6 +190,7 @@ const SectionOutline = () => {
                                 height: eachHeight,
                             },
                             thickness: 50,
+                            weight: 0,
                         },
                     ],
                     divided: 1,
@@ -242,6 +243,7 @@ const SectionOutline = () => {
                                 screwWidth: 0,
                                 screwNumberOf: 0,
                             },
+                            weight: 0,
                         },
                         {
                             index: 1,
@@ -259,6 +261,7 @@ const SectionOutline = () => {
                                 screwWidth: 0,
                                 screwNumberOf: 0,
                             },
+                            weight: 0,
                         },
                     ],
                 }
@@ -383,6 +386,7 @@ const SectionOutline = () => {
                             height: sections[i].section.height,
                         },
                         thickness: TWParts[i].parts[0].index,
+                        weight: 0,
                     },
                 ],
                 divided: TWParts[i].divided,

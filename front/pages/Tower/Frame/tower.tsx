@@ -269,6 +269,7 @@ const Frame = () => {
                                 height: eachPartHeight,
                             },
                             thickness: 50,
+                            weight: 0,
                         },
                     ],
                     divided: 1,
@@ -305,6 +306,7 @@ const Frame = () => {
                                 screwWidth: 64,
                                 screwNumberOf: 150,
                             },
+                            weight: 0,
                         },
                         {
                             index: 1,
@@ -331,6 +333,7 @@ const Frame = () => {
                                 screwWidth: 64,
                                 screwNumberOf: 150,
                             },
+                            weight: 0,
                         },
                     ],
                 }
@@ -446,6 +449,7 @@ const Frame = () => {
                                     TWFlanges[i].flanges[1].flange.neckHeight),
                         },
                         thickness: TWParts[i].parts[0].index,
+                        weight: 0,
                     },
                 ],
                 divided: TWParts[i].divided,
@@ -497,6 +501,7 @@ const Frame = () => {
                         screwWidth: TWFlanges[i].flanges[0].flange.screwWidth,
                         screwNumberOf: TWFlanges[i].flanges[0].flange.screwNumberOf,
                     },
+                    weight: 0,
                 },
                 {
                     index: 1,
@@ -531,6 +536,7 @@ const Frame = () => {
                         screwWidth: TWFlanges[i].flanges[1].flange.screwWidth,
                         screwNumberOf: TWFlanges[i].flanges[1].flange.screwNumberOf,
                     },
+                    weight: 0,
                 },
             ]
         }

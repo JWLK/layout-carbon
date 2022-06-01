@@ -24,6 +24,36 @@ export const InitPart: TWPart = {
     index: 0,
     part: { top: 4950, bottom: 7300, height: 100000 },
     thickness: 50,
+    weight: Math.abs(
+        ((Math.pow(4950, 2) -
+            Math.pow(4950 - 2 * 50, 2) +
+            Math.pow(7300, 2) -
+            Math.pow(7300 - 2 * 50, 2) +
+            4950 * 7300 -
+            (4950 - 2 * 50) * (7300 - 2 * 50)) *
+            Math.PI *
+            100000 *
+            1000 *
+            7.85 *
+            Math.pow(10, -6)) /
+            12,
+    ),
+    /*
+    (Math.abs(
+        ((Math.pow(TOP, 2) -
+            Math.pow(TOP - 2 * THICKNESS, 2) +
+            Math.pow(BOTTOM, 2) -
+            Math.pow(BOTTOM - 2 * THICKNESS, 2) +
+            TOP * BOTTOM -
+            (TOP - 2 * THICKNESS) * (BOTTOM - 2 * THICKNESS)) *
+            Math.PI *
+            HEIGHT *
+            1000 *
+            7.85 *
+            Math.pow(10, -6)) /
+            12,
+    ))
+    */
 }
 
 export const InitParts: TWParts = {
@@ -78,6 +108,7 @@ export const InitFlnages: TWFlanges = {
                 screwWidth: 0,
                 screwNumberOf: 0,
             },
+            weight: 0,
         },
         {
             index: 1,
@@ -95,6 +126,7 @@ export const InitFlnages: TWFlanges = {
                 screwWidth: 0,
                 screwNumberOf: 0,
             },
+            weight: 0,
         },
     ],
 }

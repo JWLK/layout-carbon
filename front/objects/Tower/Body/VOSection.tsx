@@ -4,6 +4,7 @@ interface Props {
     draws: ObjSquare[]
     currentIndex: number
     setCurrentIndex: (flag: number) => void
+    label: string
 }
 
 /*IMPORT*/
@@ -34,7 +35,7 @@ let TOTAL_GUIDE_COLOR = '#ffff00'
 let TOTAL_GUIDE_LINE_WIDTH = 0
 let TOTAL_GUIDE_TEXT_SIZE = 0
 
-const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
+const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
     /*SIZE CHECK*/
     const { windowWidth, windowHeight } = useGlobal()
     /*VIEW BOX*/
@@ -66,18 +67,29 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
 
     /*Element Calc*/
     var totalHeight = 0
+    var totalHeightText = 0
     var getDivided = draws.length
     var [eachObject, setEachObject] = useState([] as ObjSquare[])
 
     //Get totalHeight
     draws.slice(0, draws.length).forEach((e) => {
-        totalHeight += e.height
+        if (e.height < 8000) {
+            totalHeight += 8000
+        } else {
+            totalHeight += e.height
+        }
+        totalHeightText += e.height
     })
     useEffect(() => {
         var object = draws.map((v) => {
             var top = (v.top / draws[0].bottom) * objWidth
             var bottom = (v.bottom / draws[0].bottom) * objWidth
             var height = (v.height / totalHeight) * objHeight
+            if (v.height < 8000) {
+                height = (8000 / totalHeight) * objHeight
+            } else {
+                height = (v.height / totalHeight) * objHeight
+            }
             return { top, bottom, height }
         })
         setEachObject(object)
@@ -147,6 +159,14 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                 guideEnable={GUIDE_ENABLE}
                 guideTextSize={GUIDE_TEXT_SIZE}
             /> */}
+            <text
+                x={-viewWidth / 2}
+                y={-viewHeight + LINE_WIDTH * 70}
+                fill="white"
+                fontSize={LINE_WIDTH * 50}
+            >
+                {label}
+            </text>
             {eachObject.map((draw, index) => (
                 <g onClick={() => setCurrentIndex(index)}>
                     <Square
@@ -183,7 +203,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex }) => {
                             guideLineColor={TOTAL_GUIDE_COLOR}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
-                            value={totalHeight / 1000}
+                            value={totalHeightText / 1000}
                             unit={'m'}
                         />
 

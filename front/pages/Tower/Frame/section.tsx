@@ -155,37 +155,76 @@ const Frame = () => {
                 v.thickness = valueNumber
                 return v
             })
+            var flangeWithNeckOutsideMass = 0
+            var flangeBodyInnerMass = 0
             //Set each Flange -> neckWidth
-            flangeObject = flangesData[currentSectionIndex].flanges.map((v) => {
-                v.flange.neckWidth = valueNumber
-                v.flange.pcDia = v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
-                v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
-                v.flange.param_b = (v.flange.outDia - valueNumber - v.flange.pcDia) / 2
-                var flangeWithNeckOutsideMass = Math.abs(
-                    ((Math.pow(v.flange.outDia, 2) -
-                        Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
-                        Math.pow(v.flange.outDia, 2) -
-                        Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
-                        v.flange.outDia * v.flange.outDia -
-                        (v.flange.outDia - 2 * valueNumber) * (v.flange.outDia - 2 * valueNumber)) *
-                        Math.PI *
-                        (v.flange.flangeHeight + v.flange.neckHeight) *
-                        1000 *
-                        7.85 *
-                        Math.pow(10, -6)) /
-                        12,
-                )
-                var flangeBodyInnerMass = Math.abs(
-                    ((Math.pow(v.flange.outDia - 2 * valueNumber, 2) -
-                        Math.pow(v.flange.inDia, 2)) *
-                        Math.PI *
-                        v.flange.flangeHeight *
-                        1000 *
-                        7.85 *
-                        Math.pow(10, -6)) /
-                        4,
-                )
-                v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+            flangeObject = flangesData[currentSectionIndex].flanges.map((v, index) => {
+                if (currentSectionIndex == 0) {
+                    v.flange.neckWidth = valueNumber
+                    v.flange.pcDia = v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
+                    v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                    v.flange.param_b = (v.flange.outDia - valueNumber - v.flange.pcDia) / 2
+                    flangeWithNeckOutsideMass = Math.abs(
+                        ((Math.pow(v.flange.outDia, 2) -
+                            Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
+                            Math.pow(v.flange.outDia, 2) -
+                            Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
+                            v.flange.outDia * v.flange.outDia -
+                            (v.flange.outDia - 2 * valueNumber) *
+                                (v.flange.outDia - 2 * valueNumber)) *
+                            Math.PI *
+                            (v.flange.flangeHeight + v.flange.neckHeight) *
+                            1000 *
+                            7.85 *
+                            Math.pow(10, -6)) /
+                            12,
+                    )
+                    flangeBodyInnerMass = Math.abs(
+                        ((Math.pow(v.flange.outDia - 2 * valueNumber, 2) -
+                            Math.pow(v.flange.inDia, 2)) *
+                            Math.PI *
+                            v.flange.flangeHeight *
+                            1000 *
+                            7.85 *
+                            Math.pow(10, -6)) /
+                            4,
+                    )
+                    v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                } else {
+                    if (index === 1) {
+                        v.flange.neckWidth = valueNumber
+                        v.flange.pcDia =
+                            v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
+                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        v.flange.param_b = (v.flange.outDia - valueNumber - v.flange.pcDia) / 2
+                        flangeWithNeckOutsideMass = Math.abs(
+                            ((Math.pow(v.flange.outDia, 2) -
+                                Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
+                                Math.pow(v.flange.outDia, 2) -
+                                Math.pow(v.flange.outDia - 2 * valueNumber, 2) +
+                                v.flange.outDia * v.flange.outDia -
+                                (v.flange.outDia - 2 * valueNumber) *
+                                    (v.flange.outDia - 2 * valueNumber)) *
+                                Math.PI *
+                                (v.flange.flangeHeight + v.flange.neckHeight) *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                12,
+                        )
+                        flangeBodyInnerMass = Math.abs(
+                            ((Math.pow(v.flange.outDia - 2 * valueNumber, 2) -
+                                Math.pow(v.flange.inDia, 2)) *
+                                Math.PI *
+                                v.flange.flangeHeight *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                4,
+                        )
+                        v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                    }
+                }
                 return v
             })
 
@@ -333,28 +372,27 @@ const Frame = () => {
             })
             console.log('flanges', flanges)
 
-            rawData.flangesData[currentSectionIndex].flanges = flanges
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            // localStorage.setItem(
-            //     keyRawData,
-            //     JSON.stringify(updateRawDatadSyncWithFlange(flange, selectedIndex)),
-            // )
+            // rawData.flangesData[currentSectionIndex].flanges = flanges
+            // localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithFlange(flanges)))
             mutate()
         },
         [currentSectionIndex, flangesData, keyRawData, rawData],
     )
 
-    const updateRawDatadSyncWithFlange = (flanges: TWFlange[], flangeIndex: number) => {
+    const updateRawDatadSyncWithFlange = (flanges: TWFlange[]) => {
         //Out Diameter => part
         // partsData[currentSectionIndex].parts[0].part.bottom = flanges[0].outDia
         // partsData[currentSectionIndex].parts[partsData.length - 1].part.top = flanges[1].outDia
-        partsData[currentSectionIndex].parts[0].thickness = flanges[flangeIndex].flange.neckWidth
+        // partsData[currentSectionIndex].parts[0].thickness = flanges[flangeIndex].flange.neckWidth
         // partsData[currentSectionIndex].parts[partsData.length - 1].thickness = flanges[1].neckWidth
 
-        rawData.initial = initData
-        rawData.sectionData = sectionData
-        rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
-        rawData.flangesData[currentSectionIndex].flanges = flanges
+        // rawData.initial = initData
+        // rawData.sectionData = sectionData
+        // rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
+        if (currentSectionIndex !== sectionData.length) {
+            rawData.flangesData[currentSectionIndex + 1].flanges[0] = flanges[1]
+        }
 
         return rawData
     }
@@ -374,7 +412,8 @@ const Frame = () => {
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
-                var eachHeight = Math.round(totalHeight / divided)
+                // var eachHeight = Math.round(totalHeight / divided)
+                var eachHeight = totalHeight / divided
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
                 var eachHypo =
                     Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
@@ -386,12 +425,16 @@ const Frame = () => {
                 // console.log('angle', (180 / Math.PI) * angle)
 
                 /* Calc Value */
-                var sectionWidthTop = Math.round(
-                    topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
-                )
-                var sectionWidthBottom = Math.round(
-                    topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
-                )
+                // var sectionWidthTop = Math.round(
+                //     topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
+                // )
+                // var sectionWidthBottom = Math.round(
+                //     topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
+                // )
+                var sectionWidthTop = topUpperOutDia + eachHypo * i * Math.sin(radian) * 2
+
+                var sectionWidthBottom = topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2
+
                 // console.log(
                 //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
                 // )
@@ -1043,44 +1086,77 @@ const Frame = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <TextWrapTableCell width={5}>
-                                                    <TextInput
-                                                        id={`flange-flangeWidth-UPR`}
-                                                        labelText=""
-                                                        name="flangeWidth"
-                                                        value={
-                                                            flangesData[currentSectionIndex]
-                                                                .flanges[0].flange.flangeWidth
-                                                        }
-                                                        onChange={(e) => onChangeFlnageData(e, 0)}
-                                                    />
+                                                    {!currentSectionIndex ? (
+                                                        <TextInput
+                                                            id={`flange-flangeWidth-UPR`}
+                                                            labelText=""
+                                                            name="flangeWidth"
+                                                            value={
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.flangeWidth
+                                                            }
+                                                            onChange={(e) =>
+                                                                onChangeFlnageData(e, 0)
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div style={{ color: '#fff' }}>
+                                                            {
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.flangeWidth
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </TextWrapTableCell>
                                             </TableCell>
                                             <TableCell>
                                                 <TextWrapTableCell width={5}>
-                                                    <TextInput
-                                                        id={`flange-flangeHeight-UPR`}
-                                                        labelText=""
-                                                        name="flangeHeight"
-                                                        value={
-                                                            flangesData[currentSectionIndex]
-                                                                .flanges[0].flange.flangeHeight
-                                                        }
-                                                        onChange={(e) => onChangeFlnageData(e, 0)}
-                                                    />
+                                                    {!currentSectionIndex ? (
+                                                        <TextInput
+                                                            id={`flange-flangeHeight-UPR`}
+                                                            labelText=""
+                                                            name="flangeHeight"
+                                                            value={
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.flangeHeight
+                                                            }
+                                                            onChange={(e) =>
+                                                                onChangeFlnageData(e, 0)
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div style={{ color: '#fff' }}>
+                                                            {
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.flangeHeight
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </TextWrapTableCell>
                                             </TableCell>
                                             <TableCell>
                                                 <TextWrapTableCell width={5}>
-                                                    <TextInput
-                                                        id={`flange-neckHeight-UPR`}
-                                                        labelText=""
-                                                        name="neckHeight"
-                                                        value={
-                                                            flangesData[currentSectionIndex]
-                                                                .flanges[0].flange.neckHeight
-                                                        }
-                                                        onChange={(e) => onChangeFlnageData(e, 0)}
-                                                    />
+                                                    {!currentSectionIndex ? (
+                                                        <TextInput
+                                                            id={`flange-neckHeight-UPR`}
+                                                            labelText=""
+                                                            name="neckHeight"
+                                                            value={
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.neckHeight
+                                                            }
+                                                            onChange={(e) =>
+                                                                onChangeFlnageData(e, 0)
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div style={{ color: '#fff' }}>
+                                                            {
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.neckHeight
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </TextWrapTableCell>
                                             </TableCell>
                                             <TableCell>
@@ -1095,17 +1171,28 @@ const Frame = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <TextWrapTableCell width={5}>
-                                                    <TextInput
-                                                        style={{ color: '#ff00ff' }}
-                                                        id={`flange-neckWidth-LWR`}
-                                                        labelText=""
-                                                        name="neckWidth"
-                                                        value={
-                                                            flangesData[currentSectionIndex]
-                                                                .flanges[0].flange.neckWidth
-                                                        }
-                                                        onChange={(e) => onChangeFlnageData(e, 0)}
-                                                    />
+                                                    {!currentSectionIndex ? (
+                                                        <TextInput
+                                                            style={{ color: '#ff00ff' }}
+                                                            id={`flange-neckWidth-LWR`}
+                                                            labelText=""
+                                                            name="neckWidth"
+                                                            value={
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.neckWidth
+                                                            }
+                                                            onChange={(e) =>
+                                                                onChangeFlnageData(e, 0)
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div style={{ color: '#ff00ff' }}>
+                                                            {
+                                                                flangesData[currentSectionIndex]
+                                                                    .flanges[0].flange.neckWidth
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </TextWrapTableCell>
                                             </TableCell>
                                             <TableCell>
@@ -1387,15 +1474,19 @@ const Frame = () => {
                                                         </TextWrapTableCell>
                                                     </TableCell>
 
-                                                    <TableCell>{v.part.top}</TableCell>
+                                                    <TableCell>{Math.round(v.part.top)}</TableCell>
 
                                                     <TableCell>
-                                                        {v.part.top - v.thickness * 2}
+                                                        {Math.round(v.part.top - v.thickness * 2)}
                                                     </TableCell>
 
-                                                    <TableCell>{v.part.bottom}</TableCell>
                                                     <TableCell>
-                                                        {v.part.bottom - v.thickness * 2}
+                                                        {Math.round(v.part.bottom)}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {Math.round(
+                                                            v.part.bottom - v.thickness * 2,
+                                                        )}
                                                     </TableCell>
 
                                                     <TableCell>

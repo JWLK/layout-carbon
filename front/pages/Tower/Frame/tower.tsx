@@ -193,9 +193,9 @@ const Frame = () => {
         let invalidList = sectionData
             .slice(0)
             .reverse()
-            .map((v) => {
+            .map((v, index) => {
                 const invalidCheckLength = v.section.height > MfrD!.capacity[0].length * 1000
-                const invalidTopBottom = v.section.top > v.section.bottom
+                const invalidTopBottom = index !== 0 && v.section.top > v.section.bottom
                 const invalidCheckTop = v.section.top > MfrD!.capacity[0].diameter * 1000
                 const invalidCheckBottom = v.section.bottom > MfrD!.capacity[0].diameter * 1000
 
@@ -894,7 +894,7 @@ const Frame = () => {
                                 {sectionData
                                     .slice(0)
                                     .reverse()
-                                    .map((v) => {
+                                    .map((v, index) => {
                                         const notSaveValidation = divided !== sectionData.length
                                         const linearTypeValidationNotLastSection =
                                             !v.tapered && v.index !== sectionData.length - 1
@@ -903,7 +903,8 @@ const Frame = () => {
                                         const invalidTextLength = `Length <= ${
                                             MfrD.capacity[0].length * 1000
                                         }`
-                                        const invalidTopBottom = v.section.top > v.section.bottom
+                                        const invalidTopBottom =
+                                            index !== 0 && v.section.top > v.section.bottom
                                         const invalidCheckTop =
                                             v.section.top > MfrD.capacity[0].diameter * 1000
                                         const invalidCheckBottom =

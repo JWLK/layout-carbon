@@ -2,15 +2,19 @@
 import {
     ObjPoint,
     ObjSquare,
+    ObjSector,
+    ObjFlange,
+    ObjFrequency,
     TWInitialValue,
     TWRawData,
     TWSection,
     TWPart,
     TWParts,
+    TWFlange,
     TWFlanges,
-    ObjSector,
     TWSector,
     TWSectors,
+    TWFrequency,
 } from 'typings/object'
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 
@@ -109,6 +113,8 @@ export const InitFlnages: TWFlanges = {
                 screwNumberOf: 0,
             },
             weight: 0,
+            flangeWeight: 0,
+            partWeight: 0,
         },
         {
             index: 1,
@@ -127,6 +133,8 @@ export const InitFlnages: TWFlanges = {
                 screwNumberOf: 0,
             },
             weight: 0,
+            flangeWeight: 0,
+            partWeight: 0,
         },
     ],
 }
@@ -146,3 +154,21 @@ export const RawData: TWRawData = {
     sectorsData: [InitSecotors],
     flangesData: [InitFlnages],
 }
+
+export const InitFrequency: TWFrequency = {
+    index: 0,
+    frequency: {
+        l: 0,
+        flangeLWR: 0,
+        flangeLWRAdd: 0,
+        m: 0,
+        i: 0,
+        j: 0,
+        mExtra: 0,
+        mExtraAdd: 0,
+        flangeUPR: 0,
+        flangeUPRAdd: 0,
+    },
+}
+
+export const FreqData: TWFrequency[] = [InitFrequency]

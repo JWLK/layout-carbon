@@ -244,6 +244,8 @@ const SectionOutline = () => {
                                 screwNumberOf: 0,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                         {
                             index: 1,
@@ -262,6 +264,8 @@ const SectionOutline = () => {
                                 screwNumberOf: 0,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                     ],
                 }

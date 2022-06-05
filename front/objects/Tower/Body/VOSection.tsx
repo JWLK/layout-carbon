@@ -203,7 +203,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
                             guideLineColor={TOTAL_GUIDE_COLOR}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
-                            value={totalHeightText / 1000}
+                            value={Math.round(totalHeightText) / 1000}
                             unit={'m'}
                         />
 
@@ -226,7 +226,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
                             guideLineColor={'#42be65'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
-                            value={draws[draws.length - 1]?.top / 1000}
+                            value={Math.round(draws[draws.length - 1]?.top) / 1000}
                             unit={'m'}
                         />
 
@@ -245,7 +245,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
                             guideLineColor={'#be95ff'}
                             guideLineWidth={TOTAL_GUIDE_LINE_WIDTH}
                             guideTextSize={TOTAL_GUIDE_TEXT_SIZE}
-                            value={draws[0]?.bottom / 1000}
+                            value={Math.round(draws[0]?.bottom) / 1000}
                             unit={'m'}
                         />
                     </g>

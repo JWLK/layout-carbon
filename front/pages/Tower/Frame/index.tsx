@@ -236,6 +236,8 @@ const Frame = () => {
                                 screwNumberOf: 150,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                         {
                             index: 1,
@@ -263,6 +265,8 @@ const Frame = () => {
                                 screwNumberOf: 150,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                     ],
                 }

@@ -83,6 +83,14 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         >
                             0X.M-Section
                         </SideNavLink>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/model/frequency`}
+                        >
+                            0X.Natural Frequency
+                        </SideNavLink>
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}

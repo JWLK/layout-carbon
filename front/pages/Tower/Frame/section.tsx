@@ -145,7 +145,7 @@ const Frame = () => {
     const [totalThickness, setTotalThickness] = useState(50)
     const onChangeTotalThickness = useCallback(
         (e) => {
-            console.log('onChangeTotalThickness')
+            // console.log('onChangeTotalThickness')
             const valueNumber = parseInt(e.value)
             var partObject = [] as TWPart[]
             var flangeObject = [] as TWFlange[]
@@ -190,6 +190,8 @@ const Frame = () => {
                             4,
                     )
                     v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                    v.flangeWeight = flangeBodyInnerMass
+                    v.partWeight = flangeWithNeckOutsideMass
                 } else {
                     if (index === 1) {
                         v.flange.neckWidth = valueNumber
@@ -223,6 +225,8 @@ const Frame = () => {
                                 4,
                         )
                         v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                        v.flangeWeight = flangeBodyInnerMass
+                        v.partWeight = flangeWithNeckOutsideMass
                     }
                 }
                 return v
@@ -243,6 +247,10 @@ const Frame = () => {
     const [checkDiaOutLWR, setCheckDiaOutLWR] = useState(0)
     const [checkDiaInLWR, setCheckDiaInLWR] = useState(0)
     const [checkBodyMass, setCheckBodyMass] = useState(0)
+
+    const [sectionSlopeHeight, setSectionSlopeHeight] = useState(0)
+    const [sectionSlopeDiameter, setSectionSlopeDiameter] = useState(0)
+    const [sectionSlopeValue, setSectionSlopeValue] = useState(0)
     useEffect(() => {
         if (sectionData.length && partsData.length && flangesData.length) {
             var bodyHeight =
@@ -260,6 +268,7 @@ const Frame = () => {
             setCheckDiaInUPR(diaInUPR)
             setCheckDiaOutLWR(diaOutLWR)
             setCheckDiaInLWR(diaInLWR)
+
             var bodyMass = Math.abs(
                 ((Math.pow(diaOutUPR, 2) -
                     Math.pow(diaInUPR, 2) +
@@ -274,9 +283,28 @@ const Frame = () => {
                     12,
             )
             setCheckBodyMass(bodyMass / 1000)
+
+            var slopeHeight =
+                checkBodyHeight +
+                flangesData[currentSectionIndex].flanges[1].flange.flangeHeight +
+                flangesData[currentSectionIndex].flanges[1].flange.neckHeight
+            setSectionSlopeHeight(slopeHeight)
+
+            var slopeDiameter =
+                flangesData[currentSectionIndex].flanges[0].flange.outDia -
+                flangesData[currentSectionIndex].flanges[1].flange.outDia
+            setSectionSlopeDiameter(slopeDiameter)
+
+            var slopeValue = slopeDiameter / slopeHeight / 2
+            setSectionSlopeValue(slopeValue)
+
+            // console.log(
+            //     `${currentSectionIndex + 1} Slope : ${slopeHeight} ${slopeDiameter} ${slopeValue}`,
+            // )
         }
     }, [
         TD,
+        checkBodyHeight,
         currentSectionIndex,
         flangesData,
         keyRawData,
@@ -317,6 +345,7 @@ const Frame = () => {
         (e, selectedIndex) => {
             // console.log(e.target.name, selectedIndex, currentSectionIndex)
             // console.log('flangeData', flangesData[currentSectionIndex])
+            console.log('currentSectionIndex ' + currentSectionIndex)
             const flanges = flangesData[currentSectionIndex].flanges.map((v, index) => {
                 const typeObject: typeObjFlange = e.target.name
                 if (index === selectedIndex) {
@@ -367,10 +396,12 @@ const Frame = () => {
                             4,
                     )
                     v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                    v.flangeWeight = flangeBodyInnerMass
+                    v.partWeight = flangeWithNeckOutsideMass
                 }
                 return v
             })
-            console.log('flanges', flanges)
+            // console.log('flanges', flanges)
 
             // rawData.flangesData[currentSectionIndex].flanges = flanges
             // localStorage.setItem(keyRawData, JSON.stringify(rawData))
@@ -390,7 +421,7 @@ const Frame = () => {
         // rawData.initial = initData
         // rawData.sectionData = sectionData
         // rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
-        if (currentSectionIndex !== sectionData.length) {
+        if (currentSectionIndex !== sectionData.length - 1) {
             rawData.flangesData[currentSectionIndex + 1].flanges[0] = flanges[1]
         }
 
@@ -410,42 +441,40 @@ const Frame = () => {
             var topUpperOutDia = sectionData[currentSectionIndex].section.top
             var bottomLowerOutDia = sectionData[currentSectionIndex].section.bottom
 
+            // for (var i = 0; i < divided; i++) {
+            //     var partHeight = totalHeight / divided
+            //     var partHeightSum = partHeight * (i + 1)
+
+            //     var partDiameter = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSum
+            //     console.log(`Part Number ${i} - ${partDiameter}`)
+            // }
+
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
-                // var eachHeight = Math.round(totalHeight / divided)
-                var eachHeight = totalHeight / divided
+                var eachHeight = Math.round(totalHeight / divided)
+                // var eachHeight = totalHeight / divided
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
                 var eachHypo =
                     Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
                 var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
 
-                // console.log('eachHeight', eachHeight)
-                // console.log('triBottom', triBottom)
-                // console.log('eachHypo', eachHypo)
-                // console.log('angle', (180 / Math.PI) * angle)
+                var partHeight = totalHeight / divided
+                var partHeightSumUPR = partHeight * (divided - i)
+                var partHeightSumLWR = partHeight * (divided - 1 - i)
 
-                /* Calc Value */
-                // var sectionWidthTop = Math.round(
-                //     topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
-                // )
-                // var sectionWidthBottom = Math.round(
-                //     topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
-                // )
-                var sectionWidthTop = topUpperOutDia + eachHypo * i * Math.sin(radian) * 2
+                var partWidthTop = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumUPR
+                var partWidthBottom = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumLWR
 
-                var sectionWidthBottom = topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2
+                // console.log(`Part Number ${i} - ${partWidthTop} / ${partWidthBottom}`)
 
-                // console.log(
-                //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
-                // )
                 var sectoinWeight = Math.abs(
-                    ((Math.pow(sectionWidthTop, 2) -
-                        Math.pow(sectionWidthTop - 2 * totalThickness, 2) +
-                        Math.pow(sectionWidthBottom, 2) -
-                        Math.pow(sectionWidthBottom - 2 * totalThickness, 2) +
-                        sectionWidthTop * sectionWidthBottom -
-                        (sectionWidthTop - 2 * totalThickness) *
-                            (sectionWidthBottom - 2 * totalThickness)) *
+                    ((Math.pow(partWidthTop, 2) -
+                        Math.pow(partWidthTop - 2 * totalThickness, 2) +
+                        Math.pow(partWidthBottom, 2) -
+                        Math.pow(partWidthBottom - 2 * totalThickness, 2) +
+                        partWidthTop * partWidthBottom -
+                        (partWidthTop - 2 * totalThickness) *
+                            (partWidthBottom - 2 * totalThickness)) *
                         Math.PI *
                         eachHeight *
                         1000 *
@@ -458,8 +487,8 @@ const Frame = () => {
                 partArray[divided - 1 - i] = {
                     index: i,
                     part: {
-                        top: sectionWidthTop,
-                        bottom: sectionWidthBottom,
+                        top: partWidthTop,
+                        bottom: partWidthBottom,
                         height: eachHeight,
                     },
                     thickness: totalThickness,
@@ -497,16 +526,38 @@ const Frame = () => {
     type typeObjSquare = 'top' | 'bottom' | 'height' | 'thickness'
     const onChangePartsData = useCallback(
         (e, selectedIndex) => {
-            console.log(e.target.name, selectedIndex)
+            // console.log(e.target.name, selectedIndex)
             const parts = partsData[currentSectionIndex].parts.map((v, index) => {
                 const typeObject: typeObjSquare = e.target.name
                 if (index === selectedIndex) {
-                    if (typeObject !== 'thickness') {
-                        v.part[`${typeObject}`] = parseInt(
-                            e.target.value !== '' ? e.target.value : 0,
-                        )
+                    var inputValue = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    if (typeObject == 'height') {
+                        v.part[`${typeObject}`] = inputValue
+                        var partHeightSum =
+                            selectedIndex == 0
+                                ? 0
+                                : partsData[currentSectionIndex].parts
+                                      .map((v) => v.part.height)
+                                      .slice(0, selectedIndex)
+                                      .reduce((prev, next) => prev + next)
+
+                        // console.log('sectionSlopeValue', sectionSlopeValue)
+                        // console.log('partHeightSumUPR', partHeightSum + inputValue)
+                        // console.log('partHeightSumLWR', partHeightSum)
+                        var partWidthUPR =
+                            sectionData[currentSectionIndex].section.bottom +
+                            sectionSlopeValue * 2 * -(inputValue + partHeightSum)
+                        var partWidthLWR =
+                            sectionData[currentSectionIndex].section.bottom +
+                            sectionSlopeValue * 2 * -partHeightSum
+                        // console.log('partWidthUPR ' + partWidthUPR)
+                        // console.log('partWidthLWR ' + partWidthLWR)
+                        v.part.top = partWidthUPR
+                        v.part.bottom = partWidthLWR
+                    } else if (typeObject == 'top' || typeObject == 'bottom') {
+                        v.part[`${typeObject}`] = inputValue
                     } else {
-                        v.thickness = parseInt(e.target.value !== '' ? e.target.value : 0)
+                        v.thickness = inputValue
                     }
                     var bodyMass = Math.abs(
                         ((Math.pow(v.part.top, 2) -
@@ -535,7 +586,7 @@ const Frame = () => {
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
             mutate()
         },
-        [currentSectionIndex, keyRawData, partsData, rawData],
+        [currentSectionIndex, keyRawData, partsData, rawData, sectionData, sectionSlopeValue],
     )
 
     const updateRawDatadSyncWithParts = (parts: TWPart[]) => {
@@ -613,7 +664,7 @@ const Frame = () => {
                                     draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
                                     currentIndex={currentPartIndex}
                                     setCurrentIndex={setCurrentPartIndex}
-                                    label={`Section ${sectionData.length - currentSectionIndex}`}
+                                    label={`Section ${currentSectionIndex + 1}`}
                                 />
                             )}
                         </GraphicViewOrigin>
@@ -649,7 +700,7 @@ const Frame = () => {
                                 onChange={onChangeSectionIndex}
                             >
                                 {partsData.map((v, index) => (
-                                    <ProgressStep label={`SECTION ${sectionData.length - index}`} />
+                                    <ProgressStep label={`SECTION ${index + 1}`} />
                                 ))}
                             </ProgressIndicator>
                             <SectionDivider />
@@ -672,16 +723,31 @@ const Frame = () => {
                                             />
                                         )}
 
-                                        <Button
-                                            kind="tertiary"
-                                            renderIcon={ArrowRight32}
-                                            disabled={!true}
-                                            onClick={() =>
-                                                setCurrentSectionIndex(currentSectionIndex + 1)
-                                            }
-                                        >
-                                            NEXT
-                                        </Button>
+                                        {currentSectionIndex !== sectionData.length - 1 && (
+                                            <Button
+                                                kind="tertiary"
+                                                renderIcon={ArrowRight32}
+                                                disabled={!true}
+                                                onClick={() =>
+                                                    setCurrentSectionIndex(currentSectionIndex + 1)
+                                                }
+                                            >
+                                                NEXT
+                                            </Button>
+                                        )}
+
+                                        {currentSectionIndex == sectionData.length - 1 && (
+                                            <Button
+                                                style={{ background: '#0f62fe' }}
+                                                kind="tertiary"
+                                                renderIcon={ArrowRight32}
+                                                disabled={!true}
+                                                as={NavLink}
+                                                to={`/workspace/${workspace}/model/frequency`}
+                                            >
+                                                Go to Natural Frequency Check
+                                            </Button>
+                                        )}
                                     </div>
                                 </SettingTitle>
                                 {/* {!validInitialData && (
@@ -1826,16 +1892,31 @@ const Frame = () => {
                                         />
                                     )}
 
-                                    <Button
-                                        kind="tertiary"
-                                        renderIcon={ArrowRight32}
-                                        disabled={!true}
-                                        onClick={() =>
-                                            setCurrentSectionIndex(currentSectionIndex + 1)
-                                        }
-                                    >
-                                        NEXT
-                                    </Button>
+                                    {currentSectionIndex !== sectionData.length - 1 && (
+                                        <Button
+                                            kind="tertiary"
+                                            renderIcon={ArrowRight32}
+                                            disabled={!true}
+                                            onClick={() =>
+                                                setCurrentSectionIndex(currentSectionIndex + 1)
+                                            }
+                                        >
+                                            NEXT
+                                        </Button>
+                                    )}
+
+                                    {currentSectionIndex == sectionData.length - 1 && (
+                                        <Button
+                                            style={{ background: '#0f62fe' }}
+                                            kind="tertiary"
+                                            renderIcon={ArrowRight32}
+                                            disabled={!true}
+                                            as={NavLink}
+                                            to={`/workspace/${workspace}/model/frequency`}
+                                        >
+                                            Go to Natural Frequency Check
+                                        </Button>
+                                    )}
                                 </div>
                             </>
                         </SettingViewFit>

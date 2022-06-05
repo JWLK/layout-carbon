@@ -10,6 +10,21 @@ export interface ObjSquare {
     height: number
 }
 
+export interface ObjFlange {
+    outDia: number
+    inDia: number
+    flangeWidth: number
+    flangeHeight: number
+    neckWidth: number
+    neckHeight: number
+    minScrewWidth: number
+    pcDia: number
+    param_a: number
+    param_b: number
+    screwWidth: number
+    screwNumberOf: number
+}
+
 export interface ObjSector {
     degree: number
     radian: number //6
@@ -29,19 +44,12 @@ export interface ObjSector {
     paperSheetHeight: number // 11
 }
 
-export interface ObjFlange {
-    outDia: number
-    inDia: number
-    flangeWidth: number
-    flangeHeight: number
-    neckWidth: number
-    neckHeight: number
-    minScrewWidth: number
-    pcDia: number
-    param_a: number
-    param_b: number
-    screwWidth: number
-    screwNumberOf: number
+export interface TWRawData {
+    initial: TWInitialValue
+    sectionData: TWSection[]
+    partsData: TWParts[]
+    sectorsData: TWSectors[]
+    flangesData: TWFlanges[]
 }
 
 export interface TWInitialValue {
@@ -52,14 +60,6 @@ export interface TWInitialValue {
     maxHeight: number
     custom: boolean
     divided: number
-}
-
-export interface TWRawData {
-    initial: TWInitialValue
-    sectionData: TWSection[]
-    partsData: TWParts[]
-    sectorsData: TWSectors[]
-    flangesData: TWFlanges[]
 }
 
 export interface TWSection {
@@ -81,6 +81,19 @@ export interface TWParts {
     divided: number
 }
 
+export interface TWFlange {
+    index: number
+    flange: ObjFlange
+    weight: number
+    flangeWeight: number
+    partWeight: number
+}
+
+export interface TWFlanges {
+    index: number
+    flanges: TWFlange[]
+}
+
 export interface TWSector {
     index: number //PartIndex
     sector: ObjSector //sector Data
@@ -91,13 +104,20 @@ export interface TWSectors {
     sectors: TWSector[] //Each Part Index => sector Data
 }
 
-export interface TWFlange {
-    index: number
-    flange: ObjFlange
-    weight: number
+export interface ObjFrequency {
+    l: number
+    flangeLWR: number
+    flangeLWRAdd: number
+    m: number
+    i: number
+    j: number
+    mExtra: number
+    mExtraAdd: number
+    flangeUPR: number
+    flangeUPRAdd: number
 }
 
-export interface TWFlanges {
+export interface TWFrequency {
     index: number
-    flanges: TWFlange[]
+    frequency: ObjFrequency
 }

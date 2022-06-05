@@ -292,6 +292,8 @@ const ViewEachSection = () => {
                             screwNumberOf: 150,
                         },
                         weight: 0,
+                        flangeWeight: 0,
+                        partWeight: 0,
                     },
 
                     {
@@ -322,6 +324,8 @@ const ViewEachSection = () => {
                             screwNumberOf: 150,
                         },
                         weight: 0,
+                        flangeWeight: 0,
+                        partWeight: 0,
                     },
                 ],
             }

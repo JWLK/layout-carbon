@@ -22,6 +22,7 @@ const Model_02 = loadable(() => import('@pages/Tower/02_'))
 const Frame = loadable(() => import('@pages/Tower/Frame'))
 const ModelTower = loadable(() => import('@pages/Tower/Frame/tower'))
 const ModelSection = loadable(() => import('@pages/Tower/Frame/section'))
+const ModelFrequency = loadable(() => import('@pages/Tower/Frame/frequency'))
 
 //Hooks & Util & Type
 import useInput from '@hooks/useInput'
@@ -198,6 +199,7 @@ const Workspace = () => {
                         <Route path="/frame/" element={<Frame />} />
                         <Route path="/model/tower" element={<ModelTower />} />
                         <Route path="/model/section" element={<ModelSection />} />
+                        <Route path="/model/frequency" element={<ModelFrequency />} />
                         <Route path="/project/" element={<Project />} />
                         <Route path="/channel/:channel" element={<Channel />} />
                         <Route path="/dm/:id" element={<DirectMessage />} />

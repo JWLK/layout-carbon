@@ -307,6 +307,8 @@ const Frame = () => {
                                 screwNumberOf: 150,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                         {
                             index: 1,
@@ -334,6 +336,8 @@ const Frame = () => {
                                 screwNumberOf: 150,
                             },
                             weight: 0,
+                            flangeWeight: 0,
+                            partWeight: 0,
                         },
                     ],
                 }
@@ -502,6 +506,8 @@ const Frame = () => {
                         screwNumberOf: TWFlanges[i].flanges[0].flange.screwNumberOf,
                     },
                     weight: 0,
+                    flangeWeight: 0,
+                    partWeight: 0,
                 },
                 {
                     index: 1,
@@ -537,6 +543,8 @@ const Frame = () => {
                         screwNumberOf: TWFlanges[i].flanges[1].flange.screwNumberOf,
                     },
                     weight: 0,
+                    flangeWeight: 0,
+                    partWeight: 0,
                 },
             ]
         }

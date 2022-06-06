@@ -19,7 +19,8 @@
             "@resource/*": ["resource/*"],
             "@typings/*": ["typings/*"],
             "@utils/*": ["utils/*"],
-            "@objects/*": ["objects/*"]
+            "@objects/*": ["objects/*"],
+            "@calc/*": ["calc/*"]
         }
     }
 }

@@ -108,9 +108,12 @@ export interface ObjFrequency {
     l: number
     flangeLWR: number
     flangeLWRAdd: number
-    m: number
-    i: number
-    j: number
+    m_1: number
+    i_1: number
+    j_1: number
+    m_2: number
+    i_2: number
+    j_2: number
     mExtra: number
     mExtraAdd: number
     flangeUPR: number

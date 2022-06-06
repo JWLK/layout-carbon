@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import CalcMatrix from '@calc/Matrix'
+import { multiply } from 'mathjs'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
@@ -105,6 +107,11 @@ const Frequency = () => {
 
     const [frequencyData, setFrequencyData] = useState([] as TWFrequency[])
 
+    /* Matix Calc State */
+    const [w, setW] = useState(1)
+    var determinant = 0.0
+    var cnt = 0
+
     useEffect(() => {
         const ListAnyType = [] as any[]
         // const partsArray = [] as TWPart[]
@@ -136,182 +143,142 @@ const Frequency = () => {
         // )
         var flangeCounter = 0
         var massArray = ListAnyType.map((v) => {
-            var freqElement = [] as TWFrequency[]
+            var freqElement = {} as TWFrequency
             if (v.flange == undefined) {
-                freqElement = [
-                    {
-                        index: v.index,
-                        frequency: {
-                            l: v.part.height / 1000,
-                            flangeLWR: 0,
-                            flangeLWRAdd: 0,
-                            m: calcFreqM(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
-                            i: calcFreqI(0, v.part.top, v.part.bottom, v.thickness),
-                            j: calcFreqJ(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
-                            mExtra: 0,
-                            mExtraAdd: 0,
-                            flangeUPR: 0,
-                            flangeUPRAdd: 0,
-                        },
+                freqElement = {
+                    index: v.index,
+                    frequency: {
+                        l: v.part.height / 1000,
+                        flangeLWR: 0,
+                        flangeLWRAdd: 0,
+                        m_1: calcFreqM(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                        i_1: calcFreqI(0, v.part.top, v.part.bottom, v.thickness),
+                        j_1: calcFreqJ(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                        m_2: calcFreqM(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                        i_2: calcFreqI(1, v.part.top, v.part.bottom, v.thickness),
+                        j_2: calcFreqJ(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                        mExtra: 0,
+                        mExtraAdd: 0,
+                        flangeUPR: 0,
+                        flangeUPRAdd: 0,
                     },
-                    {
-                        index: v.index,
-                        frequency: {
-                            l: v.part.height / 1000,
-                            flangeLWR: 0,
-                            flangeLWRAdd: 0,
-                            m: calcFreqM(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
-                            i: calcFreqI(1, v.part.top, v.part.bottom, v.thickness),
-                            j: calcFreqJ(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
-                            mExtra: 0,
-                            mExtraAdd: 0,
-                            flangeUPR: 0,
-                            flangeUPRAdd: 0,
-                        },
-                    },
-                ]
+                }
+                return freqElement
             } else {
                 if (flangeCounter % 2 == 0) {
-                    freqElement = [
-                        {
-                            index: v.index,
-                            frequency: {
-                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
-                                flangeLWR: calcFreqM(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                flangeLWRAdd: 0,
-                                m: v.partWeight / 2000,
-                                i: calcFreqI(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                ),
-                                j: calcFreqJ(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                mExtra: 0,
-                                mExtraAdd: 0,
-                                flangeUPR: 0,
-                                flangeUPRAdd: 0,
-                            },
+                    freqElement = {
+                        index: v.index,
+                        frequency: {
+                            l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                            flangeLWR: v.flangeWeight / 1000,
+                            flangeLWRAdd: 0,
+                            m_1: calcFreqM(
+                                0,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            i_1: calcFreqI(0, v.flange.outDia, v.flange.outDia, v.flange.neckWidth),
+                            j_1: calcFreqJ(
+                                0,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            m_2: calcFreqM(
+                                1,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            i_2: calcFreqI(1, v.flange.outDia, v.flange.outDia, v.flange.neckWidth),
+                            j_2: calcFreqJ(
+                                1,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            mExtra: 0,
+                            mExtraAdd: 0,
+                            flangeUPR: 0,
+                            flangeUPRAdd: 0,
                         },
-                        {
-                            index: v.index,
-                            frequency: {
-                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
-                                flangeLWR: calcFreqM(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                flangeLWRAdd: 0,
-                                m: v.partWeight / 2000,
-                                i: calcFreqI(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                ),
-                                j: calcFreqJ(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                mExtra: 0,
-                                mExtraAdd: 0,
-                                flangeUPR: 0,
-                                flangeUPRAdd: 0,
-                            },
-                        },
-                    ]
+                    }
                 } else {
-                    freqElement = [
-                        {
-                            index: v.index,
-                            frequency: {
-                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
-                                flangeLWR: 0,
-                                flangeLWRAdd: 0,
-                                m: calcFreqM(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                i: calcFreqI(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                ),
-                                j: calcFreqJ(
-                                    0,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                mExtra: 0,
-                                mExtraAdd: 0,
-                                flangeUPR: v.flangeWeight / 1000,
-                                flangeUPRAdd: 0,
-                            },
+                    freqElement = {
+                        index: v.index,
+                        frequency: {
+                            l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                            flangeLWR: 0,
+                            flangeLWRAdd: 0,
+                            m_1: calcFreqM(
+                                0,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            i_1: calcFreqI(0, v.flange.outDia, v.flange.outDia, v.flange.neckWidth),
+                            j_1: calcFreqJ(
+                                0,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            m_2: calcFreqM(
+                                1,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            i_2: calcFreqI(1, v.flange.outDia, v.flange.outDia, v.flange.neckWidth),
+                            j_2: calcFreqJ(
+                                1,
+                                v.flange.outDia,
+                                v.flange.outDia,
+                                v.flange.neckWidth,
+                                v.flange.neckHeight + v.flange.flangeHeight,
+                            ),
+                            mExtra: 0,
+                            mExtraAdd: 0,
+                            flangeUPR: v.flangeWeight / 1000,
+                            flangeUPRAdd: 0,
                         },
-                        {
-                            index: v.index,
-                            frequency: {
-                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
-                                flangeLWR: 0,
-                                flangeLWRAdd: 0,
-                                m: calcFreqM(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                i: calcFreqI(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                ),
-                                j: calcFreqJ(
-                                    1,
-                                    v.flange.outDia,
-                                    v.flange.outDia,
-                                    v.flange.neckWidth,
-                                    v.flange.neckHeight + v.flange.flangeHeight,
-                                ),
-                                mExtra: 0,
-                                mExtraAdd: 0,
-                                flangeUPR: v.flangeWeight / 1000,
-                                flangeUPRAdd: 0,
-                            },
-                        },
-                    ]
+                    }
+                    flangeCounter++
                 }
-                flangeCounter++
+                return freqElement
             }
-            return freqElement
         })
+        ListAnyType.length &&
+            massArray.push({
+                index: massArray.length,
+                frequency: {
+                    l: 3.31224619239327,
+                    flangeLWR: 0,
+                    flangeLWRAdd: 0,
+                    m_1: 0,
+                    i_1: 4908738.52123405,
+                    j_1: 0,
+                    m_2: 0,
+                    i_2: 4908738.52123405,
+                    j_2: 0,
+                    mExtra: 0,
+                    mExtraAdd: 0,
+                    flangeUPR: 673052.5,
+                    flangeUPRAdd: 0,
+                },
+            })
         console.log(massArray)
-    }, [flangesData, partsData])
+        localStorage.setItem(keyFreqData, JSON.stringify(massArray))
+        mutateFreq()
+    }, [flangesData, keyFreqData, partsData])
 
     const calcFreqM = (
         type: number,
@@ -421,7 +388,52 @@ const Frequency = () => {
         }
         return result
     }
+    const MR = (value: number) => {
+        return Math.round(value * 1000) / 1000
+    }
 
+    const matChainCalc = (w: number, param: TWFrequency[], number: number) => {
+        console.log('Chain Calc')
+        var matResult = [CalcMatrix({ w, ...param[0].frequency })]
+
+        for (var i = 0; i < number; i++) {
+            matResult[i + 1] = multiply(CalcMatrix({ w, ...param[i + 1].frequency }), matResult[i])
+        }
+        return matResult
+    }
+
+    /**
+     * Matrix Calc Unit Test
+     * */
+    frequencyData.length &&
+        console.log(
+            'result - 10',
+            CalcMatrix({ w, ...frequencyData[9].frequency }).map((col) => col.map((v) => MR(v))),
+        )
+
+    const mulResult = () => {
+        var matMul = multiply(
+            CalcMatrix({ w, ...frequencyData[1].frequency }),
+            CalcMatrix({ w, ...frequencyData[0].frequency }),
+        )
+        return matMul
+    }
+    frequencyData.length && console.log('result - Multifly', mulResult())
+
+    /* Data Chain Matrix Calc Test */
+    frequencyData.length &&
+        console.log(
+            'Chain Calc',
+            matChainCalc(w, frequencyData, 49).map((e) => e.map((col) => col.map((v) => MR(v)))),
+        )
+    frequencyData.length &&
+        console.log(
+            'Determinant',
+            matChainCalc(w, frequencyData, 49)[49][2][2] *
+                matChainCalc(w, frequencyData, 49)[49][3][3] -
+                matChainCalc(w, frequencyData, 49)[49][2][3] *
+                    matChainCalc(w, frequencyData, 49)[49][3][2],
+        )
     /*
     ** Data Renewal
     *
@@ -472,19 +484,220 @@ const Frequency = () => {
                             <br />
                             <br />
                             <br />
-                            <Button renderIcon={MathCurve32}>Find Natural Frequency</Button>
+                            <Button kind="tertiary" renderIcon={Fade32}>
+                                Reset Parameter
+                            </Button>
                         </Column>
                     </Row>
                     <SectionDivider />
                     <Section>
-                        <h3>First STEP : Set Base data</h3>
-                        <Button renderIcon={Fade32}> Add First Component</Button>
+                        <h3>Natural Frequency Calculator</h3>
+                        <Button renderIcon={MathCurve32}>Find Natural Frequency</Button>
                         <Row as="article" narrow>
-                            <Column sm={4} md={8} lg={6} style={{ marginBlock: '0.5rem' }}>
-                                Project Components
+                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                W = {w}
+                            </Column>
+                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                Natural Frequency = {w / (2 * Math.PI)} Hz
+                            </Column>
+                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                Determinent = {determinant}
                             </Column>
                         </Row>
                     </Section>
+                    <SectionDivider />
+                    <>
+                        <InputLabel>Section Body Mass Table</InputLabel>
+                        <Table size="lg">
+                            <TableHead>
+                                <TableRow>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>No.</div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            L [m]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            M_Flange_LWR [kg]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            M_1 [kg]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            I_1 [m^4]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            J_1_CG [kgm^2]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            M_2 [kg]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            I_2 [m^4]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            J_2_CG [kgm^2]
+                                        </div>
+                                    </TableHeader>
+                                    <TableHeader>
+                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                            M_Flange_UPR [kg]
+                                        </div>
+                                    </TableHeader>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {/* Tower Parts */}
+                                {frequencyData.map((v, index) => {
+                                    return (
+                                        <TableRow key={`frequencyData-${index}`}>
+                                            <TableCell>
+                                                <TextWrapTableCell width={1}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#fff',
+                                                        }}
+                                                    >
+                                                        {index + 1}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={2}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#FF7700',
+                                                        }}
+                                                    >
+                                                        {v.frequency.l}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={4}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color:
+                                                                v.frequency.flangeLWR > 0
+                                                                    ? '#FFcc22'
+                                                                    : '#fff',
+                                                        }}
+                                                    >
+                                                        {v.frequency.flangeLWR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#9BBB59',
+                                                        }}
+                                                    >
+                                                        {v.frequency.m_1}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#538DD5',
+                                                        }}
+                                                    >
+                                                        {v.frequency.i_1}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#B1A0C7',
+                                                        }}
+                                                    >
+                                                        {v.frequency.j_1}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#9BBB59',
+                                                        }}
+                                                    >
+                                                        {v.frequency.m_2}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#538DD5',
+                                                        }}
+                                                    >
+                                                        {v.frequency.i_2}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={8}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color: '#B1A0C7',
+                                                        }}
+                                                    >
+                                                        {v.frequency.j_2}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={4}>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '0.7rem',
+                                                            color:
+                                                                v.frequency.flangeUPR > 0
+                                                                    ? '#FFcc22'
+                                                                    : '#fff',
+                                                        }}
+                                                    >
+                                                        {v.frequency.flangeUPR}
+                                                    </div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </>
                 </Grid>
             </PageTypeWide>
         </>

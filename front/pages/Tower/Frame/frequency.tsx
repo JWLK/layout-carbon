@@ -112,7 +112,7 @@ const Frequency = () => {
         // partsArray.push()
         // partsData.map((v) => console.log(v.parts))
         // flangesData.map((v) => console.log(v.flanges))
-        var indexCounter = 1
+        var indexCounter = 0
         partsData.map((v, vIndex) => {
             indexCounter += vIndex > 0 ? partsData[vIndex - 1].parts.length : 0
             flangesData[vIndex].flanges[0].index = indexCounter
@@ -131,10 +131,296 @@ const Frequency = () => {
             indexCounter += 1
         })
         console.log(ListAnyType)
-        ListAnyType.forEach((e) =>
-            e.flange == undefined ? console.log('part') : console.log('flange'),
-        )
+        // ListAnyType.forEach((e) =>
+        //     e.flange == undefined ? console.log('part') : console.log('flange'),
+        // )
+        var flangeCounter = 0
+        var massArray = ListAnyType.map((v) => {
+            var freqElement = [] as TWFrequency[]
+            if (v.flange == undefined) {
+                freqElement = [
+                    {
+                        index: v.index,
+                        frequency: {
+                            l: v.part.height / 1000,
+                            flangeLWR: 0,
+                            flangeLWRAdd: 0,
+                            m: calcFreqM(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                            i: calcFreqI(0, v.part.top, v.part.bottom, v.thickness),
+                            j: calcFreqJ(0, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                            mExtra: 0,
+                            mExtraAdd: 0,
+                            flangeUPR: 0,
+                            flangeUPRAdd: 0,
+                        },
+                    },
+                    {
+                        index: v.index,
+                        frequency: {
+                            l: v.part.height / 1000,
+                            flangeLWR: 0,
+                            flangeLWRAdd: 0,
+                            m: calcFreqM(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                            i: calcFreqI(1, v.part.top, v.part.bottom, v.thickness),
+                            j: calcFreqJ(1, v.part.top, v.part.bottom, v.thickness, v.part.height),
+                            mExtra: 0,
+                            mExtraAdd: 0,
+                            flangeUPR: 0,
+                            flangeUPRAdd: 0,
+                        },
+                    },
+                ]
+            } else {
+                if (flangeCounter % 2 == 0) {
+                    freqElement = [
+                        {
+                            index: v.index,
+                            frequency: {
+                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                                flangeLWR: calcFreqM(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                flangeLWRAdd: 0,
+                                m: v.partWeight / 2000,
+                                i: calcFreqI(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                ),
+                                j: calcFreqJ(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                mExtra: 0,
+                                mExtraAdd: 0,
+                                flangeUPR: 0,
+                                flangeUPRAdd: 0,
+                            },
+                        },
+                        {
+                            index: v.index,
+                            frequency: {
+                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                                flangeLWR: calcFreqM(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                flangeLWRAdd: 0,
+                                m: v.partWeight / 2000,
+                                i: calcFreqI(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                ),
+                                j: calcFreqJ(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                mExtra: 0,
+                                mExtraAdd: 0,
+                                flangeUPR: 0,
+                                flangeUPRAdd: 0,
+                            },
+                        },
+                    ]
+                } else {
+                    freqElement = [
+                        {
+                            index: v.index,
+                            frequency: {
+                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                                flangeLWR: 0,
+                                flangeLWRAdd: 0,
+                                m: calcFreqM(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                i: calcFreqI(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                ),
+                                j: calcFreqJ(
+                                    0,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                mExtra: 0,
+                                mExtraAdd: 0,
+                                flangeUPR: v.flangeWeight / 1000,
+                                flangeUPRAdd: 0,
+                            },
+                        },
+                        {
+                            index: v.index,
+                            frequency: {
+                                l: (v.flange.neckHeight + v.flange.flangeHeight) / 1000,
+                                flangeLWR: 0,
+                                flangeLWRAdd: 0,
+                                m: calcFreqM(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                i: calcFreqI(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                ),
+                                j: calcFreqJ(
+                                    1,
+                                    v.flange.outDia,
+                                    v.flange.outDia,
+                                    v.flange.neckWidth,
+                                    v.flange.neckHeight + v.flange.flangeHeight,
+                                ),
+                                mExtra: 0,
+                                mExtraAdd: 0,
+                                flangeUPR: v.flangeWeight / 1000,
+                                flangeUPRAdd: 0,
+                            },
+                        },
+                    ]
+                }
+                flangeCounter++
+            }
+            return freqElement
+        })
+        console.log(massArray)
     }, [flangesData, partsData])
+
+    const calcFreqM = (
+        type: number,
+        diaUPR: number,
+        diaLWR: number,
+        thickness: number,
+        length: number,
+    ) => {
+        var result = 0
+        var leng = length / 2000
+        var thick = thickness / 1000
+        var diaUPROut = diaUPR / 1000
+        var diaUPRIn = diaUPROut - 2 * thick
+        var diaLWROut = diaLWR / 1000
+        var diaLWRIn = diaLWROut - 2 * thick
+
+        var diaOut_type0 = (3 * diaUPROut + diaLWROut) / 4
+        var diaIn_type0 = (3 * diaUPRIn + diaLWRIn) / 4
+
+        var diaOut_type1 = (diaUPROut + 3 * diaLWROut) / 4
+        var diaIn_type1 = (diaUPRIn + 3 * diaLWRIn) / 4
+
+        if (type === 0) {
+            result =
+                ((Math.PI * (Math.pow(diaOut_type0, 2) - Math.pow(diaIn_type0, 2))) / 4) *
+                leng *
+                7.85 *
+                Math.pow(10, 3)
+        } else if (type === 1) {
+            result =
+                ((Math.PI * (Math.pow(diaOut_type1, 2) - Math.pow(diaIn_type1, 2))) / 4) *
+                leng *
+                7.85 *
+                Math.pow(10, 3)
+        }
+        return result
+    }
+
+    const calcFreqI = (type: number, diaUPR: number, diaLWR: number, thickness: number) => {
+        var result = 0
+        var thick = thickness / 1000
+        var diaUPROut = diaUPR / 1000
+        var diaUPRIn = diaUPROut - 2 * thick
+        var diaLWROut = diaLWR / 1000
+        var diaLWRIn = diaLWROut - 2 * thick
+
+        var diaOut_type0 = (3 * diaUPROut + diaLWROut) / 4
+        var diaIn_type0 = (3 * diaUPRIn + diaLWRIn) / 4
+
+        var diaOut_type1 = (diaUPROut + 3 * diaLWROut) / 4
+        var diaIn_type1 = (diaUPRIn + 3 * diaLWRIn) / 4
+        if (type === 0) {
+            result = (Math.PI / 64) * (Math.pow(diaOut_type0, 4) - Math.pow(diaIn_type0, 4))
+        } else if (type === 1) {
+            result = (Math.PI / 64) * (Math.pow(diaOut_type1, 4) - Math.pow(diaIn_type1, 4))
+        }
+        return result
+    }
+
+    const calcFreqJ = (
+        type: number,
+        diaUPR: number,
+        diaLWR: number,
+        thickness: number,
+        length: number,
+    ) => {
+        var result = 0
+        var leng = length / 2000
+        var thick = thickness / 1000
+        var diaUPROut = diaUPR / 1000
+        var diaUPRIn = diaUPROut - 2 * thick
+        var diaLWROut = diaLWR / 1000
+        var diaLWRIn = diaLWROut - 2 * thick
+
+        var diaOut_type0 = (3 * diaUPROut + diaLWROut) / 4
+        var diaIn_type0 = (3 * diaUPRIn + diaLWRIn) / 4
+
+        var diaOut_type1 = (diaUPROut + 3 * diaLWROut) / 4
+        var diaIn_type1 = (diaUPRIn + 3 * diaLWRIn) / 4
+
+        if (type === 0) {
+            result =
+                (1 / 12) *
+                (((Math.PI * Math.pow(diaOut_type0, 2)) / 4) *
+                    leng *
+                    7.85 *
+                    Math.pow(10, 3) *
+                    (3 * Math.pow(diaOut_type0 / 2, 2) + Math.pow(leng, 2)) -
+                    ((Math.PI * Math.pow(diaIn_type0, 2)) / 4) *
+                        leng *
+                        7.85 *
+                        Math.pow(10, 3) *
+                        (3 * Math.pow(diaIn_type0 / 2, 2) + Math.pow(leng, 2)))
+        } else if (type === 1) {
+            result =
+                (1 / 12) *
+                (((Math.PI * Math.pow(diaOut_type1, 2)) / 4) *
+                    leng *
+                    7.85 *
+                    Math.pow(10, 3) *
+                    (3 * Math.pow(diaOut_type1 / 2, 2) + Math.pow(leng, 2)) -
+                    ((Math.PI * Math.pow(diaIn_type1, 2)) / 4) *
+                        leng *
+                        7.85 *
+                        Math.pow(10, 3) *
+                        (3 * Math.pow(diaIn_type1 / 2, 2) + Math.pow(leng, 2)))
+        }
+        return result
+    }
 
     /*
     ** Data Renewal

@@ -408,7 +408,7 @@ const Frame = () => {
             localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithFlange(flanges)))
             mutate()
         },
-        [currentSectionIndex, flangesData, keyRawData, rawData],
+        [currentSectionIndex, flangesData, keyRawData],
     )
 
     const updateRawDatadSyncWithFlange = (flanges: TWFlange[]) => {
@@ -421,8 +421,18 @@ const Frame = () => {
         // rawData.initial = initData
         // rawData.sectionData = sectionData
         // rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
+
+        console.log('updateRawDatadSyncWithFlange')
         if (currentSectionIndex !== sectionData.length - 1) {
-            rawData.flangesData[currentSectionIndex + 1].flanges[0] = flanges[1]
+            rawData.flangesData[currentSectionIndex + 1].flanges[0] = {
+                index: 0,
+                flange: flanges[1].flange,
+                weight: flanges[1].weight,
+                flangeWeight: flanges[1].flangeWeight,
+                partWeight: flanges[1].partWeight,
+            }
+            rawData.flangesData[currentSectionIndex].flanges[0].index = 0
+            rawData.flangesData[currentSectionIndex].flanges[1].index = 1
         }
 
         return rawData

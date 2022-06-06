@@ -106,10 +106,35 @@ const Frequency = () => {
     const [frequencyData, setFrequencyData] = useState([] as TWFrequency[])
 
     useEffect(() => {
-        const freqArray = [] as TWFrequency[]
-        const elementLength = partsData.forEach((e) => e.divided)
-        console.log(elementLength)
-    }, [partsData])
+        const ListAnyType = [] as any[]
+        // const partsArray = [] as TWPart[]
+        // const freqArray = [] as TWFrequency[]
+        // partsArray.push()
+        // partsData.map((v) => console.log(v.parts))
+        // flangesData.map((v) => console.log(v.flanges))
+        var indexCounter = 1
+        partsData.map((v, vIndex) => {
+            indexCounter += vIndex > 0 ? partsData[vIndex - 1].parts.length : 0
+            flangesData[vIndex].flanges[0].index = indexCounter
+            // console.log(flangesData[vIndex].flanges[0])
+            ListAnyType.push(flangesData[vIndex].flanges[0])
+            indexCounter += 1
+            v.parts.map((e, index) => {
+                e.index = index + indexCounter
+                // partsArray.push(e)
+                // console.log(e)
+                ListAnyType.push(e)
+            })
+            flangesData[vIndex].flanges[1].index = v.parts.length + indexCounter
+            // console.log(flangesData[vIndex].flanges[1])
+            ListAnyType.push(flangesData[vIndex].flanges[1])
+            indexCounter += 1
+        })
+        console.log(ListAnyType)
+        ListAnyType.forEach((e) =>
+            e.flange == undefined ? console.log('part') : console.log('flange'),
+        )
+    }, [flangesData, partsData])
 
     /*
     ** Data Renewal

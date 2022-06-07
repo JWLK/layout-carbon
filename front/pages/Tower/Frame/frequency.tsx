@@ -77,6 +77,7 @@ import {
     TableHeader,
     TableBody,
     TableCell,
+    Loading,
 } from 'carbon-components-react'
 
 const Frequency = () => {
@@ -109,8 +110,9 @@ const Frequency = () => {
 
     /* Matix Calc State */
     const [w, setW] = useState(1)
-    var determinant = 0.0
-    var cnt = 0
+    const [deter, setDeter] = useState(0.0)
+    const [calcCount, setCalcCount] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const ListAnyType = [] as any[]
@@ -137,7 +139,6 @@ const Frequency = () => {
             ListAnyType.push(flangesData[vIndex].flanges[1])
             indexCounter += 1
         })
-        console.log(ListAnyType)
         // ListAnyType.forEach((e) =>
         //     e.flange == undefined ? console.log('part') : console.log('flange'),
         // )
@@ -251,8 +252,8 @@ const Frequency = () => {
                             flangeUPRAdd: 0,
                         },
                     }
-                    flangeCounter++
                 }
+                flangeCounter++
                 return freqElement
             }
         })
@@ -275,7 +276,7 @@ const Frequency = () => {
                     flangeUPRAdd: 0,
                 },
             })
-        console.log(massArray)
+        // console.log(massArray)
         localStorage.setItem(keyFreqData, JSON.stringify(massArray))
         mutateFreq()
     }, [flangesData, keyFreqData, partsData])
@@ -405,35 +406,75 @@ const Frequency = () => {
     /**
      * Matrix Calc Unit Test
      * */
-    frequencyData.length &&
-        console.log(
-            'result - 10',
-            CalcMatrix({ w, ...frequencyData[9].frequency }).map((col) => col.map((v) => MR(v))),
-        )
+    // frequencyData.length &&
+    //     console.log(
+    //         'result - 24',
+    //         CalcMatrix({ w, ...frequencyData[23].frequency }).map((col) => col.map((v) => MR(v))),
+    //     )
 
-    const mulResult = () => {
-        var matMul = multiply(
-            CalcMatrix({ w, ...frequencyData[1].frequency }),
-            CalcMatrix({ w, ...frequencyData[0].frequency }),
-        )
-        return matMul
+    // const mulResult = () => {
+    //     var matMul = multiply(
+    //         CalcMatrix({ w, ...frequencyData[1].frequency }),
+    //         CalcMatrix({ w, ...frequencyData[0].frequency }),
+    //     )
+    //     return matMul
+    // }
+    // frequencyData.length && console.log('result - Multifly', mulResult())
+
+    /**
+     * Matirx Data Calc
+     */
+    useEffect(() => {
+        /* Data Chain Matrix Calc Test */
+        if (frequencyData.length) {
+            var matixResult = matChainCalc(w, frequencyData, frequencyData.length - 1)
+            console.log(
+                'Chain Calc Result ',
+                matixResult.map((e) => e.map((col) => col.map((v) => MR(v)))),
+            )
+            console.log('Last Calc Result ', matixResult[frequencyData.length - 1])
+
+            var determinant =
+                matixResult[frequencyData.length - 1][2][2] *
+                    matixResult[frequencyData.length - 1][3][3] -
+                matixResult[frequencyData.length - 1][2][3] *
+                    matixResult[frequencyData.length - 1][3][2]
+            setDeter(determinant)
+            console.log('Determinant', determinant)
+        }
+    }, [frequencyData, w])
+
+    const calcEvent = async (freqData: TWFrequency[], w: number, deter: number) => {
+        console.log('Calc Event')
+        var resultMat = [] as number[][][]
+        var cnt = 0
+        setLoading(true)
+        // do {
+        //     resultMat = matChainCalc(w, freqData, freqData.length - 1)
+        //     deter =
+        //         resultMat[frequencyData.length - 1][2][2] *
+        //             resultMat[frequencyData.length - 1][3][3] -
+        //         resultMat[frequencyData.length - 1][2][3] *
+        //             resultMat[frequencyData.length - 1][3][2]
+        //     cnt++
+        //     w += 0.0001
+        // } while (deter > 0.0001)
+        while (deter > 0.0001) {
+            resultMat = matChainCalc(w, freqData, freqData.length - 1)
+            deter =
+                resultMat[frequencyData.length - 1][2][2] *
+                    resultMat[frequencyData.length - 1][3][3] -
+                resultMat[frequencyData.length - 1][2][3] *
+                    resultMat[frequencyData.length - 1][3][2]
+            cnt++
+            w += 0.001
+        }
+        setW(w)
+        setDeter(deter)
+        setCalcCount(cnt)
+        setLoading(false)
     }
-    frequencyData.length && console.log('result - Multifly', mulResult())
 
-    /* Data Chain Matrix Calc Test */
-    frequencyData.length &&
-        console.log(
-            'Chain Calc',
-            matChainCalc(w, frequencyData, 49).map((e) => e.map((col) => col.map((v) => MR(v)))),
-        )
-    frequencyData.length &&
-        console.log(
-            'Determinant',
-            matChainCalc(w, frequencyData, 49)[49][2][2] *
-                matChainCalc(w, frequencyData, 49)[49][3][3] -
-                matChainCalc(w, frequencyData, 49)[49][2][3] *
-                    matChainCalc(w, frequencyData, 49)[49][3][2],
-        )
     /*
     ** Data Renewal
     *
@@ -471,6 +512,9 @@ const Frequency = () => {
 
     return (
         <>
+            {loading && (
+                <Loading description="Active loading indicator" withOverlay={true} small={false} />
+            )}
             <PageTypeWide>
                 <Grid fullWidth>
                     <Row>
@@ -492,7 +536,12 @@ const Frequency = () => {
                     <SectionDivider />
                     <Section>
                         <h3>Natural Frequency Calculator</h3>
-                        <Button renderIcon={MathCurve32}>Find Natural Frequency</Button>
+                        <Button
+                            renderIcon={MathCurve32}
+                            onClick={() => calcEvent(frequencyData, w, deter)}
+                        >
+                            Find Natural Frequency
+                        </Button>
                         <Row as="article" narrow>
                             <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
                                 W = {w}
@@ -501,7 +550,12 @@ const Frequency = () => {
                                 Natural Frequency = {w / (2 * Math.PI)} Hz
                             </Column>
                             <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                Determinent = {determinant}
+                                Determinent = {deter}
+                            </Column>
+                        </Row>
+                        <Row as="article" narrow>
+                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                Count = {calcCount}
                             </Column>
                         </Row>
                     </Section>

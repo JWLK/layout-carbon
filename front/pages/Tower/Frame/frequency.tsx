@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import CalcMatrix from '@calc/Matrix'
-import { multiply } from 'mathjs'
+import { multiply, inv } from 'mathjs'
 
 //Current Page Parameter
 import { useParams } from 'react-router'
@@ -112,6 +112,8 @@ const Frequency = () => {
     const [w, setW] = useState(1)
     const [deter, setDeter] = useState(0.0)
     const [calcCount, setCalcCount] = useState(0)
+    const [graphRowVector, setGraphRowVector] = useState([[0], [0], [0], [0]] as number[][])
+    const [graphRowResult, setGraphRowResult] = useState([[0], [0], [0], [0]] as number[][])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -403,6 +405,20 @@ const Frequency = () => {
         return matResult
     }
 
+    const matChainCalc2 = (
+        result: number[][],
+        vector: number[][],
+        param: number[][][],
+        number: number,
+    ) => {
+        console.log('Chain Calc 2')
+        var matResult = [] as number[][][]
+        for (var i = 0; i < number; i++) {
+            matResult[i + 1] = multiply(param[i], result)
+        }
+        return matResult
+    }
+
     /**
      * Matrix Calc Unit Test
      * */
@@ -441,8 +457,19 @@ const Frequency = () => {
                     matixResult[frequencyData.length - 1][3][2]
             setDeter(determinant)
             console.log('Determinant', determinant)
+            // calcEvent2(matixResult[frequencyData.length - 1])
+            // var matixResult2 = matChainCalc2(
+            //     graphRowResult,
+            //     graphRowVector,
+            //     matixResult,
+            //     frequencyData.length - 1,
+            // )
+            // console.log(
+            //     'Chain Calc2 Result',
+            //     matixResult2.map((e) => e.map((col) => col.map((v) => MR(v)))),
+            // )
         }
-    }, [frequencyData, w])
+    }, [frequencyData, graphRowResult, graphRowVector, w])
 
     const calcEvent = async (freqData: TWFrequency[], w: number, deter: number) => {
         console.log('Calc Event')
@@ -473,6 +500,19 @@ const Frequency = () => {
         setDeter(deter)
         setCalcCount(cnt)
         setLoading(false)
+    }
+    const calcEvent2 = async (freqData: number[][]) => {
+        console.log('Calc Event2')
+        var seta = 1
+        var resultMat = multiply(inv(freqData), [[1], [seta], [0], [0]])
+        while (resultMat[1][0] > 0.000005) {
+            resultMat = multiply(inv(freqData), [[1], [seta], [0], [0]])
+            seta -= 0.00001
+        }
+        console.log(resultMat)
+        console.log(seta)
+        setGraphRowVector([[1], [seta], [0], [0]])
+        setGraphRowResult(resultMat)
     }
 
     /*
@@ -557,6 +597,36 @@ const Frequency = () => {
                             <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
                                 Count = {calcCount}
                             </Column>
+                        </Row>
+                        <Row>
+                            <Table size="sm">
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell>y</TableCell>
+                                        <TableCell>{graphRowVector[0][0]}</TableCell>
+                                        <TableCell>{`=>`}</TableCell>
+                                        <TableCell>{graphRowResult[0][0]}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>θ</TableCell>
+                                        <TableCell>{graphRowVector[1][0]}</TableCell>
+                                        <TableCell>{`=>`}</TableCell>
+                                        <TableCell>{graphRowResult[1][0]}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>M</TableCell>
+                                        <TableCell>{graphRowVector[2][0]}</TableCell>
+                                        <TableCell>{`=>`}</TableCell>
+                                        <TableCell>{graphRowResult[2][0]}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>V</TableCell>
+                                        <TableCell>{graphRowVector[3][0]}</TableCell>
+                                        <TableCell>{`=>`}</TableCell>
+                                        <TableCell>{graphRowResult[3][0]}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
                         </Row>
                     </Section>
                     <SectionDivider />

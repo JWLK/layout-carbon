@@ -19,7 +19,7 @@ import { RawData, InitSector } from '@objects/Data/InitValue'
 /* @objects/Tools */
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
-import VOTower from '@objects/Tower/Body/VOTowerTitle'
+import VOTower from '@objects/Tower/Body/VOTower'
 import VOSection from '@objects/Tower/Body/VOSection'
 import VHFlange from '@objects/Tower/Body/VHFlange'
 
@@ -118,7 +118,6 @@ const Frame = () => {
     const [rawData, setRawData] = useState({} as TWRawData)
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
-    const [sectionSubData, setSectionSubData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
     const [flangesData, setFlangesData] = useState([] as TWFlanges[])
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
@@ -253,18 +252,18 @@ const Frame = () => {
     const [sectionSlopeDiameter, setSectionSlopeDiameter] = useState(0)
     const [sectionSlopeValue, setSectionSlopeValue] = useState(0)
     useEffect(() => {
-        if (sectionSubData.length && partsData.length && flangesData.length) {
+        if (sectionData.length && partsData.length && flangesData.length) {
             var bodyHeight =
-                sectionSubData[currentSectionIndex].section.height -
+                sectionData[currentSectionIndex].section.height -
                 flangesData[currentSectionIndex].flanges[0].flange.flangeHeight -
                 flangesData[currentSectionIndex].flanges[0].flange.neckHeight -
                 flangesData[currentSectionIndex].flanges[1].flange.flangeHeight -
                 flangesData[currentSectionIndex].flanges[1].flange.neckHeight
             setCheckBodyHeight(bodyHeight)
-            var diaOutUPR = sectionSubData[currentSectionIndex].section.top
-            var diaInUPR = sectionSubData[currentSectionIndex].section.top - 2 * totalThickness
-            var diaOutLWR = sectionSubData[currentSectionIndex].section.bottom
-            var diaInLWR = sectionSubData[currentSectionIndex].section.bottom - 2 * totalThickness
+            var diaOutUPR = sectionData[currentSectionIndex].section.top
+            var diaInUPR = sectionData[currentSectionIndex].section.top - 2 * totalThickness
+            var diaOutLWR = sectionData[currentSectionIndex].section.bottom
+            var diaInLWR = sectionData[currentSectionIndex].section.bottom - 2 * totalThickness
             setCheckDiaOutUPR(diaOutUPR)
             setCheckDiaInUPR(diaInUPR)
             setCheckDiaOutLWR(diaOutLWR)
@@ -311,7 +310,7 @@ const Frame = () => {
         keyRawData,
         partsData,
         rawData,
-        sectionSubData,
+        sectionData,
         totalThickness,
     ])
 
@@ -406,13 +405,13 @@ const Frame = () => {
 
             // rawData.flangesData[currentSectionIndex].flanges = flanges
             // localStorage.setItem(keyRawData, JSON.stringify(rawData))
-            localStorage.setItem(keyRawData, JSON.stringify(updateRawDataSyncWithFlange(flanges)))
+            localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithFlange(flanges)))
             mutate()
         },
         [currentSectionIndex, flangesData, keyRawData],
     )
 
-    const updateRawDataSyncWithFlange = (flanges: TWFlange[]) => {
+    const updateRawDatadSyncWithFlange = (flanges: TWFlange[]) => {
         //Out Diameter => part
         // partsData[currentSectionIndex].parts[0].part.bottom = flanges[0].outDia
         // partsData[currentSectionIndex].parts[partsData.length - 1].part.top = flanges[1].outDia
@@ -423,8 +422,8 @@ const Frame = () => {
         // rawData.sectionData = sectionData
         // rawData.partsData[currentSectionIndex] = partsData[currentSectionIndex]
 
-        console.log('updateRawDataSyncWithFlange')
-        if (currentSectionIndex !== sectionSubData.length - 1) {
+        console.log('updateRawDatadSyncWithFlange')
+        if (currentSectionIndex !== sectionData.length - 1) {
             rawData.flangesData[currentSectionIndex + 1].flanges[0] = {
                 index: 0,
                 flange: flanges[1].flange,
@@ -435,25 +434,6 @@ const Frame = () => {
             rawData.flangesData[currentSectionIndex].flanges[0].index = 0
             rawData.flangesData[currentSectionIndex].flanges[1].index = 1
         }
-
-        var totalHeight = 0
-        var sectionHeight = 0
-
-        for (var i = 0; i < partsData[currentSectionIndex].parts.length; i++) {
-            sectionHeight += partsData[currentSectionIndex].parts[i].part.height
-        }
-        sectionHeight += flangesData[currentSectionIndex].flanges
-            .map((v) => v.flange.flangeHeight + v.flange.neckHeight)
-            .reduce((prev, curr) => prev + curr, 0)
-        sectionSubData[currentSectionIndex].section.height = sectionHeight
-
-        for (var l = 0; l < sectionSubData.length; l++) {
-            totalHeight += sectionSubData[l].section.height
-        }
-        initData.totalHeight = totalHeight
-
-        rawData.initial = initData
-        rawData.sectionSubData = sectionSubData
 
         return rawData
     }
@@ -468,8 +448,8 @@ const Frame = () => {
             // var totalHeight = sectionData[currentSectionIndex].section.height
 
             var totalHeight = checkBodyHeight
-            var topUpperOutDia = sectionSubData[currentSectionIndex].section.top
-            var bottomLowerOutDia = sectionSubData[currentSectionIndex].section.bottom
+            var topUpperOutDia = sectionData[currentSectionIndex].section.top
+            var bottomLowerOutDia = sectionData[currentSectionIndex].section.bottom
 
             // for (var i = 0; i < divided; i++) {
             //     var partHeight = totalHeight / divided
@@ -541,7 +521,7 @@ const Frame = () => {
         },
         [
             checkBodyHeight,
-            sectionSubData,
+            sectionData,
             currentSectionIndex,
             divided,
             rawData,
@@ -575,10 +555,10 @@ const Frame = () => {
                         // console.log('partHeightSumUPR', partHeightSum + inputValue)
                         // console.log('partHeightSumLWR', partHeightSum)
                         var partWidthUPR =
-                            sectionSubData[currentSectionIndex].section.bottom +
+                            sectionData[currentSectionIndex].section.bottom +
                             sectionSlopeValue * 2 * -(inputValue + partHeightSum)
                         var partWidthLWR =
-                            sectionSubData[currentSectionIndex].section.bottom +
+                            sectionData[currentSectionIndex].section.bottom +
                             sectionSlopeValue * 2 * -partHeightSum
                         // console.log('partWidthUPR ' + partWidthUPR)
                         // console.log('partWidthLWR ' + partWidthLWR)
@@ -611,33 +591,30 @@ const Frame = () => {
 
             // const updateInitial = updateInitialSync(section)
             // const updateParts = updatePartsTaperedSync(section)
-            localStorage.setItem(keyRawData, JSON.stringify(updateRawDataSyncWithParts(parts)))
-            // rawData.partsData[currentSectionIndex].parts = parts
-            // localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            // localStorage.setItem(keyRawData, JSON.stringify(updateRawDatadSyncWithParts(parts)))
+            rawData.partsData[currentSectionIndex].parts = parts
+            localStorage.setItem(keyRawData, JSON.stringify(rawData))
             mutate()
         },
-        [currentSectionIndex, keyRawData, partsData, rawData, sectionSubData, sectionSlopeValue],
+        [currentSectionIndex, keyRawData, partsData, rawData, sectionData, sectionSlopeValue],
     )
 
-    const updateRawDataSyncWithParts = (parts: TWPart[]) => {
+    const updateRawDatadSyncWithParts = (parts: TWPart[]) => {
         var totalHeight = 0
         var sectionHeight = 0
 
         for (var i = 0; i < partsData[currentSectionIndex].parts.length; i++) {
             sectionHeight += partsData[currentSectionIndex].parts[i].part.height
         }
-        sectionHeight += flangesData[currentSectionIndex].flanges
-            .map((v) => v.flange.flangeHeight + v.flange.neckHeight)
-            .reduce((prev, curr) => prev + curr, 0)
-        sectionSubData[currentSectionIndex].section.height = sectionHeight
+        sectionData[currentSectionIndex].section.height = sectionHeight
 
-        for (var l = 0; l < sectionSubData.length; l++) {
-            totalHeight += sectionSubData[l].section.height
+        for (var l = 0; l < sectionData.length; l++) {
+            totalHeight += sectionData[l].section.height
         }
         initData.totalHeight = totalHeight
 
         rawData.initial = initData
-        rawData.sectionSubData = sectionSubData
+        rawData.sectionData = sectionData
         rawData.partsData[currentSectionIndex].parts = parts
 
         // rawData.sectorsData[currentSectionIndex].sectors[currentPartIndex].sector =
@@ -668,7 +645,6 @@ const Frame = () => {
             setInitData(TD.initial)
             //SectionData
             setSectionData(TD.sectionData)
-            setSectionSubData(TD.sectionSubData)
             //PartsData
             setPartsData(TD.partsData)
             //Section & Parts
@@ -691,17 +667,6 @@ const Frame = () => {
         <>
             {partsData.length && flangesData.length && (
                 <FlexWrap>
-                    <GraphicWrap>
-                        <GraphicViewOrigin>
-                            <VOTower
-                                draws={sectionSubData.map((v) => v.section)}
-                                currentIndex={currentSectionIndex}
-                                setCurrentIndex={setCurrentSectionIndex}
-                                label={`Tower`}
-                            />
-                        </GraphicViewOrigin>
-                    </GraphicWrap>
-
                     <GraphicWrap>
                         <GraphicViewOrigin>
                             {partsData.length && (
@@ -740,7 +705,7 @@ const Frame = () => {
                             {/* Section Progress & Change Zone*/}
                             {/*  */}
                             {/*  */}
-                            {/* <ProgressIndicator
+                            <ProgressIndicator
                                 currentIndex={currentSectionIndex}
                                 onChange={onChangeSectionIndex}
                             >
@@ -748,7 +713,7 @@ const Frame = () => {
                                     <ProgressStep label={`SECTION ${index + 1}`} />
                                 ))}
                             </ProgressIndicator>
-                            <SectionDivider /> */}
+                            <SectionDivider />
                             {/* 
                                 STEP 1 - 1 : Section Mass Check
                             */}
@@ -768,7 +733,7 @@ const Frame = () => {
                                             />
                                         )}
 
-                                        {currentSectionIndex !== sectionSubData.length - 1 && (
+                                        {currentSectionIndex !== sectionData.length - 1 && (
                                             <Button
                                                 kind="tertiary"
                                                 renderIcon={ArrowRight32}
@@ -781,7 +746,7 @@ const Frame = () => {
                                             </Button>
                                         )}
 
-                                        {currentSectionIndex == sectionSubData.length - 1 && (
+                                        {currentSectionIndex == sectionData.length - 1 && (
                                             <Button
                                                 style={{ background: '#0f62fe' }}
                                                 kind="tertiary"
@@ -800,8 +765,7 @@ const Frame = () => {
                                         Invalid Value Exist. Check input value
                                     </div>
                                 )} */}
-                                {/* All thickness control */}
-                                {/* <SectionDivider />
+                                <SectionDivider />
                                 <InputLabel style={{ color: '#ff00ff' }}>
                                     All thickness control (mm)
                                 </InputLabel>
@@ -815,23 +779,10 @@ const Frame = () => {
                                         value={totalThickness}
                                         onChange={onChangeTotalThickness}
                                     />
-                                </SliderCustom> */}
-                                <SectionDivider />
-                            </>
-                            <br />
-                            {/* 
-                                STEP 0 - 0 : STEP 
-                            */}
-                            <></>
+                                </SliderCustom>
 
-                            {/* 
-                                STEP 1 - 1 : Number of Parts
-                            */}
-                            <>
-                                {/* <SettingTitle>
-                                    {`Section ${currentSectionIndex + 1} - Each Part Mass Check`}
-                                </SettingTitle> */}
-                                <InputLabel>1. Initial value of body mass.</InputLabel>
+                                <SectionDivider />
+                                <InputLabel>Section Body Mass Check</InputLabel>
                                 <Table size="lg">
                                     <TableHead>
                                         <TableRow>
@@ -944,8 +895,13 @@ const Frame = () => {
                                         </TableRow>
                                     </TableBody>
                                 </Table>
-                                <SectionDivider />
-                                <InputLabel>2. Flange Mass Check</InputLabel>
+                            </>
+                            <br />
+                            {/* 
+                                STEP 1 - 2 : Flange Mass Check
+                            */}
+                            <>
+                                <InputLabel>Flange Mass Check</InputLabel>
                                 <Table size="lg">
                                     <TableHead>
                                         <TableRow>
@@ -1367,8 +1323,42 @@ const Frame = () => {
                                         </GraphicViewHarf>
                                     </GraphicWrapHarf>
                                 </SettingViewWide>
+
+                                {!true && (
+                                    <>
+                                        <InputDivider />
+                                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                                            Invalid Value Exist. Check input value.
+                                        </div>
+                                    </>
+                                )}
+
+                                <InputDivider />
+                                <Button
+                                    kind="primary"
+                                    renderIcon={Save32}
+                                    // onClick={onClickSetSectionsInitData}
+                                    // disabled={!validFirstStep}
+
+                                    onClick={onClickSetPartsData}
+                                >
+                                    Section {currentSectionIndex + 1} Mass Capacity : SAVE
+                                </Button>
+
                                 <SectionDivider />
-                                <InputLabel>3. Number of Tower Part</InputLabel>
+                            </>
+
+                            {/* 
+                                STEP 2 - 1 : Number of Parts
+                            */}
+                            <>
+                                <SettingTitle>
+                                    {`Section ${currentSectionIndex + 1} - Each Part Mass Check`}
+                                </SettingTitle>
+                                <SectionDivider />
+                                <InputLabel style={{ color: '#fff' }}>
+                                    Number of Tower Part
+                                </InputLabel>
                                 <Row
                                     style={{
                                         border: '0px solid #333',
@@ -1693,7 +1683,7 @@ const Frame = () => {
                                                         id={`section-total-height`}
                                                         labelText=""
                                                         name="total-height"
-                                                        warn={
+                                                        invalid={
                                                             partsData[currentSectionIndex].parts
                                                                 .map((v) => v.part.height)
                                                                 .reduce(
@@ -1712,13 +1702,24 @@ const Frame = () => {
                                                                         (prev, curr) => prev + curr,
                                                                         0,
                                                                     ) !=
-                                                            sectionSubData[currentSectionIndex]
-                                                                .section.height
+                                                            sectionData[currentSectionIndex].section
+                                                                .height
                                                         }
-                                                        warnText={`Remaining Height = ${
-                                                            rawData.initial.maxHeight -
-                                                            sectionSubData
-                                                                .map((v) => v.section.height)
+                                                        invalidText={`Remaining = ${
+                                                            sectionData[currentSectionIndex].section
+                                                                .height -
+                                                            partsData[currentSectionIndex].parts
+                                                                .map((v) => v.part.height)
+                                                                .reduce(
+                                                                    (prev, curr) => prev + curr,
+                                                                    0,
+                                                                ) -
+                                                            flangesData[currentSectionIndex].flanges
+                                                                .map(
+                                                                    (v) =>
+                                                                        v.flange.flangeHeight +
+                                                                        v.flange.neckHeight,
+                                                                )
                                                                 .reduce(
                                                                     (prev, curr) => prev + curr,
                                                                     0,
@@ -1753,10 +1754,10 @@ const Frame = () => {
                                                     {`Section ${
                                                         currentSectionIndex + 1
                                                     } - Total Height ${
-                                                        sectionSubData[currentSectionIndex].section
+                                                        sectionData[currentSectionIndex].section
                                                             .height
                                                     }mm (= ${
-                                                        sectionSubData[currentSectionIndex].section
+                                                        sectionData[currentSectionIndex].section
                                                             .height / 1000
                                                     }m) `}
                                                 </TextWrapTableCell>
@@ -1901,7 +1902,7 @@ const Frame = () => {
                                         />
                                     )}
 
-                                    {currentSectionIndex !== sectionSubData.length - 1 && (
+                                    {currentSectionIndex !== sectionData.length - 1 && (
                                         <Button
                                             kind="tertiary"
                                             renderIcon={ArrowRight32}
@@ -1914,7 +1915,7 @@ const Frame = () => {
                                         </Button>
                                     )}
 
-                                    {currentSectionIndex == sectionSubData.length - 1 && (
+                                    {currentSectionIndex == sectionData.length - 1 && (
                                         <Button
                                             style={{ background: '#0f62fe' }}
                                             kind="tertiary"

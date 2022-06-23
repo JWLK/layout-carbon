@@ -111,6 +111,7 @@ const Frame = () => {
     const [rawData, setRawData] = useState({} as TWRawData)
     const [initData, setInitData] = useState({} as TWInitialValue)
     const [sectionData, setSectionData] = useState([] as TWSection[])
+    const [sectionSubData, setSectionSubData] = useState([] as TWSection[])
     const [partsData, setPartsData] = useState([] as TWParts[])
     const [flangesData, setFlangesData] = useState([] as TWFlanges[])
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
@@ -352,6 +353,7 @@ const Frame = () => {
             initData.divided = divided
             rawData.initial = initData
             rawData.sectionData = sectionsObject
+            rawData.sectionSubData = sectionsObject
             rawData.partsData = partsObject
             rawData.sectorsData = sectorsObject
             rawData.flangesData = flangesObject
@@ -383,7 +385,9 @@ const Frame = () => {
             const updateSection = updateSectionsTaperedSync(section)
 
             setSectionData(updateSection)
+            setSectionSubData(updateSection)
             rawData.sectionData = updateSection
+            rawData.sectionSubData = updateSection
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
         },
         [keyRawData, rawData, sectionData],
@@ -568,6 +572,7 @@ const Frame = () => {
 
             rawData.initial = updateInitial
             rawData.sectionData = updateSection
+            rawData.sectionSubData = updateSection
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
             mutate()
             setValidSecondStep(false)
@@ -584,6 +589,7 @@ const Frame = () => {
             const updateFlanges = updateFlangesSync(updateSection, flangesData)
             rawData.initial = updateInitial
             rawData.sectionData = updateSection
+            rawData.sectionSubData = updateSection
             rawData.partsData = updateParts
             rawData.flangesData = updateFlanges
             localStorage.setItem(keyRawData, JSON.stringify(rawData))
@@ -632,6 +638,7 @@ const Frame = () => {
             setDivided(TD.initial.divided)
             //SectionData
             setSectionData(TD.sectionData)
+            setSectionSubData(TD.sectionSubData)
             //PartsData
             setPartsData(TD.partsData)
             //SectorsData

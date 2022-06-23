@@ -126,18 +126,6 @@ export const columMaxInfo = [
 
 export const rows = [
     {
-        id: 0,
-        name: 'Dongkuk S&C',
-        country: 'KR',
-        length: 35,
-        diameter: 6,
-        weight: 100,
-        extraWeight: 0,
-        thickness: 0,
-        remark: '외부크레인 없이 가능',
-        selected: true,
-    },
-    {
         id: 1,
         name: 'CS Wind',
         country: 'KR',
@@ -147,7 +135,6 @@ export const rows = [
         extraWeight: 0,
         thickness: 0,
         remark: '공장에서 항구까지 운반 조건 포함',
-        selected: true,
     },
     {
         id: 2,

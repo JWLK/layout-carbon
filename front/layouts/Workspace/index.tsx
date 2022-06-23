@@ -81,7 +81,7 @@ const Workspace = () => {
 
     /* Event UI */
     /*SideMenu-Left : Channel List*/
-    const [sideNavExpanded, setSideNavExpand] = useState(true)
+    const [sideNavExpanded, setSideNavExpand] = useState(false)
     const onClickSideNavExpand = useCallback(() => {
         setSideNavExpand((prev) => !prev)
     }, [])
@@ -93,11 +93,12 @@ const Workspace = () => {
 
     /* Loading useEffect */
     useEffect(() => {
-        if (windowWidth < 1500 && sideNavExpanded === true) {
-            setSideNavExpand(false)
-        } else if (windowWidth >= 1500 && sideNavExpanded === false) {
-            setSideNavExpand(true)
-        }
+        /* Side Menu Expand Control */
+        // if (windowWidth < 1500 && sideNavExpanded === true) {
+        //     setSideNavExpand(false)
+        // } else if (windowWidth >= 1500 && sideNavExpanded === false) {
+        //     setSideNavExpand(true)
+        // }
     }, [windowWidth])
 
     useEffect(() => {

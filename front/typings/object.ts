@@ -47,6 +47,7 @@ export interface ObjSector {
 export interface TWRawData {
     initial: TWInitialValue
     sectionData: TWSection[]
+    sectionSubData: TWSection[]
     partsData: TWParts[]
     sectorsData: TWSectors[]
     flangesData: TWFlanges[]

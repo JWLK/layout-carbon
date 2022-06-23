@@ -2,6 +2,152 @@ import React, { useState, useCallback, useEffect } from 'react'
 import CalcMatrix from '@calc/Matrix'
 import { multiply, inv } from 'mathjs'
 
+/* Chart Data */
+import { LineChart } from '@carbon/charts-react'
+import { LineChartOptions } from '@carbon/charts/interfaces'
+import { ScaleTypes } from '@carbon/charts/interfaces/enums'
+// import { options } from '@carbon/charts/configuration'
+/* Example Data */
+const chartDataSample = [
+    {
+        group: 'Dataset 1',
+        date: '2018-12-31T15:00:00.000Z',
+        value: 50000,
+        surplus: 6024805.530945587,
+    },
+    {
+        group: 'Dataset 1',
+        date: '2019-01-04T15:00:00.000Z',
+        value: 65000,
+        surplus: 222673734.26300198,
+    },
+    {
+        group: 'Dataset 1',
+        date: '2019-01-07T15:00:00.000Z',
+        value: null,
+        surplus: 15408.875792075045,
+    },
+    {
+        group: 'Dataset 1',
+        date: '2019-01-12T15:00:00.000Z',
+        value: 49213,
+        surplus: 648002554.0392833,
+    },
+    {
+        group: 'Dataset 1',
+        date: '2019-01-16T15:00:00.000Z',
+        value: 51213,
+        surplus: 441663361.24701434,
+    },
+    {
+        group: 'Dataset 2',
+        date: '2019-01-01T15:00:00.000Z',
+        value: 0,
+        surplus: 15572.003297682562,
+    },
+    {
+        group: 'Dataset 2',
+        date: '2019-01-05T15:00:00.000Z',
+        value: 57312,
+        surplus: 368783048.20488375,
+    },
+    {
+        group: 'Dataset 2',
+        date: '2019-01-07T15:00:00.000Z',
+        value: 27432,
+        surplus: 510332080.07300717,
+    },
+    {
+        group: 'Dataset 2',
+        date: '2019-01-14T15:00:00.000Z',
+        value: 70323,
+        surplus: 279517404.1363876,
+    },
+    {
+        group: 'Dataset 2',
+        date: '2019-01-18T15:00:00.000Z',
+        value: 21300,
+        surplus: 232742763.4232267,
+    },
+    {
+        group: 'Dataset 3',
+        date: '2018-12-31T15:00:00.000Z',
+        value: 40000,
+        surplus: 937639441.0477679,
+    },
+    {
+        group: 'Dataset 3',
+        date: '2019-01-04T15:00:00.000Z',
+        value: null,
+        surplus: 11158.925081380838,
+    },
+    {
+        group: 'Dataset 3',
+        date: '2019-01-07T15:00:00.000Z',
+        value: 18000,
+        surplus: 228402114.67607424,
+    },
+    {
+        group: 'Dataset 3',
+        date: '2019-01-12T15:00:00.000Z',
+        value: 39213,
+        surplus: 856147249.5598493,
+    },
+    {
+        group: 'Dataset 3',
+        date: '2019-01-16T15:00:00.000Z',
+        value: 61213,
+        surplus: 260310880.2857741,
+    },
+    {
+        group: 'Dataset 4',
+        date: '2019-01-01T15:00:00.000Z',
+        value: 20000,
+        surplus: 238298568.43392482,
+    },
+    {
+        group: 'Dataset 4',
+        date: '2019-01-05T15:00:00.000Z',
+        value: 37312,
+        surplus: 166118825.46681815,
+    },
+    {
+        group: 'Dataset 4',
+        date: '2019-01-07T15:00:00.000Z',
+        value: 51432,
+        surplus: 236204246.83006358,
+    },
+    {
+        group: 'Dataset 4',
+        date: '2019-01-14T15:00:00.000Z',
+        value: 25332,
+        surplus: 519704030.1368107,
+    },
+    {
+        group: 'Dataset 4',
+        date: '2019-01-18T15:00:00.000Z',
+        value: null,
+        surplus: 22484.64556387117,
+    },
+]
+const chartOption: LineChartOptions = {
+    title: 'Line (time series)',
+    axes: {
+        bottom: {
+            title: '2019 Annual Sales Figures',
+            mapsTo: 'date',
+            scaleType: 'time' as ScaleTypes,
+        },
+        left: {
+            title: 'Conversion rate',
+            mapsTo: 'value',
+            scaleType: 'linear' as ScaleTypes,
+        },
+    },
+    curve: 'curveMonotoneX',
+    height: '400px',
+}
+
 //Current Page Parameter
 import { useParams } from 'react-router'
 //Request
@@ -582,51 +728,58 @@ const Frequency = () => {
                         >
                             Find Natural Frequency
                         </Button>
-                        <Row as="article" narrow>
-                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                W = {w}
-                            </Column>
-                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                Natural Frequency = {w / (2 * Math.PI)} Hz
-                            </Column>
-                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                Determinent = {deter}
-                            </Column>
-                        </Row>
-                        <Row as="article" narrow>
-                            <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                Count = {calcCount}
-                            </Column>
-                        </Row>
                         <Row>
-                            <Table size="sm">
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>y</TableCell>
-                                        <TableCell>{graphRowVector[0][0]}</TableCell>
-                                        <TableCell>{`=>`}</TableCell>
-                                        <TableCell>{graphRowResult[0][0]}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>θ</TableCell>
-                                        <TableCell>{graphRowVector[1][0]}</TableCell>
-                                        <TableCell>{`=>`}</TableCell>
-                                        <TableCell>{graphRowResult[1][0]}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>M</TableCell>
-                                        <TableCell>{graphRowVector[2][0]}</TableCell>
-                                        <TableCell>{`=>`}</TableCell>
-                                        <TableCell>{graphRowResult[2][0]}</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell>V</TableCell>
-                                        <TableCell>{graphRowVector[3][0]}</TableCell>
-                                        <TableCell>{`=>`}</TableCell>
-                                        <TableCell>{graphRowResult[3][0]}</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
+                            <Column sm={4} md={4} lg={6}>
+                                <Row as="article" narrow>
+                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                        W = {w}
+                                    </Column>
+                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                        Natural Frequency = {w / (2 * Math.PI)} Hz
+                                    </Column>
+                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                        Determinent = {deter}
+                                    </Column>
+                                </Row>
+                                <Row as="article" narrow>
+                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
+                                        Count = {calcCount}
+                                    </Column>
+                                </Row>
+                                <Row>
+                                    <Table size="sm">
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell>y</TableCell>
+                                                <TableCell>{graphRowVector[0][0]}</TableCell>
+                                                <TableCell>{`=>`}</TableCell>
+                                                <TableCell>{graphRowResult[0][0]}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>θ</TableCell>
+                                                <TableCell>{graphRowVector[1][0]}</TableCell>
+                                                <TableCell>{`=>`}</TableCell>
+                                                <TableCell>{graphRowResult[1][0]}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>M</TableCell>
+                                                <TableCell>{graphRowVector[2][0]}</TableCell>
+                                                <TableCell>{`=>`}</TableCell>
+                                                <TableCell>{graphRowResult[2][0]}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell>V</TableCell>
+                                                <TableCell>{graphRowVector[3][0]}</TableCell>
+                                                <TableCell>{`=>`}</TableCell>
+                                                <TableCell>{graphRowResult[3][0]}</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </Row>
+                            </Column>
+                            <Column sm={4} md={4} lg={6}>
+                                <LineChart data={chartDataSample} options={chartOption}></LineChart>
+                            </Column>
                         </Row>
                     </Section>
                     <SectionDivider />

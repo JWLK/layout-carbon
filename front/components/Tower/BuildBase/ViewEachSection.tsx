@@ -407,13 +407,12 @@ const ViewEachSection = () => {
             console.log(e.target.name, selectedIndex)
             const parts = partsData[currentSectionIndex].parts.map((v, index) => {
                 const typeObject: typeObjSquare = e.target.name
-                if (index === selectedIndex) {
+                const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                if (index === selectedIndex && !Number.isNaN(valueNumber)) {
                     if (typeObject !== 'thickness') {
-                        v.part[`${typeObject}`] = parseInt(
-                            e.target.value !== '' ? e.target.value : 0,
-                        )
+                        v.part[`${typeObject}`] = valueNumber
                     } else {
-                        v.thickness = parseInt(e.target.value !== '' ? e.target.value : 0)
+                        v.thickness = valueNumber
                     }
                 }
                 return v
@@ -478,26 +477,25 @@ const ViewEachSection = () => {
             const flange = flangesData[currentSectionIndex].flanges.map((v, index) => {
                 const typeObject: typeObjFlange = e.target.name
                 if (index === selectedIndex) {
-                    v.flange[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
-                    if (typeObject == 'neckWidth') {
-                        v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0) -
-                            2 * v.flange.minScrewWidth
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
-                        v.flange.param_b =
-                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
-                    } else if (typeObject == 'minScrewWidth') {
-                        v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * v.flange.neckWidth -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0)
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
-                        v.flange.param_b =
-                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
-                    } else if (typeObject == 'flangeWidth') {
-                        v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                    const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    if (!Number.isNaN(valueNumber)) {
+                        v.flange[`${typeObject}`] = valueNumber
+                        if (typeObject == 'neckWidth') {
+                            v.flange.pcDia =
+                                v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                            v.flange.param_b =
+                                (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                        } else if (typeObject == 'minScrewWidth') {
+                            v.flange.pcDia =
+                                v.flange.outDia - 2 * v.flange.neckWidth - 2 * valueNumber
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                            v.flange.param_b =
+                                (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                        } else if (typeObject == 'flangeWidth') {
+                            v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        }
                     }
                 }
                 return v

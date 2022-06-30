@@ -4,6 +4,7 @@ interface Props {
     draws: ObjSquare[]
     currentIndex: number
     setCurrentIndex: (flag: number) => void
+    basement: ObjSquare
     label: string
 }
 
@@ -35,7 +36,7 @@ let TOTAL_GUIDE_COLOR = '#ffff00'
 let TOTAL_GUIDE_LINE_WIDTH = 0
 let TOTAL_GUIDE_TEXT_SIZE = 0
 
-const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
+const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, basement, label }) => {
     /*SIZE CHECK*/
     const { windowWidth, windowHeight } = useGlobal()
     /*VIEW BOX*/
@@ -66,7 +67,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
     }, [windowWidth, windowHeight, viewWidth, viewHeight])
 
     /*Element Calc*/
-    var totalHeight = 0
+    var totalHeight = basement.height
     var totalHeightText = 0
     var getDivided = draws.length
     var [eachObject, setEachObject] = useState([] as ObjSquare[])
@@ -81,7 +82,7 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
         totalHeightText += e.height
     })
     useEffect(() => {
-        var object = draws.map((v) => {
+        var object = [basement, ...draws].map((v) => {
             var top = (v.top / draws[0].bottom) * objWidth
             var bottom = (v.bottom / draws[0].bottom) * objWidth
             var height = 0
@@ -93,20 +94,20 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
             return { top, bottom, height }
         })
         setEachObject(object)
-    }, [draws, objHeight, objWidth, totalHeight, windowHeight])
+    }, [basement, draws, objHeight, objWidth, totalHeight, windowHeight])
 
     // console.log('eachObject', eachObject)
 
     const realPointStackArray: number[] = useMemo(
         () =>
-            draws.map((draw, index) => {
+            [basement, ...draws].map((draw, index) => {
                 let stackHeight = 0
                 draws.slice(0, index + 1).forEach((e) => {
                     stackHeight += e.height
                 })
                 return stackHeight
             }),
-        [draws],
+        [basement, draws],
     )
 
     const centerPointStackArray: ObjPoint[] = useMemo(
@@ -167,30 +168,59 @@ const View: FC<Props> = ({ draws, currentIndex, setCurrentIndex, label }) => {
             >
                 {label}
             </text>
-            {eachObject.map((draw, index) => (
-                <g onClick={() => setCurrentIndex(index)}>
-                    <Square
-                        key={`each-section-${index}`}
-                        center={centerPointStackArray[index]}
-                        draw={eachObject[index]}
-                        lineColor={currentIndex === index ? LINE_COLOR_ACTIVE : LINE_COLOR}
-                        lineWidth={currentIndex === index ? LINE_WIDTH_ACTIVE : LINE_WIDTH}
-                        guideEnable={GUIDE_ENABLE}
-                        guideMargin={GUIDE_MARGIN}
-                        guidePositon={GUIDE_POSITION}
-                        guideLineColor={GUIDE_COLOR}
-                        guideLineWidth={GUIDE_LINE_WIDTH}
-                        guideTextSize={GUIDE_TEXT_SIZE}
-                        fixedMargin={eachObject[0].bottom / 2 + 20}
-                        title={`Section ${index + 1}`}
-                        indicator={(realPointStackArray[index] / 1000).toFixed(2)}
-                        activeColor={currentIndex === index ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.0)'}
-                        label={''}
-                        value={draws[index]?.height / 1000}
-                        unit={''}
-                    />
-                </g>
-            ))}
+            {eachObject.map((draw, index) => {
+                var settingIndex = basement.height == 0 ? index : index - 1
+                return (
+                    <g
+                        onClick={
+                            basement.height == 0
+                                ? () => setCurrentIndex(index)
+                                : index == 0
+                                ? () => {}
+                                : () => setCurrentIndex(settingIndex)
+                        }
+                    >
+                        <Square
+                            key={`each-section-${index}`}
+                            center={centerPointStackArray[index]}
+                            draw={eachObject[index]}
+                            lineColor={
+                                currentIndex === settingIndex ? LINE_COLOR_ACTIVE : LINE_COLOR
+                            }
+                            lineWidth={
+                                currentIndex === settingIndex ? LINE_WIDTH_ACTIVE : LINE_WIDTH
+                            }
+                            guideEnable={GUIDE_ENABLE}
+                            guideMargin={GUIDE_MARGIN}
+                            guidePositon={GUIDE_POSITION}
+                            guideLineColor={GUIDE_COLOR}
+                            guideLineWidth={GUIDE_LINE_WIDTH}
+                            guideTextSize={GUIDE_TEXT_SIZE}
+                            fixedMargin={eachObject[0].bottom / 2 + 20}
+                            title={
+                                basement.height == 0
+                                    ? `Section ${index + 1}`
+                                    : index == 0
+                                    ? 'Offshore Offset'
+                                    : `Section ${index}`
+                            }
+                            indicator={(realPointStackArray[index] / 1000).toFixed(2)}
+                            activeColor={
+                                currentIndex === settingIndex
+                                    ? 'rgba(0,0,0,0.8)'
+                                    : 'rgba(0,0,0,0.0)'
+                            }
+                            label={''}
+                            value={
+                                index === 0
+                                    ? basement.height / 1000
+                                    : draws[index - 1]?.height / 1000
+                            }
+                            unit={''}
+                        />
+                    </g>
+                )
+            })}
             {GUIDE_ENABLE && (
                 <>
                     <g>

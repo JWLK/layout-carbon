@@ -61,12 +61,16 @@ export interface TWInitialValue {
     maxHeight: number
     custom: boolean
     divided: number
+    thickness: number
+    shore: 'onshore' | 'offshore'
 }
 
 export interface TWSection {
     index: number
     section: ObjSquare
     tapered: boolean
+    thickness: number
+    weight: number
 }
 
 export interface TWPart {

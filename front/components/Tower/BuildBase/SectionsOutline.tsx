@@ -177,6 +177,8 @@ const SectionOutline = () => {
                         height: eachHeight,
                     },
                     tapered: true,
+                    thickness: 0,
+                    weight: 0,
                 }
 
                 partsObject[divided - 1 - i] = {
@@ -316,10 +318,9 @@ const SectionOutline = () => {
         (e, index) => {
             const section = sectionData.map((v) => {
                 const typeObject: typeObjSquare = e.target.name
-                if (v.index === index) {
-                    v.section[`${typeObject}`] = parseInt(
-                        e.target.value !== '' ? e.target.value : 0,
-                    )
+                const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                if (v.index === index && !Number.isNaN(valueNumber)) {
+                    v.section[`${typeObject}`] = valueNumber
                 }
                 return v
             })
@@ -361,6 +362,8 @@ const SectionOutline = () => {
                         height: sections[i].section.height,
                     },
                     tapered: sections[i].tapered,
+                    thickness: sections[i].thickness,
+                    weight: sections[i].weight,
                 }
             } else {
                 sections[i] = {
@@ -371,6 +374,8 @@ const SectionOutline = () => {
                         height: sections[i].section.height,
                     },
                     tapered: sections[i].tapered,
+                    thickness: sections[i].thickness,
+                    weight: sections[i].weight,
                 }
             }
         }

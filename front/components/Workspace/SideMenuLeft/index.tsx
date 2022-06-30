@@ -41,7 +41,7 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         >
                             DashBoard
                         </SideNavLink>
-                        <SideNavDivider />
+                        {/* <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}
                             renderIcon={DotMark32}
@@ -65,7 +65,7 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                             to={`/workspace/${workspace}/frame/`}
                         >
                             0X.Frame
-                        </SideNavLink>
+                        </SideNavLink> */}
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}

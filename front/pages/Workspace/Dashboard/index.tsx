@@ -18,7 +18,7 @@ import {
     InfoText,
 } from '@pages/Common/ContentsLayout/styles'
 
-import { Fade32, ShareKnowledge32 } from '@carbon/icons-react'
+import { Fade32, ShareKnowledge32, Archive32, CheckmarkFilled16 } from '@carbon/icons-react'
 import {
     Grid,
     Row,
@@ -29,13 +29,24 @@ import {
     AccordionItem,
     ContentSwitcher,
     Switch,
+    ButtonSet,
     Button,
     Toggle,
     TextInput,
     RadioButtonGroup,
     RadioButton,
     Dropdown,
+    Modal,
+    StructuredListWrapper,
+    StructuredListHead,
+    StructuredListBody,
+    StructuredListRow,
+    StructuredListCell,
+    StructuredListInput,
 } from 'carbon-components-react'
+
+/* @objects/Data */
+import { sampleMode_00 } from '@objects/Data/sampleData'
 
 const Dashboard = () => {
     /* Param */
@@ -43,6 +54,16 @@ const Dashboard = () => {
 
     /* SWR */
     const { data: workspaceData } = useSWR<IWorkspace[]>('/api/workspaces', fetcher)
+
+    /* Localstorage */
+    const keyRawData = `${workspace}-towerData`
+
+    const [importData, setimportData] = useState(false)
+    const onClickLoadSampleData = useCallback(() => {
+        console.log('loaded')
+        setimportData(false)
+        localStorage.setItem(keyRawData, JSON.stringify(sampleMode_00))
+    }, [keyRawData])
 
     /*Modal*/
     const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false)
@@ -76,9 +97,9 @@ const Dashboard = () => {
     /* State */
     //turnbineOption Dropdown Option
     const [turnbineOption, setTurbineOption] = useState(items[2])
-    useEffect(() => {
-        // console.log(turnbineOption)
-    }, [turnbineOption])
+    // useEffect(() => {
+    //     // console.log(turnbineOption)
+    // }, [turnbineOption])
 
     //project-info-edit Toggle Option
     const [projectInfoEdit, setProjectInfoEdit] = useState(true)
@@ -92,23 +113,80 @@ const Dashboard = () => {
 
     return (
         <>
+            {importData && (
+                <Modal
+                    modalHeading="Import Sample"
+                    modalLabel="Sample Data"
+                    primaryButtonText="Import"
+                    secondaryButtonText="Cancel"
+                    open={importData}
+                    onRequestClose={() => setimportData(false)}
+                    onRequestSubmit={onClickLoadSampleData}
+                >
+                    <StructuredListWrapper selection ariaLabel="Structured list">
+                        <StructuredListHead>
+                            <StructuredListRow head tabIndex={0}>
+                                <StructuredListCell head>No.</StructuredListCell>
+                                <StructuredListCell head>Date</StructuredListCell>
+                                <StructuredListCell head>Description</StructuredListCell>
+                                <StructuredListCell head />
+                            </StructuredListRow>
+                        </StructuredListHead>
+                        <StructuredListBody>
+                            <StructuredListRow tabIndex={0}>
+                                <StructuredListCell>1</StructuredListCell>
+                                <StructuredListCell>2022.06.22</StructuredListCell>
+                                <StructuredListCell>
+                                    TOWER CALCULATION for 8 Mega 126.555 meter offshore model.
+                                </StructuredListCell>
+                                <StructuredListInput
+                                    id="row-1"
+                                    value="row-1"
+                                    title="row-1"
+                                    name="row-1"
+                                    defaultChecked
+                                />
+                                <StructuredListCell>
+                                    <CheckmarkFilled16
+                                        className="cds--structured-list-svg"
+                                        aria-label="select an option"
+                                    >
+                                        <title>select an option</title>
+                                    </CheckmarkFilled16>
+                                </StructuredListCell>
+                            </StructuredListRow>
+                        </StructuredListBody>
+                    </StructuredListWrapper>
+                </Modal>
+            )}
             <PageTypeWide>
                 <Grid fullWidth>
                     <Section>
                         <Row>
-                            <Column sm={2} md={6} lg={10}>
+                            <Column sm={2} md={6} lg={9}>
                                 <Header>
                                     DashBoard
                                     <p>Quick Access Menu & Infographics</p>
                                 </Header>
                             </Column>
-                            <Column sm={2} md={2} lg={2}>
+                            <Column sm={2} md={2} lg={3}>
                                 <br />
                                 <br />
                                 <br />
-                                <Button onClick={onClickAddMember} renderIcon={ShareKnowledge32}>
-                                    Invite Workspace Memeber
+                                <Button
+                                    kind="tertiary"
+                                    onClick={() => setimportData(true)}
+                                    renderIcon={Archive32}
+                                >
+                                    Load Sample Data
                                 </Button>
+                                <Button
+                                    hasIconOnly
+                                    iconDescription="Invite Memeber"
+                                    kind="tertiary"
+                                    onClick={onClickAddMember}
+                                    renderIcon={ShareKnowledge32}
+                                />
                             </Column>
                         </Row>
                     </Section>

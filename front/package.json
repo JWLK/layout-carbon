@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "pm2": "npx pm2 start \"npm run dev\" --name TW-WEB && npx pm2 monit",
         "dev": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" webpack serve --env development",
         "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" NODE_ENV=production webpack",
         "test": "echo \"Error: no test specified\" && exit 1"

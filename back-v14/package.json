@@ -4,6 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
+        "pm2": "npx pm2 start \"npm run dev\" --name TW-API",
         "dev": "nodemon app.js",
         "start": "cross-env NODE_ENV=production pm2 start app.js"
     },

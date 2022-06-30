@@ -337,15 +337,19 @@ const CustomDataTable: FC<Props> = ({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedRows.slice(start, start + pageSize).map((row: any) => {
-                        const { id: rowId, selected, expanded } = row
+                    {sortedRows.slice(start, start + pageSize).map((row: any, index: number) => {
+                        var { id: rowId, selected, expanded } = row
+                        if (expanded === undefined) {
+                            expanded = false
+                        }
                         const selectionName = !hasSelection
                             ? undefined
                             : `__custom-data-table_${elementId}_${rowId}`
                         return (
-                            <>
+                            <React.Fragment key={`tr-${rowId}`}>
                                 <TableExpandRow
-                                    key={rowId}
+                                    ariaLabel="__custom-data-table-save"
+                                    key={`table-expand-row-${rowId}`}
                                     isSelected={hasSelection && selected}
                                     data-row-id={rowId}
                                     isExpanded={expanded}
@@ -393,11 +397,14 @@ const CustomDataTable: FC<Props> = ({
                                     )}
                                 </TableExpandRow>
                                 {expanded && (
-                                    <TableExpandedRow colSpan={columns.length + 2}>
+                                    <TableExpandedRow
+                                        key={`table-expanded-row-${rowId}`}
+                                        colSpan={columns.length + 2}
+                                    >
                                         {row.remark}
                                     </TableExpandedRow>
                                 )}
-                            </>
+                            </React.Fragment>
                         )
                     })}
                 </TableBody>

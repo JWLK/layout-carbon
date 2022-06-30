@@ -8,144 +8,50 @@ import { LineChartOptions } from '@carbon/charts/interfaces'
 import { ScaleTypes } from '@carbon/charts/interfaces/enums'
 // import { options } from '@carbon/charts/configuration'
 /* Example Data */
-const chartDataSample = [
+const chartScaleData = [
     {
-        group: 'Dataset 1',
-        date: '2018-12-31T15:00:00.000Z',
-        value: 50000,
-        surplus: 6024805.530945587,
+        group: 'Max',
+        height: 0,
+        value: 1,
     },
     {
-        group: 'Dataset 1',
-        date: '2019-01-04T15:00:00.000Z',
-        value: 65000,
-        surplus: 222673734.26300198,
-    },
-    {
-        group: 'Dataset 1',
-        date: '2019-01-07T15:00:00.000Z',
-        value: null,
-        surplus: 15408.875792075045,
-    },
-    {
-        group: 'Dataset 1',
-        date: '2019-01-12T15:00:00.000Z',
-        value: 49213,
-        surplus: 648002554.0392833,
-    },
-    {
-        group: 'Dataset 1',
-        date: '2019-01-16T15:00:00.000Z',
-        value: 51213,
-        surplus: 441663361.24701434,
-    },
-    {
-        group: 'Dataset 2',
-        date: '2019-01-01T15:00:00.000Z',
-        value: 0,
-        surplus: 15572.003297682562,
-    },
-    {
-        group: 'Dataset 2',
-        date: '2019-01-05T15:00:00.000Z',
-        value: 57312,
-        surplus: 368783048.20488375,
-    },
-    {
-        group: 'Dataset 2',
-        date: '2019-01-07T15:00:00.000Z',
-        value: 27432,
-        surplus: 510332080.07300717,
-    },
-    {
-        group: 'Dataset 2',
-        date: '2019-01-14T15:00:00.000Z',
-        value: 70323,
-        surplus: 279517404.1363876,
-    },
-    {
-        group: 'Dataset 2',
-        date: '2019-01-18T15:00:00.000Z',
-        value: 21300,
-        surplus: 232742763.4232267,
-    },
-    {
-        group: 'Dataset 3',
-        date: '2018-12-31T15:00:00.000Z',
-        value: 40000,
-        surplus: 937639441.0477679,
-    },
-    {
-        group: 'Dataset 3',
-        date: '2019-01-04T15:00:00.000Z',
-        value: null,
-        surplus: 11158.925081380838,
-    },
-    {
-        group: 'Dataset 3',
-        date: '2019-01-07T15:00:00.000Z',
-        value: 18000,
-        surplus: 228402114.67607424,
-    },
-    {
-        group: 'Dataset 3',
-        date: '2019-01-12T15:00:00.000Z',
-        value: 39213,
-        surplus: 856147249.5598493,
-    },
-    {
-        group: 'Dataset 3',
-        date: '2019-01-16T15:00:00.000Z',
-        value: 61213,
-        surplus: 260310880.2857741,
-    },
-    {
-        group: 'Dataset 4',
-        date: '2019-01-01T15:00:00.000Z',
-        value: 20000,
-        surplus: 238298568.43392482,
-    },
-    {
-        group: 'Dataset 4',
-        date: '2019-01-05T15:00:00.000Z',
-        value: 37312,
-        surplus: 166118825.46681815,
-    },
-    {
-        group: 'Dataset 4',
-        date: '2019-01-07T15:00:00.000Z',
-        value: 51432,
-        surplus: 236204246.83006358,
-    },
-    {
-        group: 'Dataset 4',
-        date: '2019-01-14T15:00:00.000Z',
-        value: 25332,
-        surplus: 519704030.1368107,
-    },
-    {
-        group: 'Dataset 4',
-        date: '2019-01-18T15:00:00.000Z',
-        value: null,
-        surplus: 22484.64556387117,
+        group: 'MIN',
+        height: 0,
+        value: -1,
     },
 ]
 const chartOption: LineChartOptions = {
-    title: 'Line (time series)',
+    title: 'Height',
     axes: {
-        bottom: {
-            title: '2019 Annual Sales Figures',
-            mapsTo: 'date',
-            scaleType: 'time' as ScaleTypes,
-        },
         left: {
-            title: 'Conversion rate',
+            title: 'Height',
+            mapsTo: 'height',
+            scaleType: 'linear' as ScaleTypes,
+        },
+        bottom: {
+            title: 'Value',
             mapsTo: 'value',
             scaleType: 'linear' as ScaleTypes,
+            ticks: {
+                values: [-1, -0.5, 0, 0.5, 1],
+                min: -1,
+                max: 1,
+            },
+            includeZero: true,
+            thresholds: [
+                {
+                    label: 'Center Line',
+                    value: 0,
+                    fillColor: 'orange',
+                },
+            ],
         },
     },
     curve: 'curveMonotoneX',
-    height: '400px',
+    height: '1000px',
+    legend: {
+        clickable: false,
+    },
 }
 
 //Current Page Parameter
@@ -253,6 +159,11 @@ const Frequency = () => {
     const [sectorsData, setSectorsData] = useState([] as TWSectors[])
 
     const [frequencyData, setFrequencyData] = useState([] as TWFrequency[])
+
+    /* Chart Data */
+    const [eigenData, setEigenData] = useState(
+        [] as { group: string; height: number; value: number }[],
+    )
 
     /* Matix Calc State */
     const [w, setW] = useState(1)
@@ -552,17 +463,24 @@ const Frequency = () => {
     }
 
     const matChainCalc2 = (
+        freqData: number[][][],
         result: number[][],
         vector: number[][],
-        param: number[][][],
         number: number,
     ) => {
         console.log('Chain Calc 2')
         var matResult = [] as number[][][]
         for (var i = 0; i < number; i++) {
-            matResult[i + 1] = multiply(param[i], result)
+            matResult[i] = multiply(freqData[i], result)
         }
-        return matResult
+        if (number < 70) {
+            for (i = number; i < 69; i++) {
+                matResult[i] = matResult[number - 1]
+            }
+        }
+        matResult[69] = vector
+
+        return matResult.map((v) => v[0][0])
     }
 
     /**
@@ -602,22 +520,49 @@ const Frequency = () => {
                 matixResult[frequencyData.length - 1][2][3] *
                     matixResult[frequencyData.length - 1][3][2]
             setDeter(determinant)
-            console.log('Determinant', determinant)
-            // calcEvent2(matixResult[frequencyData.length - 1])
-            // var matixResult2 = matChainCalc2(
-            //     graphRowResult,
-            //     graphRowVector,
-            //     matixResult,
-            //     frequencyData.length - 1,
-            // )
-            // console.log(
-            //     'Chain Calc2 Result',
-            //     matixResult2.map((e) => e.map((col) => col.map((v) => MR(v)))),
-            // )
-        }
-    }, [frequencyData, graphRowResult, graphRowVector, w])
+            // console.log('Determinant', determinant)
+            var garaphData = calcEvent2(matixResult)
+            var heightArray = [20, ...frequencyData.map((v) => v.frequency.l)]
+            if (frequencyData.length < garaphData.length) {
+                for (var i = frequencyData.length; i < garaphData.length; i++) {
+                    heightArray[i] = 0
+                }
+            }
+            console.log('heightArray', heightArray)
 
-    const calcEvent = async (freqData: TWFrequency[], w: number, deter: number) => {
+            for (var j = 1; j < garaphData.length - 1; j++) {
+                var sumOf =
+                    Math.round(heightArray.slice(0, j).reduce((prev, next) => prev + next) * 1000) /
+                    1000
+                console.log(sumOf)
+            }
+
+            setEigenData(
+                garaphData.map((v, index) => {
+                    var dataElement = {
+                        group: 'Eigen Vector',
+                        height:
+                            Math.round(
+                                heightArray
+                                    .slice(0, index + 1)
+                                    .reduce((prev, next) => prev + next) * 1000,
+                            ) / 1000,
+                        // height: index,
+                        value: v,
+                    }
+                    return dataElement
+                }),
+            )
+            // console.log('garaphData', garaphData)
+        }
+    }, [frequencyData, w])
+
+    /* Eigen Data Check */
+    // useEffect(() => {
+    //     console.log('eigenData', eigenData)
+    // }, [eigenData])
+
+    const calcEvent = (freqData: TWFrequency[], w: number, deter: number) => {
         console.log('Calc Event')
         var resultMat = [] as number[][][]
         var cnt = 0
@@ -647,18 +592,30 @@ const Frequency = () => {
         setCalcCount(cnt)
         setLoading(false)
     }
-    const calcEvent2 = async (freqData: number[][]) => {
+    const calcEvent2 = (freqData: number[][][]) => {
         console.log('Calc Event2')
         var seta = 1
-        var resultMat = multiply(inv(freqData), [[1], [seta], [0], [0]])
+        var resultMat = multiply(inv(freqData[frequencyData.length - 1]), [[1], [seta], [0], [0]])
         while (resultMat[1][0] > 0.000005) {
-            resultMat = multiply(inv(freqData), [[1], [seta], [0], [0]])
+            resultMat = multiply(inv(freqData[frequencyData.length - 1]), [[1], [seta], [0], [0]])
             seta -= 0.00001
         }
         console.log(resultMat)
         console.log(seta)
         setGraphRowVector([[1], [seta], [0], [0]])
         setGraphRowResult(resultMat)
+
+        var matixResult2 = matChainCalc2(
+            freqData,
+            resultMat,
+            [[1], [seta], [0], [0]],
+            frequencyData.length - 1,
+        )
+        // console.log('Chain Calc2 Result', [0, ...matixResult2])
+
+        return [0, ...matixResult2]
+        // var result = multiply(freqData[0], resultMat)
+        // console.log('result row 1 graph vector', result)
     }
 
     /*
@@ -701,282 +658,310 @@ const Frequency = () => {
             {loading && (
                 <Loading description="Active loading indicator" withOverlay={true} small={false} />
             )}
-            <PageTypeWide>
-                <Grid fullWidth>
-                    <Row>
-                        <Column sm={2} md={6} lg={10}>
-                            <Header>
-                                Natural Frequency Check
-                                <p>Project Detail</p>
-                            </Header>
-                        </Column>
-                        <Column sm={2} md={2} lg={2}>
-                            <br />
-                            <br />
-                            <br />
-                            <Button kind="tertiary" renderIcon={Fade32}>
-                                Reset Parameter
-                            </Button>
-                        </Column>
-                    </Row>
-                    <SectionDivider />
-                    <Section>
-                        <h3>Natural Frequency Calculator</h3>
-                        <Button
-                            renderIcon={MathCurve32}
-                            onClick={() => calcEvent(frequencyData, w, deter)}
-                        >
-                            Find Natural Frequency
-                        </Button>
+            {frequencyData.length && (
+                <PageTypeWide>
+                    <Grid fullWidth>
                         <Row>
-                            <Column sm={4} md={4} lg={6}>
-                                <Row as="article" narrow>
-                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                        W = {w}
-                                    </Column>
-                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                        Natural Frequency = {w / (2 * Math.PI)} Hz
-                                    </Column>
-                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                        Determinent = {deter}
-                                    </Column>
-                                </Row>
-                                <Row as="article" narrow>
-                                    <Column sm={1} md={2} lg={4} style={{ marginBlock: '0.5rem' }}>
-                                        Count = {calcCount}
-                                    </Column>
-                                </Row>
-                                <Row>
-                                    <Table size="sm">
-                                        <TableBody>
-                                            <TableRow>
-                                                <TableCell>y</TableCell>
-                                                <TableCell>{graphRowVector[0][0]}</TableCell>
-                                                <TableCell>{`=>`}</TableCell>
-                                                <TableCell>{graphRowResult[0][0]}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>θ</TableCell>
-                                                <TableCell>{graphRowVector[1][0]}</TableCell>
-                                                <TableCell>{`=>`}</TableCell>
-                                                <TableCell>{graphRowResult[1][0]}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>M</TableCell>
-                                                <TableCell>{graphRowVector[2][0]}</TableCell>
-                                                <TableCell>{`=>`}</TableCell>
-                                                <TableCell>{graphRowResult[2][0]}</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell>V</TableCell>
-                                                <TableCell>{graphRowVector[3][0]}</TableCell>
-                                                <TableCell>{`=>`}</TableCell>
-                                                <TableCell>{graphRowResult[3][0]}</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </Row>
+                            <Column sm={2} md={6} lg={10}>
+                                <Header>
+                                    Natural Frequency Check
+                                    <p>Project Detail</p>
+                                </Header>
                             </Column>
-                            <Column sm={4} md={4} lg={6}>
-                                <LineChart data={chartDataSample} options={chartOption}></LineChart>
+                            <Column sm={2} md={2} lg={2}>
+                                <br />
+                                <br />
+                                <br />
+                                <Button kind="tertiary" renderIcon={Fade32}>
+                                    Reset Parameter
+                                </Button>
                             </Column>
                         </Row>
-                    </Section>
-                    <SectionDivider />
-                    <>
-                        <InputLabel>Section Body Mass Table</InputLabel>
-                        <Table size="lg">
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>No.</div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            L [m]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            M_Flange_LWR [kg]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            M_1 [kg]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            I_1 [m^4]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            J_1_CG [kgm^2]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            M_2 [kg]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            I_2 [m^4]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            J_2_CG [kgm^2]
-                                        </div>
-                                    </TableHeader>
-                                    <TableHeader>
-                                        <div style={{ color: '#fff', marginLeft: '0px' }}>
-                                            M_Flange_UPR [kg]
-                                        </div>
-                                    </TableHeader>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {/* Tower Parts */}
-                                {frequencyData.map((v, index) => {
-                                    return (
-                                        <TableRow key={`frequencyData-${index}`}>
-                                            <TableCell>
-                                                <TextWrapTableCell width={1}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#fff',
-                                                        }}
-                                                    >
-                                                        {index + 1}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={2}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#FF7700',
-                                                        }}
-                                                    >
-                                                        {v.frequency.l}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={4}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color:
-                                                                v.frequency.flangeLWR > 0
-                                                                    ? '#FFcc22'
-                                                                    : '#fff',
-                                                        }}
-                                                    >
-                                                        {v.frequency.flangeLWR}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#9BBB59',
-                                                        }}
-                                                    >
-                                                        {v.frequency.m_1}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#538DD5',
-                                                        }}
-                                                    >
-                                                        {v.frequency.i_1}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#B1A0C7',
-                                                        }}
-                                                    >
-                                                        {v.frequency.j_1}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#9BBB59',
-                                                        }}
-                                                    >
-                                                        {v.frequency.m_2}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#538DD5',
-                                                        }}
-                                                    >
-                                                        {v.frequency.i_2}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={8}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color: '#B1A0C7',
-                                                        }}
-                                                    >
-                                                        {v.frequency.j_2}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextWrapTableCell width={4}>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '0.7rem',
-                                                            color:
-                                                                v.frequency.flangeUPR > 0
-                                                                    ? '#FFcc22'
-                                                                    : '#fff',
-                                                        }}
-                                                    >
-                                                        {v.frequency.flangeUPR}
-                                                    </div>
-                                                </TextWrapTableCell>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </>
-                </Grid>
-            </PageTypeWide>
+                        <SectionDivider />
+                        <Section>
+                            <h3>Natural Frequency Calculator</h3>
+                            <Button
+                                renderIcon={MathCurve32}
+                                onClick={() => calcEvent(frequencyData, w, deter)}
+                            >
+                                Find Natural Frequency
+                            </Button>
+                            <Row>
+                                <Column sm={4} md={2} lg={2}>
+                                    <LineChart
+                                        data={[...chartScaleData, ...eigenData]}
+                                        options={chartOption}
+                                    ></LineChart>
+                                </Column>
+                                <Column sm={4} md={4} lg={10}>
+                                    <Row as="article" narrow>
+                                        <Column
+                                            sm={1}
+                                            md={2}
+                                            lg={4}
+                                            style={{ marginBlock: '0.5rem' }}
+                                        >
+                                            W = {Math.round(w * 1000) / 1000}
+                                        </Column>
+                                        <Column
+                                            sm={1}
+                                            md={4}
+                                            lg={4}
+                                            style={{ marginBlock: '0.5rem' }}
+                                        >
+                                            Natural Frequency ={' '}
+                                            {Math.round((w / (2 * Math.PI)) * 1000) / 1000} Hz
+                                        </Column>
+                                        <Column
+                                            sm={1}
+                                            md={4}
+                                            lg={4}
+                                            style={{ marginBlock: '0.5rem' }}
+                                        >
+                                            Determinent = {Math.round(deter * 1000) / 1000}
+                                        </Column>
+                                    </Row>
+                                    <Row as="article" narrow>
+                                        <Column
+                                            sm={1}
+                                            md={2}
+                                            lg={4}
+                                            style={{ marginBlock: '0.5rem' }}
+                                        >
+                                            Count = {calcCount}
+                                        </Column>
+                                    </Row>
+                                    <Row>
+                                        <Table size="sm">
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell>y</TableCell>
+                                                    <TableCell>{graphRowVector[0][0]}</TableCell>
+                                                    <TableCell>{`=>`}</TableCell>
+                                                    <TableCell>{graphRowResult[0][0]}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>θ</TableCell>
+                                                    <TableCell>{graphRowVector[1][0]}</TableCell>
+                                                    <TableCell>{`=>`}</TableCell>
+                                                    <TableCell>{graphRowResult[1][0]}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>M</TableCell>
+                                                    <TableCell>{graphRowVector[2][0]}</TableCell>
+                                                    <TableCell>{`=>`}</TableCell>
+                                                    <TableCell>{graphRowResult[2][0]}</TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>V</TableCell>
+                                                    <TableCell>{graphRowVector[3][0]}</TableCell>
+                                                    <TableCell>{`=>`}</TableCell>
+                                                    <TableCell>{graphRowResult[3][0]}</TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </Row>
+                                </Column>
+                            </Row>
+                        </Section>
+                        <SectionDivider />
+                        <>
+                            <InputLabel>Section Body Mass Table</InputLabel>
+                            <Table size="lg">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                No.
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                L [m]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                M_Flange_LWR [kg]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                M_1 [kg]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                I_1 [m^4]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                J_1_CG [kgm^2]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                M_2 [kg]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                I_2 [m^4]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                J_2_CG [kgm^2]
+                                            </div>
+                                        </TableHeader>
+                                        <TableHeader>
+                                            <div style={{ color: '#fff', marginLeft: '0px' }}>
+                                                M_Flange_UPR [kg]
+                                            </div>
+                                        </TableHeader>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {/* Tower Parts */}
+                                    {frequencyData.map((v, index) => {
+                                        return (
+                                            <TableRow key={`frequencyData-${index}`}>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={1}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#fff',
+                                                            }}
+                                                        >
+                                                            {index + 1}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={2}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#FF7700',
+                                                            }}
+                                                        >
+                                                            {v.frequency.l}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={4}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color:
+                                                                    v.frequency.flangeLWR > 0
+                                                                        ? '#FFcc22'
+                                                                        : '#fff',
+                                                            }}
+                                                        >
+                                                            {v.frequency.flangeLWR}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#9BBB59',
+                                                            }}
+                                                        >
+                                                            {v.frequency.m_1}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#538DD5',
+                                                            }}
+                                                        >
+                                                            {v.frequency.i_1}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#B1A0C7',
+                                                            }}
+                                                        >
+                                                            {v.frequency.j_1}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#9BBB59',
+                                                            }}
+                                                        >
+                                                            {v.frequency.m_2}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#538DD5',
+                                                            }}
+                                                        >
+                                                            {v.frequency.i_2}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={8}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color: '#B1A0C7',
+                                                            }}
+                                                        >
+                                                            {v.frequency.j_2}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={4}>
+                                                        <div
+                                                            style={{
+                                                                fontSize: '0.7rem',
+                                                                color:
+                                                                    v.frequency.flangeUPR > 0
+                                                                        ? '#FFcc22'
+                                                                        : '#fff',
+                                                            }}
+                                                        >
+                                                            {v.frequency.flangeUPR}
+                                                        </div>
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </>
+                    </Grid>
+                </PageTypeWide>
+            )}
         </>
     )
 }

@@ -185,6 +185,8 @@ const Frame = () => {
                         height: eachSectionHeight,
                     },
                     tapered: true,
+                    thickness: 50,
+                    weight: 0,
                 }
 
                 partsObject[divided - 1 - i] = {
@@ -343,11 +345,11 @@ const Frame = () => {
         <FlexWrap>
             <GraphicWrap>
                 <GraphicViewOrigin>
-                    <VOTower
+                    {/* <VOTower
                         draws={sectionData.map((v) => v.section)}
                         currentIndex={currentSectionIndex}
                         setCurrentIndex={setCurrentSectionIndex}
-                    />
+                    /> */}
                 </GraphicViewOrigin>
             </GraphicWrap>
             <SettingWrap>

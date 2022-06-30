@@ -70,8 +70,9 @@ import {
     Grid,
     Row,
     Column,
-    ButtonSet,
     Button,
+    RadioButtonGroup,
+    RadioButton,
     TextInput,
     NumberInput,
     Slider,
@@ -152,12 +153,14 @@ const Frame = () => {
             const valueNumber = parseInt(
                 e.imaginaryTarget.value !== '' ? e.imaginaryTarget.value : 0,
             )
-            setTotalHeight(valueNumber)
-            setMaxHeight(valueNumber)
-            initData.totalHeight = valueNumber
-            initData.maxHeight = valueNumber
-            rawData.initial = initData
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            if (!Number.isNaN(valueNumber)) {
+                setTotalHeight(valueNumber)
+                setMaxHeight(valueNumber)
+                initData.totalHeight = valueNumber
+                initData.maxHeight = valueNumber
+                rawData.initial = initData
+                localStorage.setItem(keyRawData, JSON.stringify(rawData))
+            }
         },
         [keyRawData, rawData, initData],
     )
@@ -205,12 +208,13 @@ const Frame = () => {
                 )
             })
         invalidList.push(
-            sectionData.map((v) => v.section.height).reduce((prev, curr) => prev + curr, 0) !=
+            sectionData.map((v) => v.section.height).reduce((prev, curr) => prev + curr, 0) +
+                initData.offset !=
                 initData.maxHeight,
         )
 
         setInvalidTableCheck(invalidList.filter((v) => v).length > 0)
-    }, [MfrD, initData.maxHeight, sectionData])
+    }, [MfrD, initData.maxHeight, initData.offset, sectionData])
 
     /* STEP 0 */
     const onClickSetSectionsInitData = useCallback(
@@ -257,6 +261,8 @@ const Frame = () => {
                         height: eachSectionHeight,
                     },
                     tapered: true,
+                    thickness: 50,
+                    weight: 0,
                 }
 
                 partsObject[divided - 1 - i] = {
@@ -411,6 +417,37 @@ const Frame = () => {
     const updateSectionsTaperedSync = (sections: TWSection[]) => {
         if (sections[0].tapered === false) {
             sections[0].section.top = sections[0].section.bottom
+            sections[0].weight = Math.abs(
+                ((Math.pow(sections[0].section.bottom, 2) -
+                    Math.pow(sections[0].section.bottom - 2 * sections[0].thickness, 2) +
+                    Math.pow(sections[0].section.bottom, 2) -
+                    Math.pow(sections[0].section.bottom - 2 * sections[0].thickness, 2) +
+                    sections[0].section.bottom * sections[0].section.bottom -
+                    (sections[0].section.bottom - 2 * sections[0].thickness) *
+                        (sections[0].section.bottom - 2 * sections[0].thickness)) *
+                    Math.PI *
+                    sections[0].section.height *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    12,
+            )
+        } else {
+            sections[0].weight = Math.abs(
+                ((Math.pow(sections[0].section.top, 2) -
+                    Math.pow(sections[0].section.top - 2 * sections[0].thickness, 2) +
+                    Math.pow(sections[0].section.bottom, 2) -
+                    Math.pow(sections[0].section.bottom - 2 * sections[0].thickness, 2) +
+                    sections[0].section.top * sections[0].section.bottom -
+                    (sections[0].section.top - 2 * sections[0].thickness) *
+                        (sections[0].section.bottom - 2 * sections[0].thickness)) *
+                    Math.PI *
+                    sections[0].section.height *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    12,
+            )
         }
 
         for (var i = 1; i < sections.length; i++) {
@@ -423,6 +460,22 @@ const Frame = () => {
                         height: sections[i].section.height,
                     },
                     tapered: sections[i].tapered,
+                    thickness: sections[i].thickness,
+                    weight: Math.abs(
+                        ((Math.pow(sections[i].section.top, 2) -
+                            Math.pow(sections[i].section.top - 2 * sections[i].thickness, 2) +
+                            Math.pow(sections[i - 1].section.top, 2) -
+                            Math.pow(sections[i - 1].section.top - 2 * sections[i].thickness, 2) +
+                            sections[i].section.top * sections[i - 1].section.top -
+                            (sections[i].section.top - 2 * sections[i].thickness) *
+                                (sections[i - 1].section.top - 2 * sections[i].thickness)) *
+                            Math.PI *
+                            sections[i].section.height *
+                            1000 *
+                            7.85 *
+                            Math.pow(10, -6)) /
+                            12,
+                    ),
                 }
             } else {
                 sections[i] = {
@@ -433,6 +486,22 @@ const Frame = () => {
                         height: sections[i].section.height,
                     },
                     tapered: sections[i].tapered,
+                    thickness: sections[i].thickness,
+                    weight: Math.abs(
+                        ((Math.pow(sections[i - 1].section.top, 2) -
+                            Math.pow(sections[i - 1].section.top - 2 * sections[i].thickness, 2) +
+                            Math.pow(sections[i - 1].section.top, 2) -
+                            Math.pow(sections[i - 1].section.top - 2 * sections[i].thickness, 2) +
+                            sections[i - 1].section.top * sections[i - 1].section.top -
+                            (sections[i - 1].section.top - 2 * sections[i].thickness) *
+                                (sections[i - 1].section.top - 2 * sections[i].thickness)) *
+                            Math.PI *
+                            sections[i].section.height *
+                            1000 *
+                            7.85 *
+                            Math.pow(10, -6)) /
+                            12,
+                    ),
                 }
             }
         }
@@ -555,15 +624,19 @@ const Frame = () => {
         return TWFlanges
     }
 
-    type typeObjSquare = 'top' | 'bottom' | 'height'
+    type typeObjSquare = 'top' | 'bottom' | 'height' | 'thickness'
     const onChangeSectionTableData = useCallback(
         (e, index, invalid) => {
             const section = sectionData.map((v) => {
                 const typeObject: typeObjSquare = e.target.name
-                if (v.index === index) {
-                    v.section[`${typeObject}`] = parseInt(
-                        e.target.value !== '' ? e.target.value : 0,
-                    )
+
+                const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                if (v.index === index && !Number.isNaN(valueNumber)) {
+                    if (typeObject !== 'thickness') {
+                        v.section[`${typeObject}`] = valueNumber
+                    } else {
+                        v.thickness = valueNumber
+                    }
                 }
                 return v
             })
@@ -579,7 +652,18 @@ const Frame = () => {
         },
         [keyRawData, mutate, rawData, sectionData, updateInitialSync],
     )
-    useEffect(() => {}, [])
+    const onChangeSectionOffsetData = useCallback(
+        (e) => {
+            const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+            if (!Number.isNaN) {
+                rawData.initial.offset = valueNumber
+                localStorage.setItem(keyRawData, JSON.stringify(rawData))
+                mutate()
+                setValidSecondStep(false)
+            }
+        },
+        [keyRawData, mutate, rawData],
+    )
 
     const onClickSetSectionsFinalData = useCallback(
         (e) => {
@@ -678,6 +762,14 @@ const Frame = () => {
             key: 'bottom',
             header: 'Low Diameter',
         },
+        {
+            key: 'thickness',
+            header: 'Thickness',
+        },
+        {
+            key: 'weight',
+            header: 'Weight (Ton)',
+        },
     ]
 
     return (
@@ -688,6 +780,11 @@ const Frame = () => {
                         draws={sectionData.map((v) => v.section)}
                         currentIndex={currentSectionIndex}
                         setCurrentIndex={setCurrentSectionIndex}
+                        basement={{
+                            top: initData.bottomLowerOutDia,
+                            bottom: initData.bottomLowerOutDia,
+                            height: initData.offset,
+                        }}
                     />
                 </GraphicViewOrigin>
             </GraphicWrap>
@@ -738,6 +835,18 @@ const Frame = () => {
                             </div>
                         )}
                         <SectionDivider />
+                        <InputLabel>
+                            <span style={{ color: '#fff' }}>Tower Type</span>
+                        </InputLabel>
+                        <RadioButtonGroup
+                            name="tower-type"
+                            defaultSelected="offshore"
+                            disabled={true}
+                        >
+                            <RadioButton labelText="Onshore" value="onshore" id="type-onshore" />
+                            <RadioButton labelText="Offshore" value="offshore" id="type-offshore" />
+                        </RadioButtonGroup>
+                        <InputDivider />
                         <InputLabel>
                             <span style={{ color: '#ffff00' }}>Tower Total Height (mm)</span>
                         </InputLabel>
@@ -886,9 +995,18 @@ const Frame = () => {
                                             {MfrD.capacity[0].diameter * 1000}
                                         </TextWrapTableCell>
                                     </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>{`-`}</TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            {MfrD.capacity[0].weight}
+                                        </TextWrapTableCell>
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
+
                         <InputDivider />
                         <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
                             Each Section Parameter [mm]
@@ -1032,9 +1150,102 @@ const Frame = () => {
                                                         />
                                                     </TextWrapTableCell>
                                                 </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-thickness-${v.index}`}
+                                                            labelText=""
+                                                            name="thickness"
+                                                            onChange={(e) =>
+                                                                onChangeSectionTableData(
+                                                                    e,
+                                                                    v.index,
+                                                                    invalidCheckBottom,
+                                                                )
+                                                            }
+                                                            value={v.thickness}
+                                                            disabled={notSaveValidation}
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        <TextInput
+                                                            id={`section-weight-${v.index}`}
+                                                            labelText=""
+                                                            name="weight"
+                                                            value={
+                                                                Math.round(v.weight / 1000) / 1000
+                                                            }
+                                                            disabled={
+                                                                notSaveValidation || v.weight === 0
+                                                            }
+                                                        />
+                                                    </TextWrapTableCell>
+                                                </TableCell>
                                             </TableRow>
                                         )
                                     })}
+                                {/* Shore Check */}
+                                {initData.shore === 'onshore' ? (
+                                    ''
+                                ) : (
+                                    <TableRow key={`section-offshore`} style={{ textAlign: 'end' }}>
+                                        <TableCell>
+                                            <TextWrapTableCell width={3}>Offset</TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={7}>
+                                                <TextInput
+                                                    id={`section-height-offshore-offset`}
+                                                    labelText=""
+                                                    name="height"
+                                                    onChange={(e) => onChangeSectionOffsetData(e)}
+                                                    // invalid={invalidCheckLength}
+                                                    // invalidText={invalidTextLength}
+                                                    value={initData.offset}
+                                                    // disabled={notSaveValidation}
+                                                />
+                                            </TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={5}>
+                                                <TextInput
+                                                    id="offshore-linear"
+                                                    labelText=""
+                                                    value="Linear"
+                                                    disabled={true}
+                                                />
+                                            </TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={7}>
+                                                <TextInput
+                                                    id="offshore-upper-diameter"
+                                                    labelText=""
+                                                    value={initData.bottomLowerOutDia}
+                                                    disabled={true}
+                                                />
+                                            </TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={7}>
+                                                <TextInput
+                                                    id="offshore-lower-diameter"
+                                                    labelText=""
+                                                    value={initData.bottomLowerOutDia}
+                                                    disabled={true}
+                                                />
+                                            </TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={7}>-</TextWrapTableCell>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextWrapTableCell width={7}>-</TextWrapTableCell>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                         <br />
@@ -1042,7 +1253,7 @@ const Frame = () => {
                             <TableBody>
                                 <TableRow>
                                     <TableCell>
-                                        <TextWrapTableCell width={5}>
+                                        <TextWrapTableCell width={4}>
                                             <div style={{ color: '#fff' }}>Total</div>
                                         </TextWrapTableCell>
                                     </TableCell>
@@ -1055,22 +1266,47 @@ const Frame = () => {
                                                 invalid={
                                                     sectionData
                                                         .map((v) => v.section.height)
-                                                        .reduce((prev, curr) => prev + curr, 0) !=
+                                                        .reduce((prev, curr) => prev + curr, 0) +
+                                                        initData.offset !=
                                                     initData.maxHeight
                                                 }
                                                 invalidText={`Total = ${initData.maxHeight}`}
-                                                value={sectionData
-                                                    .map((v) => v.section.height)
-                                                    .reduce((prev, curr) => prev + curr, 0)}
+                                                value={
+                                                    sectionData
+                                                        .map((v) => v.section.height)
+                                                        .reduce((prev, curr) => prev + curr, 0) +
+                                                    initData.offset
+                                                }
                                                 disabled={divided !== sectionData.length}
                                             />
                                         </TextWrapTableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <TextWrapTableCell width={24}>
+                                        <TextWrapTableCell width={28}>
                                             {`Tower Total Height ${initData.maxHeight}mm (= ${
                                                 initData.maxHeight / 1000
                                             }m) `}
+                                        </TextWrapTableCell>
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextWrapTableCell width={7}>
+                                            <TextInput
+                                                id={`section-total-height`}
+                                                labelText=""
+                                                name="total-height"
+                                                invalid={
+                                                    sectionData
+                                                        .map((v) => v.section.height)
+                                                        .reduce((prev, curr) => prev + curr, 0) +
+                                                        initData.offset !=
+                                                    initData.maxHeight
+                                                }
+                                                invalidText={`Total = ${initData.maxHeight}`}
+                                                value={sectionData
+                                                    .map((v) => Math.round(v.weight / 1000) / 1000)
+                                                    .reduce((prev, curr) => prev + curr, 0)}
+                                                disabled={divided !== sectionData.length}
+                                            />
                                         </TextWrapTableCell>
                                     </TableCell>
                                 </TableRow>

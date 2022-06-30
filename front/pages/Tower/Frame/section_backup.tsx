@@ -349,55 +349,54 @@ const Frame = () => {
             const flanges = flangesData[currentSectionIndex].flanges.map((v, index) => {
                 const typeObject: typeObjFlange = e.target.name
                 if (index === selectedIndex) {
-                    v.flange[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
-                    if (typeObject == 'neckWidth') {
-                        v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0) -
-                            2 * v.flange.minScrewWidth
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
-                        v.flange.param_b =
-                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
-                    } else if (typeObject == 'minScrewWidth') {
-                        v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * v.flange.neckWidth -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0)
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
-                        v.flange.param_b =
-                            (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
-                    } else if (typeObject == 'flangeWidth') {
-                        v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
-                        v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                    const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                    if (!Number.isNaN(valueNumber)) {
+                        v.flange[`${typeObject}`] = valueNumber
+                        if (typeObject == 'neckWidth') {
+                            v.flange.pcDia =
+                                v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                            v.flange.param_b =
+                                (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                        } else if (typeObject == 'minScrewWidth') {
+                            v.flange.pcDia =
+                                v.flange.outDia - 2 * v.flange.neckWidth - 2 * valueNumber
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                            v.flange.param_b =
+                                (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
+                        } else if (typeObject == 'flangeWidth') {
+                            v.flange.inDia = v.flange.outDia - v.flange.flangeWidth * 2
+                            v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
+                        }
+                        var flangeWithNeckOutsideMass = Math.abs(
+                            ((Math.pow(v.flange.outDia, 2) -
+                                Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) +
+                                Math.pow(v.flange.outDia, 2) -
+                                Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) +
+                                v.flange.outDia * v.flange.outDia -
+                                (v.flange.outDia - 2 * v.flange.neckWidth) *
+                                    (v.flange.outDia - 2 * v.flange.neckWidth)) *
+                                Math.PI *
+                                (v.flange.flangeHeight + v.flange.neckHeight) *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                12,
+                        )
+                        var flangeBodyInnerMass = Math.abs(
+                            ((Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) -
+                                Math.pow(v.flange.inDia, 2)) *
+                                Math.PI *
+                                v.flange.flangeHeight *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                4,
+                        )
+                        v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
+                        v.flangeWeight = flangeBodyInnerMass
+                        v.partWeight = flangeWithNeckOutsideMass
                     }
-                    var flangeWithNeckOutsideMass = Math.abs(
-                        ((Math.pow(v.flange.outDia, 2) -
-                            Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) +
-                            Math.pow(v.flange.outDia, 2) -
-                            Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) +
-                            v.flange.outDia * v.flange.outDia -
-                            (v.flange.outDia - 2 * v.flange.neckWidth) *
-                                (v.flange.outDia - 2 * v.flange.neckWidth)) *
-                            Math.PI *
-                            (v.flange.flangeHeight + v.flange.neckHeight) *
-                            1000 *
-                            7.85 *
-                            Math.pow(10, -6)) /
-                            12,
-                    )
-                    var flangeBodyInnerMass = Math.abs(
-                        ((Math.pow(v.flange.outDia - 2 * v.flange.neckWidth, 2) -
-                            Math.pow(v.flange.inDia, 2)) *
-                            Math.PI *
-                            v.flange.flangeHeight *
-                            1000 *
-                            7.85 *
-                            Math.pow(10, -6)) /
-                            4,
-                    )
-                    v.weight = flangeWithNeckOutsideMass + flangeBodyInnerMass
-                    v.flangeWeight = flangeBodyInnerMass
-                    v.partWeight = flangeWithNeckOutsideMass
                 }
                 return v
             })
@@ -541,49 +540,52 @@ const Frame = () => {
                 const typeObject: typeObjSquare = e.target.name
                 if (index === selectedIndex) {
                     var inputValue = parseInt(e.target.value !== '' ? e.target.value : 0)
-                    if (typeObject == 'height') {
-                        v.part[`${typeObject}`] = inputValue
-                        var partHeightSum =
-                            selectedIndex == 0
-                                ? 0
-                                : partsData[currentSectionIndex].parts
-                                      .map((v) => v.part.height)
-                                      .slice(0, selectedIndex)
-                                      .reduce((prev, next) => prev + next)
+                    if (!Number.isNaN(inputValue)) {
+                        if (typeObject == 'height') {
+                            v.part[`${typeObject}`] = inputValue
+                            var partHeightSum =
+                                selectedIndex == 0
+                                    ? 0
+                                    : partsData[currentSectionIndex].parts
+                                          .map((v) => v.part.height)
+                                          .slice(0, selectedIndex)
+                                          .reduce((prev, next) => prev + next)
 
-                        // console.log('sectionSlopeValue', sectionSlopeValue)
-                        // console.log('partHeightSumUPR', partHeightSum + inputValue)
-                        // console.log('partHeightSumLWR', partHeightSum)
-                        var partWidthUPR =
-                            sectionData[currentSectionIndex].section.bottom +
-                            sectionSlopeValue * 2 * -(inputValue + partHeightSum)
-                        var partWidthLWR =
-                            sectionData[currentSectionIndex].section.bottom +
-                            sectionSlopeValue * 2 * -partHeightSum
-                        // console.log('partWidthUPR ' + partWidthUPR)
-                        // console.log('partWidthLWR ' + partWidthLWR)
-                        v.part.top = partWidthUPR
-                        v.part.bottom = partWidthLWR
-                    } else if (typeObject == 'top' || typeObject == 'bottom') {
-                        v.part[`${typeObject}`] = inputValue
-                    } else {
-                        v.thickness = inputValue
+                            // console.log('sectionSlopeValue', sectionSlopeValue)
+                            // console.log('partHeightSumUPR', partHeightSum + inputValue)
+                            // console.log('partHeightSumLWR', partHeightSum)
+                            var partWidthUPR =
+                                sectionData[currentSectionIndex].section.bottom +
+                                sectionSlopeValue * 2 * -(inputValue + partHeightSum)
+                            var partWidthLWR =
+                                sectionData[currentSectionIndex].section.bottom +
+                                sectionSlopeValue * 2 * -partHeightSum
+                            // console.log('partWidthUPR ' + partWidthUPR)
+                            // console.log('partWidthLWR ' + partWidthLWR)
+                            v.part.top = partWidthUPR
+                            v.part.bottom = partWidthLWR
+                        } else if (typeObject == 'top' || typeObject == 'bottom') {
+                            v.part[`${typeObject}`] = inputValue
+                        } else {
+                            v.thickness = inputValue
+                        }
+                        var bodyMass = Math.abs(
+                            ((Math.pow(v.part.top, 2) -
+                                Math.pow(v.part.top - 2 * v.thickness, 2) +
+                                Math.pow(v.part.bottom, 2) -
+                                Math.pow(v.part.bottom - 2 * v.thickness, 2) +
+                                v.part.top * v.part.bottom -
+                                (v.part.top - 2 * v.thickness) *
+                                    (v.part.bottom - 2 * v.thickness)) *
+                                Math.PI *
+                                v.part.height *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                12,
+                        )
+                        v.weight = bodyMass
                     }
-                    var bodyMass = Math.abs(
-                        ((Math.pow(v.part.top, 2) -
-                            Math.pow(v.part.top - 2 * v.thickness, 2) +
-                            Math.pow(v.part.bottom, 2) -
-                            Math.pow(v.part.bottom - 2 * v.thickness, 2) +
-                            v.part.top * v.part.bottom -
-                            (v.part.top - 2 * v.thickness) * (v.part.bottom - 2 * v.thickness)) *
-                            Math.PI *
-                            v.part.height *
-                            1000 *
-                            7.85 *
-                            Math.pow(10, -6)) /
-                            12,
-                    )
-                    v.weight = bodyMass
                 }
 
                 return v

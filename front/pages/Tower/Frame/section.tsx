@@ -20,7 +20,7 @@ import { RawData, InitSector } from '@objects/Data/InitValue'
 import { toRadian, toAngle } from '@objects/Tools/Cartesian'
 /* @objects/Element */
 import VOTower from '@objects/Tower/Body/VOTowerTitle'
-import VOSection from '@objects/Tower/Body/VOSection'
+import VOSection from '@objects/Tower/Body/VOSectionWithFlange'
 import VHFlange from '@objects/Tower/Body/VHFlange'
 
 /* @typings */
@@ -262,9 +262,13 @@ const Frame = () => {
                 flangesData[currentSectionIndex].flanges[1].flange.neckHeight
             setCheckBodyHeight(bodyHeight)
             var diaOutUPR = sectionSubData[currentSectionIndex].section.top
-            var diaInUPR = sectionSubData[currentSectionIndex].section.top - 2 * totalThickness
+            var diaInUPR =
+                sectionSubData[currentSectionIndex].section.top -
+                2 * sectionSubData[currentSectionIndex].thickness
             var diaOutLWR = sectionSubData[currentSectionIndex].section.bottom
-            var diaInLWR = sectionSubData[currentSectionIndex].section.bottom - 2 * totalThickness
+            var diaInLWR =
+                sectionSubData[currentSectionIndex].section.bottom -
+                2 * sectionSubData[currentSectionIndex].thickness
             setCheckDiaOutUPR(diaOutUPR)
             setCheckDiaInUPR(diaInUPR)
             setCheckDiaOutLWR(diaOutLWR)
@@ -312,13 +316,13 @@ const Frame = () => {
         partsData,
         rawData,
         sectionSubData,
-        totalThickness,
     ])
 
     /* STEP 2 - Each Section -> Part & Each Part Value Check */
     /* Part Parameter */
     const [currentPartIndex, setCurrentPartIndex] = useState(0)
     const [divided, setDivided] = useState(1) // part divided
+    const [dividedBefore, setDividedBefore] = useState(1) // part divided
     const onChangePartIndex = useCallback((value) => {
         setCurrentPartIndex(value)
         /* Link to Part Index */
@@ -349,21 +353,18 @@ const Frame = () => {
             console.log('currentSectionIndex ' + currentSectionIndex)
             const flanges = flangesData[currentSectionIndex].flanges.map((v, index) => {
                 const typeObject: typeObjFlange = e.target.name
-                if (index === selectedIndex) {
-                    v.flange[`${typeObject}`] = parseInt(e.target.value !== '' ? e.target.value : 0)
+
+                const valueNumber = parseInt(e.target.value !== '' ? e.target.value : 0)
+                if (index === selectedIndex && !Number.isNaN(valueNumber)) {
+                    v.flange[`${typeObject}`] = valueNumber
                     if (typeObject == 'neckWidth') {
                         v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0) -
-                            2 * v.flange.minScrewWidth
+                            v.flange.outDia - 2 * valueNumber - 2 * v.flange.minScrewWidth
                         v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
                         v.flange.param_b =
                             (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
                     } else if (typeObject == 'minScrewWidth') {
-                        v.flange.pcDia =
-                            v.flange.outDia -
-                            2 * v.flange.neckWidth -
-                            2 * parseInt(e.target.value !== '' ? e.target.value : 0)
+                        v.flange.pcDia = v.flange.outDia - 2 * v.flange.neckWidth - 2 * valueNumber
                         v.flange.param_a = (v.flange.pcDia - v.flange.inDia) / 2
                         v.flange.param_b =
                             (v.flange.outDia - v.flange.neckWidth - v.flange.pcDia) / 2
@@ -479,51 +480,113 @@ const Frame = () => {
             //     console.log(`Part Number ${i} - ${partDiameter}`)
             // }
 
-            for (var i = 0; i < divided; i++) {
-                /* Init Value */
-                var eachHeight = Math.round(totalHeight / divided)
-                // var eachHeight = totalHeight / divided
-                var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
-                var eachHypo =
-                    Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
-                var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+            // for (var i = 0; i < divided; i++) {
+            //     /* Init Value */
+            //     var eachHeight = Math.round(totalHeight / divided)
+            //     // var eachHeight = totalHeight / divided
+            //     var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+            //     var eachHypo =
+            //         Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
+            //     var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
 
-                var partHeight = totalHeight / divided
-                var partHeightSumUPR = partHeight * (divided - i)
-                var partHeightSumLWR = partHeight * (divided - 1 - i)
+            //     var partHeight = totalHeight / divided
+            //     var partHeightSumUPR = partHeight * (divided - i)
+            //     var partHeightSumLWR = partHeight * (divided - 1 - i)
 
-                var partWidthTop = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumUPR
-                var partWidthBottom = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumLWR
+            //     var partWidthTop = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumUPR
+            //     var partWidthBottom = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumLWR
 
-                // console.log(`Part Number ${i} - ${partWidthTop} / ${partWidthBottom}`)
+            //     // console.log(`Part Number ${i} - ${partWidthTop} / ${partWidthBottom}`)
 
-                var sectoinWeight = Math.abs(
-                    ((Math.pow(partWidthTop, 2) -
-                        Math.pow(partWidthTop - 2 * totalThickness, 2) +
-                        Math.pow(partWidthBottom, 2) -
-                        Math.pow(partWidthBottom - 2 * totalThickness, 2) +
-                        partWidthTop * partWidthBottom -
-                        (partWidthTop - 2 * totalThickness) *
-                            (partWidthBottom - 2 * totalThickness)) *
-                        Math.PI *
-                        eachHeight *
-                        1000 *
-                        7.85 *
-                        Math.pow(10, -6)) /
-                        12,
-                )
+            //     var sectoinWeight = Math.abs(
+            //         ((Math.pow(partWidthTop, 2) -
+            //             Math.pow(partWidthTop - 2 * totalThickness, 2) +
+            //             Math.pow(partWidthBottom, 2) -
+            //             Math.pow(partWidthBottom - 2 * totalThickness, 2) +
+            //             partWidthTop * partWidthBottom -
+            //             (partWidthTop - 2 * totalThickness) *
+            //                 (partWidthBottom - 2 * totalThickness)) *
+            //             Math.PI *
+            //             eachHeight *
+            //             1000 *
+            //             7.85 *
+            //             Math.pow(10, -6)) /
+            //             12,
+            //     )
 
-                //Inser Reverse
-                partArray[divided - 1 - i] = {
-                    index: i,
-                    part: {
-                        top: partWidthTop,
-                        bottom: partWidthBottom,
-                        height: eachHeight,
-                    },
-                    thickness: totalThickness,
-                    weight: sectoinWeight,
+            //     //Inser Reverse
+            //     partArray[divided - 1 - i] = {
+            //         index: i,
+            //         part: {
+            //             top: partWidthTop,
+            //             bottom: partWidthBottom,
+            //             height: eachHeight,
+            //         },
+            //         thickness: totalThickness,
+            //         weight: sectoinWeight,
+            //     }
+            // }
+
+            if (divided == 1 || divided === dividedBefore) {
+                for (var i = 0; i < divided; i++) {
+                    /* Init Value */
+                    var eachHeight = Math.round(totalHeight / divided)
+                    // var eachHeight = totalHeight / divided
+                    var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+                    var eachHypo =
+                        Math.sqrt(Math.pow(triBottom, 2) + Math.pow(totalHeight, 2)) / divided
+                    var radian = Math.PI / 2 - Math.atan(totalHeight / triBottom)
+
+                    var partHeight = totalHeight / divided
+                    var partHeightSumUPR = partHeight * (divided - i)
+                    var partHeightSumLWR = partHeight * (divided - 1 - i)
+
+                    var partWidthTop = bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumUPR
+                    var partWidthBottom =
+                        bottomLowerOutDia + sectionSlopeValue * 2 * -partHeightSumLWR
+
+                    // console.log(`Part Number ${i} - ${partWidthTop} / ${partWidthBottom}`)
+
+                    var sectoinWeight = Math.abs(
+                        ((Math.pow(partWidthTop, 2) -
+                            Math.pow(partWidthTop - 2 * totalThickness, 2) +
+                            Math.pow(partWidthBottom, 2) -
+                            Math.pow(partWidthBottom - 2 * totalThickness, 2) +
+                            partWidthTop * partWidthBottom -
+                            (partWidthTop - 2 * totalThickness) *
+                                (partWidthBottom - 2 * totalThickness)) *
+                            Math.PI *
+                            eachHeight *
+                            1000 *
+                            7.85 *
+                            Math.pow(10, -6)) /
+                            12,
+                    )
+
+                    //Inser Reverse
+                    partArray[divided - 1 - i] = {
+                        index: i,
+                        part: {
+                            top: partWidthTop,
+                            bottom: partWidthBottom,
+                            height: eachHeight,
+                        },
+                        thickness: totalThickness,
+                        weight: sectoinWeight,
+                    }
                 }
+            } else if (divided > dividedBefore) {
+                partArray = rawData.partsData[currentSectionIndex].parts
+                for (var j = 0; j < divided; j++) {
+                    if (j < dividedBefore) {
+                        partArray[j] = rawData.partsData[currentSectionIndex].parts[j]
+                    } else {
+                        partArray[j] =
+                            rawData.partsData[currentSectionIndex].parts[dividedBefore - 1]
+                    }
+                }
+            } else if (divided < dividedBefore) {
+                partArray = rawData.partsData[currentSectionIndex].parts.splice(0, divided)
             }
 
             rawData.partsData[currentSectionIndex].divided = divided
@@ -538,6 +601,9 @@ const Frame = () => {
 
             //한번에 업데이터
             mutate()
+            console.log(dividedBefore)
+            console.log(divided)
+            setDividedBefore(divided)
         },
         [
             checkBodyHeight,
@@ -561,49 +627,52 @@ const Frame = () => {
                 const typeObject: typeObjSquare = e.target.name
                 if (index === selectedIndex) {
                     var inputValue = parseInt(e.target.value !== '' ? e.target.value : 0)
-                    if (typeObject == 'height') {
-                        v.part[`${typeObject}`] = inputValue
-                        var partHeightSum =
-                            selectedIndex == 0
-                                ? 0
-                                : partsData[currentSectionIndex].parts
-                                      .map((v) => v.part.height)
-                                      .slice(0, selectedIndex)
-                                      .reduce((prev, next) => prev + next)
+                    if (!Number.isNaN(inputValue)) {
+                        if (typeObject == 'height') {
+                            v.part[`${typeObject}`] = inputValue
+                            var partHeightSum =
+                                selectedIndex == 0
+                                    ? 0
+                                    : partsData[currentSectionIndex].parts
+                                          .map((v) => v.part.height)
+                                          .slice(0, selectedIndex)
+                                          .reduce((prev, next) => prev + next)
 
-                        // console.log('sectionSlopeValue', sectionSlopeValue)
-                        // console.log('partHeightSumUPR', partHeightSum + inputValue)
-                        // console.log('partHeightSumLWR', partHeightSum)
-                        var partWidthUPR =
-                            sectionSubData[currentSectionIndex].section.bottom +
-                            sectionSlopeValue * 2 * -(inputValue + partHeightSum)
-                        var partWidthLWR =
-                            sectionSubData[currentSectionIndex].section.bottom +
-                            sectionSlopeValue * 2 * -partHeightSum
-                        // console.log('partWidthUPR ' + partWidthUPR)
-                        // console.log('partWidthLWR ' + partWidthLWR)
-                        v.part.top = partWidthUPR
-                        v.part.bottom = partWidthLWR
-                    } else if (typeObject == 'top' || typeObject == 'bottom') {
-                        v.part[`${typeObject}`] = inputValue
-                    } else {
-                        v.thickness = inputValue
+                            // console.log('sectionSlopeValue', sectionSlopeValue)
+                            // console.log('partHeightSumUPR', partHeightSum + inputValue)
+                            // console.log('partHeightSumLWR', partHeightSum)
+                            var partWidthUPR =
+                                sectionSubData[currentSectionIndex].section.bottom +
+                                sectionSlopeValue * 2 * -(inputValue + partHeightSum)
+                            var partWidthLWR =
+                                sectionSubData[currentSectionIndex].section.bottom +
+                                sectionSlopeValue * 2 * -partHeightSum
+                            // console.log('partWidthUPR ' + partWidthUPR)
+                            // console.log('partWidthLWR ' + partWidthLWR)
+                            v.part.top = partWidthUPR
+                            v.part.bottom = partWidthLWR
+                        } else if (typeObject == 'top' || typeObject == 'bottom') {
+                            v.part[`${typeObject}`] = inputValue
+                        } else {
+                            v.thickness = inputValue
+                        }
+                        var bodyMass = Math.abs(
+                            ((Math.pow(v.part.top, 2) -
+                                Math.pow(v.part.top - 2 * v.thickness, 2) +
+                                Math.pow(v.part.bottom, 2) -
+                                Math.pow(v.part.bottom - 2 * v.thickness, 2) +
+                                v.part.top * v.part.bottom -
+                                (v.part.top - 2 * v.thickness) *
+                                    (v.part.bottom - 2 * v.thickness)) *
+                                Math.PI *
+                                v.part.height *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                12,
+                        )
+                        v.weight = bodyMass
                     }
-                    var bodyMass = Math.abs(
-                        ((Math.pow(v.part.top, 2) -
-                            Math.pow(v.part.top - 2 * v.thickness, 2) +
-                            Math.pow(v.part.bottom, 2) -
-                            Math.pow(v.part.bottom - 2 * v.thickness, 2) +
-                            v.part.top * v.part.bottom -
-                            (v.part.top - 2 * v.thickness) * (v.part.bottom - 2 * v.thickness)) *
-                            Math.PI *
-                            v.part.height *
-                            1000 *
-                            7.85 *
-                            Math.pow(10, -6)) /
-                            12,
-                    )
-                    v.weight = bodyMass
                 }
 
                 return v
@@ -673,6 +742,7 @@ const Frame = () => {
             setPartsData(TD.partsData)
             //Section & Parts
             setDivided(TD.partsData[currentSectionIndex].divided)
+            setTotalThickness(TD.sectionSubData[currentSectionIndex].thickness)
 
             //SectorsData
             setSectorsData(TD.sectorsData)
@@ -681,7 +751,7 @@ const Frame = () => {
 
             // setThinckness(TD.partsData[currentSectionIndex].parts[currentPartIndex].thickness)
         }
-    }, [TD])
+    }, [TD, currentSectionIndex])
 
     if (TD === undefined || MfrD === undefined) {
         return <div>Loading...</div>
@@ -697,6 +767,11 @@ const Frame = () => {
                                 draws={sectionSubData.map((v) => v.section)}
                                 currentIndex={currentSectionIndex}
                                 setCurrentIndex={setCurrentSectionIndex}
+                                basement={{
+                                    top: initData.bottomLowerOutDia,
+                                    bottom: initData.bottomLowerOutDia,
+                                    height: initData.offset,
+                                }}
                                 label={`Tower`}
                             />
                         </GraphicViewOrigin>
@@ -706,10 +781,41 @@ const Frame = () => {
                         <GraphicViewOrigin>
                             {partsData.length && (
                                 <VOSection
-                                    draws={partsData[currentSectionIndex].parts.map((v) => v.part)}
+                                    draws={[
+                                        {
+                                            top: flangesData[currentSectionIndex].flanges[0].flange
+                                                .outDia,
+                                            bottom: flangesData[currentSectionIndex].flanges[0]
+                                                .flange.outDia,
+                                            height:
+                                                flangesData[currentSectionIndex].flanges[0].flange
+                                                    .neckHeight +
+                                                flangesData[currentSectionIndex].flanges[0].flange
+                                                    .flangeHeight,
+                                        },
+                                        ...partsData[currentSectionIndex].parts.map((v) => v.part),
+                                        {
+                                            top: flangesData[currentSectionIndex].flanges[1].flange
+                                                .outDia,
+                                            bottom: flangesData[currentSectionIndex].flanges[1]
+                                                .flange.outDia,
+                                            height:
+                                                flangesData[currentSectionIndex].flanges[1].flange
+                                                    .neckHeight +
+                                                flangesData[currentSectionIndex].flanges[1].flange
+                                                    .flangeHeight,
+                                        },
+                                    ]}
                                     currentIndex={currentPartIndex}
                                     setCurrentIndex={setCurrentPartIndex}
                                     label={`Section ${currentSectionIndex + 1}`}
+                                    flange={flangesData[currentSectionIndex].flanges.map((v) => {
+                                        return {
+                                            top: v.flange.outDia,
+                                            bottom: v.flange.outDia,
+                                            height: v.flange.neckHeight + v.flange.flangeHeight,
+                                        }
+                                    })}
                                 />
                             )}
                         </GraphicViewOrigin>
@@ -888,7 +994,7 @@ const Frame = () => {
                                                             color: '#fff',
                                                         }}
                                                     >
-                                                        Part 1
+                                                        Total Part
                                                     </div>
                                                 </TextWrapTableCell>
                                             </TableCell>

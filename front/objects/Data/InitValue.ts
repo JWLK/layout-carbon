@@ -22,6 +22,8 @@ export const InitSection: TWSection = {
     index: 0,
     section: { top: 4950, bottom: 7300, height: 100000 },
     tapered: true,
+    thickness: 50,
+    weight: 0,
 }
 
 export const InitPart: TWPart = {
@@ -144,10 +146,12 @@ export const RawData: TWRawData = {
         topUpperOutDia: 4950,
         bottomLowerOutDia: 7000,
         totalHeight: 106555,
-        offset: 10,
-        maxHeight: 106555,
+        offset: 20000,
+        maxHeight: 126555,
         divided: 5,
         custom: false,
+        thickness: 50,
+        shore: 'offshore',
     },
     sectionData: [InitSection],
     sectionSubData: [InitSection],

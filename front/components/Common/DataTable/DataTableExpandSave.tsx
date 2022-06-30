@@ -313,6 +313,7 @@ const CustomDataTable: FC<Props> = ({
                         return (
                             <>
                                 <TableExpandRow
+                                    ariaLabel="__custom-data-table-exapnd-save"
                                     key={rowId}
                                     isSelected={hasSelection && selected}
                                     data-row-id={rowId}

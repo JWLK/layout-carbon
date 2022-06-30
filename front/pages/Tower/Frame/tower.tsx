@@ -773,588 +773,646 @@ const Frame = () => {
     ]
 
     return (
-        <FlexWrap>
-            <GraphicWrap>
-                <GraphicViewOrigin>
-                    <VOTower
-                        draws={sectionData.map((v) => v.section)}
-                        currentIndex={currentSectionIndex}
-                        setCurrentIndex={setCurrentSectionIndex}
-                        basement={{
-                            top: initData.bottomLowerOutDia,
-                            bottom: initData.bottomLowerOutDia,
-                            height: initData.offset,
-                        }}
-                    />
-                </GraphicViewOrigin>
-            </GraphicWrap>
+        <>
+            {sectionData.length && partsData.length && (
+                <FlexWrap>
+                    <GraphicWrap>
+                        <GraphicViewOrigin>
+                            <VOTower
+                                draws={sectionData.map((v) => v.section)}
+                                currentIndex={currentSectionIndex}
+                                setCurrentIndex={setCurrentSectionIndex}
+                                basement={{
+                                    top: initData.bottomLowerOutDia,
+                                    bottom: initData.bottomLowerOutDia,
+                                    height: initData.offset,
+                                }}
+                            />
+                        </GraphicViewOrigin>
+                    </GraphicWrap>
 
-            <SettingWrap>
-                <SettingViewWide>
-                    <Accordion align="start">
-                        <AccordionItemCustom title="Capacity Setting">
-                            <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
-                                Production Capcity
-                            </div>
-                            <MfrTableDefault />
-                            <div style={{ marginTop: '30px', fontSize: '1.2rem' }}>
-                                Selected Manufacturer List
-                            </div>
-                            <MfrTableSelected />
-                        </AccordionItemCustom>
-                    </Accordion>
-                </SettingViewWide>
+                    <SettingWrap>
+                        <SettingViewWide>
+                            <Accordion align="start">
+                                <AccordionItemCustom title="Capacity Setting">
+                                    <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
+                                        Production Capcity
+                                    </div>
+                                    <MfrTableDefault />
+                                    <div style={{ marginTop: '30px', fontSize: '1.2rem' }}>
+                                        Selected Manufacturer List
+                                    </div>
+                                    <MfrTableSelected />
+                                </AccordionItemCustom>
+                            </Accordion>
+                        </SettingViewWide>
 
-                <SettingViewFit>
-                    {/* 
+                        <SettingViewFit>
+                            {/* 
                         STEP 1
                     */}
-                    <>
-                        <SettingTitle>
-                            STEP 1 : Initial Design
-                            <div style={{ float: 'right', paddingBottom: '100px' }}>
-                                <Button
-                                    kind="tertiary"
-                                    renderIcon={ArrowRight32}
-                                    disabled={!validSecondStep}
-                                    as={NavLink}
-                                    to={
-                                        validSecondStep
-                                            ? `/workspace/${workspace}/model/section`
-                                            : ''
-                                    }
-                                >
-                                    NEXT
-                                </Button>
-                            </div>
-                        </SettingTitle>
-
-                        {!validFirstStep && (
-                            <div style={{ width: '100%', color: '#fa4d56' }}>
-                                Invalid Value Exist. Check input value
-                            </div>
-                        )}
-                        <SectionDivider />
-                        <InputLabel>
-                            <span style={{ color: '#fff' }}>Tower Type</span>
-                        </InputLabel>
-                        <RadioButtonGroup
-                            name="tower-type"
-                            defaultSelected="offshore"
-                            disabled={true}
-                        >
-                            <RadioButton labelText="Onshore" value="onshore" id="type-onshore" />
-                            <RadioButton labelText="Offshore" value="offshore" id="type-offshore" />
-                        </RadioButtonGroup>
-                        <InputDivider />
-                        <InputLabel>
-                            <span style={{ color: '#ffff00' }}>Tower Total Height (mm)</span>
-                        </InputLabel>
-                        <NumberInputCustom
-                            id="NumberInput_totalHeight"
-                            label=""
-                            size="lg"
-                            min={5000}
-                            max={200000}
-                            step={100}
-                            value={maxHeight}
-                            onChange={onChangeTotalHeight}
-                            invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
-                            warnText="Warn Text"
-                        />
-                        <InputDivider />
-                        <InputLabel>
-                            <span style={{ color: '#42be65' }}>
-                                Section {divided} - Upper Outside Diameter (mm)
-                            </span>
-                        </InputLabel>
-                        <SliderCustom>
-                            <Slider
-                                id="Slider_topUpperOutDia"
-                                min={3000}
-                                max={MfrD.capacity[0].diameter * 1000}
-                                step={50}
-                                value={topUpperOutDia}
-                                onChange={onChangeTopUpperOutDia}
-                                style={{ fontSize: '3rem' }}
-                                invalid={
-                                    !validTopBottom ||
-                                    topUpperOutDia > MfrD.capacity[0].diameter * 1000
-                                }
-                            />
-                        </SliderCustom>
-                        <InputDivider />
-                        <InputLabel>
-                            <span style={{ color: '#be95ff' }}>
-                                Section 1- Lower Outside Diameter (mm)
-                            </span>
-                        </InputLabel>
-                        <SliderCustom>
-                            <Slider
-                                id="Slider_bottomLowerOutDia"
-                                labelText=""
-                                min={3000}
-                                max={MfrD.capacity[0].diameter * 1000}
-                                step={50}
-                                value={bottomLowerOutDia}
-                                onChange={onChangeBottomLowerOutDia}
-                                invalid={
-                                    !validTopBottom ||
-                                    bottomLowerOutDia > MfrD.capacity[0].diameter * 1000
-                                }
-                            />
-                        </SliderCustom>
-                        <InputDivider />
-                        <InputLabel>Number of Tower Section</InputLabel>
-                        <SliderCustom>
-                            <Slider
-                                id="Slider_initialDivided"
-                                labelText=""
-                                min={1}
-                                max={10}
-                                step={1}
-                                value={divided}
-                                onChange={onChangeDevided}
-                            />
-                        </SliderCustom>
-
-                        {!validFirstStep && (
                             <>
+                                <SettingTitle>
+                                    STEP 1 : Initial Design
+                                    <div style={{ float: 'right', paddingBottom: '100px' }}>
+                                        <Button
+                                            kind="tertiary"
+                                            renderIcon={ArrowRight32}
+                                            disabled={!validSecondStep}
+                                            as={NavLink}
+                                            to={
+                                                validSecondStep
+                                                    ? `/workspace/${workspace}/model/section`
+                                                    : ''
+                                            }
+                                        >
+                                            NEXT
+                                        </Button>
+                                    </div>
+                                </SettingTitle>
+
+                                {!validFirstStep && (
+                                    <div style={{ width: '100%', color: '#fa4d56' }}>
+                                        Invalid Value Exist. Check input value
+                                    </div>
+                                )}
+                                <SectionDivider />
+                                <InputLabel>
+                                    <span style={{ color: '#fff' }}>Tower Type</span>
+                                </InputLabel>
+                                <RadioButtonGroup
+                                    name="tower-type"
+                                    defaultSelected="offshore"
+                                    disabled={true}
+                                >
+                                    <RadioButton
+                                        labelText="Onshore"
+                                        value="onshore"
+                                        id="type-onshore"
+                                    />
+                                    <RadioButton
+                                        labelText="Offshore"
+                                        value="offshore"
+                                        id="type-offshore"
+                                    />
+                                </RadioButtonGroup>
                                 <InputDivider />
-                                <div style={{ width: '100%', color: '#fa4d56' }}>
-                                    Invalid Value Exist. Check input value.
-                                </div>
+                                <InputLabel>
+                                    <span style={{ color: '#ffff00' }}>
+                                        Tower Total Height (mm)
+                                    </span>
+                                </InputLabel>
+                                <NumberInputCustom
+                                    id="NumberInput_totalHeight"
+                                    label=""
+                                    size="lg"
+                                    min={5000}
+                                    max={200000}
+                                    step={100}
+                                    value={maxHeight}
+                                    onChange={onChangeTotalHeight}
+                                    invalidText="This value cannot be used. (Valid Value : 5,000mm ~ 200,000mm)"
+                                    warnText="Warn Text"
+                                />
+                                <InputDivider />
+                                <InputLabel>
+                                    <span style={{ color: '#42be65' }}>
+                                        Section {divided} - Upper Outside Diameter (mm)
+                                    </span>
+                                </InputLabel>
+                                <SliderCustom>
+                                    <Slider
+                                        id="Slider_topUpperOutDia"
+                                        min={3000}
+                                        max={MfrD.capacity[0].diameter * 1000}
+                                        step={50}
+                                        value={topUpperOutDia}
+                                        onChange={onChangeTopUpperOutDia}
+                                        style={{ fontSize: '3rem' }}
+                                        invalid={
+                                            !validTopBottom ||
+                                            topUpperOutDia > MfrD.capacity[0].diameter * 1000
+                                        }
+                                    />
+                                </SliderCustom>
+                                <InputDivider />
+                                <InputLabel>
+                                    <span style={{ color: '#be95ff' }}>
+                                        Section 1- Lower Outside Diameter (mm)
+                                    </span>
+                                </InputLabel>
+                                <SliderCustom>
+                                    <Slider
+                                        id="Slider_bottomLowerOutDia"
+                                        labelText=""
+                                        min={3000}
+                                        max={MfrD.capacity[0].diameter * 1000}
+                                        step={50}
+                                        value={bottomLowerOutDia}
+                                        onChange={onChangeBottomLowerOutDia}
+                                        invalid={
+                                            !validTopBottom ||
+                                            bottomLowerOutDia > MfrD.capacity[0].diameter * 1000
+                                        }
+                                    />
+                                </SliderCustom>
+                                <InputDivider />
+                                <InputLabel>Number of Tower Section</InputLabel>
+                                <SliderCustom>
+                                    <Slider
+                                        id="Slider_initialDivided"
+                                        labelText=""
+                                        min={1}
+                                        max={10}
+                                        step={1}
+                                        value={divided}
+                                        onChange={onChangeDevided}
+                                    />
+                                </SliderCustom>
+
+                                {!validFirstStep && (
+                                    <>
+                                        <InputDivider />
+                                        <div style={{ width: '100%', color: '#fa4d56' }}>
+                                            Invalid Value Exist. Check input value.
+                                        </div>
+                                    </>
+                                )}
+
+                                <InputDivider />
+                                <Button
+                                    kind="primary"
+                                    renderIcon={Save32}
+                                    onClick={onClickSetSectionsInitData}
+                                    disabled={!validFirstStep}
+                                >
+                                    STEP1 : SAVE
+                                </Button>
+
+                                <SectionDivider />
                             </>
-                        )}
 
-                        <InputDivider />
-                        <Button
-                            kind="primary"
-                            renderIcon={Save32}
-                            onClick={onClickSetSectionsInitData}
-                            disabled={!validFirstStep}
-                        >
-                            STEP1 : SAVE
-                        </Button>
-
-                        <SectionDivider />
-                    </>
-
-                    {/* 
+                            {/* 
                         STEP 2
                     */}
-                    <>
-                        <SettingTitle>STEP 2 : Each Section Setting</SettingTitle>
-                        {divided !== sectionData.length && (
-                            <div style={{ width: '100%', color: '#fa4d56' }}>
-                                Please, Click the STEP1 SAVE Button
-                            </div>
-                        )}
-                        {invalidTableCheck && (
-                            <div style={{ width: '100%', color: '#fa4d56' }}>
-                                Invalid Value Exist. Check input value
-                            </div>
-                        )}
+                            <>
+                                <SettingTitle>STEP 2 : Each Section Setting</SettingTitle>
+                                {divided !== sectionData.length && (
+                                    <div style={{ width: '100%', color: '#fa4d56' }}>
+                                        Please, Click the STEP1 SAVE Button
+                                    </div>
+                                )}
+                                {invalidTableCheck && (
+                                    <div style={{ width: '100%', color: '#fa4d56' }}>
+                                        Invalid Value Exist. Check input value
+                                    </div>
+                                )}
 
-                        <SectionDivider />
-                        <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
-                            Production Capcity [mm]
-                        </div>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    {headers.map((header) => (
-                                        <TableHeader key={header.key}>
-                                            <div style={{ marginLeft: '10px' }}>
-                                                {header.header}
-                                            </div>
-                                        </TableHeader>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>
-                                        <TextWrapTableCell width={3}>Capacity</TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            {MfrD.capacity[0].length * 1000}
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={5}>Not Defined</TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            {MfrD.capacity[0].diameter * 1000}
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            {MfrD.capacity[0].diameter * 1000}
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>{`-`}</TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            {MfrD.capacity[0].weight}
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                <SectionDivider />
+                                <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
+                                    Production Capcity [mm]
+                                </div>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            {headers.map((header) => (
+                                                <TableHeader key={header.key}>
+                                                    <div style={{ marginLeft: '10px' }}>
+                                                        {header.header}
+                                                    </div>
+                                                </TableHeader>
+                                            ))}
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>
+                                                <TextWrapTableCell width={3}>
+                                                    Capacity
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    {MfrD.capacity[0].length * 1000}
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={5}>
+                                                    Not Defined
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    {MfrD.capacity[0].diameter * 1000}
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    {MfrD.capacity[0].diameter * 1000}
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell
+                                                    width={7}
+                                                >{`-`}</TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    {MfrD.capacity[0].weight}
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
 
-                        <InputDivider />
-                        <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
-                            Each Section Parameter [mm]
-                        </div>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    {headers.map((header) => (
-                                        <TableHeader key={header.key}>
-                                            <div style={{ marginLeft: '10px' }}>
-                                                {header.header}
-                                            </div>
-                                        </TableHeader>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {sectionData
-                                    .slice(0)
-                                    .reverse()
-                                    .map((v, index) => {
-                                        const notSaveValidation = divided !== sectionData.length
-                                        const linearTypeValidationNotLastSection =
-                                            !v.tapered && v.index !== sectionData.length - 1
-                                        const invalidCheckLength =
-                                            v.section.height > MfrD.capacity[0].length * 1000
-                                        const invalidTextLength = `Length <= ${
-                                            MfrD.capacity[0].length * 1000
-                                        }`
-                                        const invalidTopBottom =
-                                            index !== 0 && v.section.top > v.section.bottom
-                                        const invalidCheckTop =
-                                            v.section.top > MfrD.capacity[0].diameter * 1000
-                                        const invalidCheckBottom =
-                                            v.section.bottom > MfrD.capacity[0].diameter * 1000
+                                <InputDivider />
+                                <div style={{ marginBlock: '10px', fontSize: '1.2rem' }}>
+                                    Each Section Parameter [mm]
+                                </div>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            {headers.map((header) => (
+                                                <TableHeader key={header.key}>
+                                                    <div style={{ marginLeft: '10px' }}>
+                                                        {header.header}
+                                                    </div>
+                                                </TableHeader>
+                                            ))}
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {sectionData
+                                            .slice(0)
+                                            .reverse()
+                                            .map((v, index) => {
+                                                const notSaveValidation =
+                                                    divided !== sectionData.length
+                                                const linearTypeValidationNotLastSection =
+                                                    !v.tapered && v.index !== sectionData.length - 1
+                                                const invalidCheckLength =
+                                                    v.section.height >
+                                                    MfrD.capacity[0].length * 1000
+                                                const invalidTextLength = `Length <= ${
+                                                    MfrD.capacity[0].length * 1000
+                                                }`
+                                                const invalidTopBottom =
+                                                    index !== 0 && v.section.top > v.section.bottom
+                                                const invalidCheckTop =
+                                                    v.section.top > MfrD.capacity[0].diameter * 1000
+                                                const invalidCheckBottom =
+                                                    v.section.bottom >
+                                                    MfrD.capacity[0].diameter * 1000
 
-                                        const invalidTextDiameter = `Diamter <= ${
-                                            MfrD.capacity[0].diameter * 1000
-                                        }`
+                                                const invalidTextDiameter = `Diamter <= ${
+                                                    MfrD.capacity[0].diameter * 1000
+                                                }`
 
-                                        const invalidTextTop =
-                                            v.section.top > MfrD.capacity[0].diameter * 1000
-                                                ? invalidTextDiameter
-                                                : `Diamter <= ${v.section.bottom}`
-                                        const invalidTextBottom = invalidTextDiameter
-                                        return (
+                                                const invalidTextTop =
+                                                    v.section.top > MfrD.capacity[0].diameter * 1000
+                                                        ? invalidTextDiameter
+                                                        : `Diamter <= ${v.section.bottom}`
+                                                const invalidTextBottom = invalidTextDiameter
+                                                return (
+                                                    <TableRow
+                                                        key={`section-${v.index}`}
+                                                        style={{ textAlign: 'end' }}
+                                                    >
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={3}>
+                                                                {initData.divided - v.index}
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={7}>
+                                                                <TextInput
+                                                                    id={`section-height-${v.index}`}
+                                                                    labelText=""
+                                                                    name="height"
+                                                                    onChange={(e) =>
+                                                                        onChangeSectionTableData(
+                                                                            e,
+                                                                            v.index,
+                                                                            v.section.height >
+                                                                                MfrD.capacity[0]
+                                                                                    .length *
+                                                                                    1000,
+                                                                        )
+                                                                    }
+                                                                    invalid={invalidCheckLength}
+                                                                    invalidText={invalidTextLength}
+                                                                    value={v.section.height}
+                                                                    disabled={notSaveValidation}
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={5}>
+                                                                <Button
+                                                                    kind="ghost"
+                                                                    onClick={(e) =>
+                                                                        onClickTypeToggle(v.index)
+                                                                    }
+                                                                    style={{
+                                                                        color: v.tapered
+                                                                            ? '#00fe33'
+                                                                            : '#ffff00',
+                                                                    }}
+                                                                    disabled={notSaveValidation}
+                                                                >
+                                                                    {v.tapered
+                                                                        ? 'Tapered'
+                                                                        : 'Linear'}
+                                                                </Button>
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={7}>
+                                                                <TextInput
+                                                                    id={`section-top-${v.index}`}
+                                                                    labelText=""
+                                                                    name="top"
+                                                                    onChange={(e) =>
+                                                                        onChangeSectionTableData(
+                                                                            e,
+                                                                            v.index,
+                                                                            invalidCheckTop ||
+                                                                                invalidTopBottom,
+                                                                        )
+                                                                    }
+                                                                    invalid={
+                                                                        invalidCheckTop ||
+                                                                        invalidTopBottom
+                                                                    }
+                                                                    invalidText={invalidTextTop}
+                                                                    value={v.section.top}
+                                                                    disabled={
+                                                                        !v.tapered ||
+                                                                        notSaveValidation
+                                                                    }
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={7}>
+                                                                <TextInput
+                                                                    id={`section-bottom-${v.index}`}
+                                                                    labelText=""
+                                                                    name="bottom"
+                                                                    onChange={(e) =>
+                                                                        onChangeSectionTableData(
+                                                                            e,
+                                                                            v.index,
+                                                                            invalidCheckBottom,
+                                                                        )
+                                                                    }
+                                                                    invalid={invalidCheckBottom}
+                                                                    invalidText={invalidTextBottom}
+                                                                    value={v.section.bottom}
+                                                                    disabled={
+                                                                        linearTypeValidationNotLastSection ||
+                                                                        notSaveValidation
+                                                                    }
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={7}>
+                                                                <TextInput
+                                                                    id={`section-thickness-${v.index}`}
+                                                                    labelText=""
+                                                                    name="thickness"
+                                                                    onChange={(e) =>
+                                                                        onChangeSectionTableData(
+                                                                            e,
+                                                                            v.index,
+                                                                            invalidCheckBottom,
+                                                                        )
+                                                                    }
+                                                                    value={v.thickness}
+                                                                    disabled={notSaveValidation}
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <TextWrapTableCell width={7}>
+                                                                <TextInput
+                                                                    id={`section-weight-${v.index}`}
+                                                                    labelText=""
+                                                                    name="weight"
+                                                                    value={
+                                                                        Math.round(
+                                                                            v.weight / 1000,
+                                                                        ) / 1000
+                                                                    }
+                                                                    disabled={
+                                                                        notSaveValidation ||
+                                                                        v.weight === 0
+                                                                    }
+                                                                />
+                                                            </TextWrapTableCell>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        {/* Shore Check */}
+                                        {initData.shore === 'onshore' ? (
+                                            ''
+                                        ) : (
                                             <TableRow
-                                                key={`section-${v.index}`}
+                                                key={`section-offshore`}
                                                 style={{ textAlign: 'end' }}
                                             >
                                                 <TableCell>
                                                     <TextWrapTableCell width={3}>
-                                                        {initData.divided - v.index}
+                                                        Offset
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                                 <TableCell>
                                                     <TextWrapTableCell width={7}>
                                                         <TextInput
-                                                            id={`section-height-${v.index}`}
+                                                            id={`section-height-offshore-offset`}
                                                             labelText=""
                                                             name="height"
                                                             onChange={(e) =>
-                                                                onChangeSectionTableData(
-                                                                    e,
-                                                                    v.index,
-                                                                    v.section.height >
-                                                                        MfrD.capacity[0].length *
-                                                                            1000,
-                                                                )
+                                                                onChangeSectionOffsetData(e)
                                                             }
-                                                            invalid={invalidCheckLength}
-                                                            invalidText={invalidTextLength}
-                                                            value={v.section.height}
-                                                            disabled={notSaveValidation}
+                                                            // invalid={invalidCheckLength}
+                                                            // invalidText={invalidTextLength}
+                                                            value={initData.offset}
+                                                            // disabled={notSaveValidation}
                                                         />
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                                 <TableCell>
                                                     <TextWrapTableCell width={5}>
-                                                        <Button
-                                                            kind="ghost"
-                                                            onClick={(e) =>
-                                                                onClickTypeToggle(v.index)
-                                                            }
-                                                            style={{
-                                                                color: v.tapered
-                                                                    ? '#00fe33'
-                                                                    : '#ffff00',
-                                                            }}
-                                                            disabled={notSaveValidation}
-                                                        >
-                                                            {v.tapered ? 'Tapered' : 'Linear'}
-                                                        </Button>
-                                                    </TextWrapTableCell>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <TextWrapTableCell width={7}>
                                                         <TextInput
-                                                            id={`section-top-${v.index}`}
+                                                            id="offshore-linear"
                                                             labelText=""
-                                                            name="top"
-                                                            onChange={(e) =>
-                                                                onChangeSectionTableData(
-                                                                    e,
-                                                                    v.index,
-                                                                    invalidCheckTop ||
-                                                                        invalidTopBottom,
-                                                                )
-                                                            }
-                                                            invalid={
-                                                                invalidCheckTop || invalidTopBottom
-                                                            }
-                                                            invalidText={invalidTextTop}
-                                                            value={v.section.top}
-                                                            disabled={
-                                                                !v.tapered || notSaveValidation
-                                                            }
+                                                            value="Linear"
+                                                            disabled={true}
                                                         />
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                                 <TableCell>
                                                     <TextWrapTableCell width={7}>
                                                         <TextInput
-                                                            id={`section-bottom-${v.index}`}
+                                                            id="offshore-upper-diameter"
                                                             labelText=""
-                                                            name="bottom"
-                                                            onChange={(e) =>
-                                                                onChangeSectionTableData(
-                                                                    e,
-                                                                    v.index,
-                                                                    invalidCheckBottom,
-                                                                )
-                                                            }
-                                                            invalid={invalidCheckBottom}
-                                                            invalidText={invalidTextBottom}
-                                                            value={v.section.bottom}
-                                                            disabled={
-                                                                linearTypeValidationNotLastSection ||
-                                                                notSaveValidation
-                                                            }
+                                                            value={initData.bottomLowerOutDia}
+                                                            disabled={true}
                                                         />
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                                 <TableCell>
                                                     <TextWrapTableCell width={7}>
                                                         <TextInput
-                                                            id={`section-thickness-${v.index}`}
+                                                            id="offshore-lower-diameter"
                                                             labelText=""
-                                                            name="thickness"
-                                                            onChange={(e) =>
-                                                                onChangeSectionTableData(
-                                                                    e,
-                                                                    v.index,
-                                                                    invalidCheckBottom,
-                                                                )
-                                                            }
-                                                            value={v.thickness}
-                                                            disabled={notSaveValidation}
+                                                            value={initData.bottomLowerOutDia}
+                                                            disabled={true}
                                                         />
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                                 <TableCell>
                                                     <TextWrapTableCell width={7}>
-                                                        <TextInput
-                                                            id={`section-weight-${v.index}`}
-                                                            labelText=""
-                                                            name="weight"
-                                                            value={
-                                                                Math.round(v.weight / 1000) / 1000
-                                                            }
-                                                            disabled={
-                                                                notSaveValidation || v.weight === 0
-                                                            }
-                                                        />
+                                                        -
+                                                    </TextWrapTableCell>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <TextWrapTableCell width={7}>
+                                                        -
                                                     </TextWrapTableCell>
                                                 </TableCell>
                                             </TableRow>
-                                        )
-                                    })}
-                                {/* Shore Check */}
-                                {initData.shore === 'onshore' ? (
-                                    ''
-                                ) : (
-                                    <TableRow key={`section-offshore`} style={{ textAlign: 'end' }}>
-                                        <TableCell>
-                                            <TextWrapTableCell width={3}>Offset</TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={7}>
-                                                <TextInput
-                                                    id={`section-height-offshore-offset`}
-                                                    labelText=""
-                                                    name="height"
-                                                    onChange={(e) => onChangeSectionOffsetData(e)}
-                                                    // invalid={invalidCheckLength}
-                                                    // invalidText={invalidTextLength}
-                                                    value={initData.offset}
-                                                    // disabled={notSaveValidation}
-                                                />
-                                            </TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={5}>
-                                                <TextInput
-                                                    id="offshore-linear"
-                                                    labelText=""
-                                                    value="Linear"
-                                                    disabled={true}
-                                                />
-                                            </TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={7}>
-                                                <TextInput
-                                                    id="offshore-upper-diameter"
-                                                    labelText=""
-                                                    value={initData.bottomLowerOutDia}
-                                                    disabled={true}
-                                                />
-                                            </TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={7}>
-                                                <TextInput
-                                                    id="offshore-lower-diameter"
-                                                    labelText=""
-                                                    value={initData.bottomLowerOutDia}
-                                                    disabled={true}
-                                                />
-                                            </TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={7}>-</TextWrapTableCell>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TextWrapTableCell width={7}>-</TextWrapTableCell>
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                        <br />
-                        <Table size="lg">
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>
-                                        <TextWrapTableCell width={4}>
-                                            <div style={{ color: '#fff' }}>Total</div>
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            <TextInput
-                                                id={`section-total-height`}
-                                                labelText=""
-                                                name="total-height"
-                                                invalid={
-                                                    sectionData
-                                                        .map((v) => v.section.height)
-                                                        .reduce((prev, curr) => prev + curr, 0) +
-                                                        initData.offset !=
-                                                    initData.maxHeight
-                                                }
-                                                invalidText={`Total = ${initData.maxHeight}`}
-                                                value={
-                                                    sectionData
-                                                        .map((v) => v.section.height)
-                                                        .reduce((prev, curr) => prev + curr, 0) +
-                                                    initData.offset
-                                                }
-                                                disabled={divided !== sectionData.length}
-                                            />
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={28}>
-                                            {`Tower Total Height ${initData.maxHeight}mm (= ${
-                                                initData.maxHeight / 1000
-                                            }m) `}
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextWrapTableCell width={7}>
-                                            <TextInput
-                                                id={`section-total-height`}
-                                                labelText=""
-                                                name="total-height"
-                                                invalid={
-                                                    sectionData
-                                                        .map((v) => v.section.height)
-                                                        .reduce((prev, curr) => prev + curr, 0) +
-                                                        initData.offset !=
-                                                    initData.maxHeight
-                                                }
-                                                invalidText={`Total = ${initData.maxHeight}`}
-                                                value={sectionData
-                                                    .map((v) => Math.round(v.weight / 1000) / 1000)
-                                                    .reduce((prev, curr) => prev + curr, 0)}
-                                                disabled={divided !== sectionData.length}
-                                            />
-                                        </TextWrapTableCell>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                                <br />
+                                <Table size="lg">
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>
+                                                <TextWrapTableCell width={4}>
+                                                    <div style={{ color: '#fff' }}>Total</div>
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    <TextInput
+                                                        id={`section-total-height`}
+                                                        labelText=""
+                                                        name="total-height"
+                                                        invalid={
+                                                            sectionData
+                                                                .map((v) => v.section.height)
+                                                                .reduce(
+                                                                    (prev, curr) => prev + curr,
+                                                                    0,
+                                                                ) +
+                                                                initData.offset !=
+                                                            initData.maxHeight
+                                                        }
+                                                        invalidText={`Total = ${initData.maxHeight}`}
+                                                        value={
+                                                            sectionData
+                                                                .map((v) => v.section.height)
+                                                                .reduce(
+                                                                    (prev, curr) => prev + curr,
+                                                                    0,
+                                                                ) + initData.offset
+                                                        }
+                                                        disabled={divided !== sectionData.length}
+                                                    />
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={28}>
+                                                    {`Tower Total Height ${
+                                                        initData.maxHeight
+                                                    }mm (= ${initData.maxHeight / 1000}m) `}
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextWrapTableCell width={7}>
+                                                    <TextInput
+                                                        id={`section-total-height`}
+                                                        labelText=""
+                                                        name="total-height"
+                                                        invalid={
+                                                            sectionData
+                                                                .map((v) => v.section.height)
+                                                                .reduce(
+                                                                    (prev, curr) => prev + curr,
+                                                                    0,
+                                                                ) +
+                                                                initData.offset !=
+                                                            initData.maxHeight
+                                                        }
+                                                        invalidText={`Total = ${initData.maxHeight}`}
+                                                        value={sectionData
+                                                            .map(
+                                                                (v) =>
+                                                                    Math.round(v.weight / 1000) /
+                                                                    1000,
+                                                            )
+                                                            .reduce((prev, curr) => prev + curr, 0)}
+                                                        disabled={divided !== sectionData.length}
+                                                    />
+                                                </TextWrapTableCell>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
 
-                        <InputDivider />
-                        {divided !== sectionData.length && (
-                            <div style={{ width: '100%', color: '#fa4d56' }}>
-                                Please, Click the STEP1 SAVE Button
-                            </div>
-                        )}
-                        {invalidTableCheck && (
-                            <div style={{ width: '100%', color: '#fa4d56' }}>
-                                Invalid Value Exist. Check input value.
-                            </div>
-                        )}
-                        <InputDivider />
-                        <Button
-                            kind="primary"
-                            renderIcon={Save32}
-                            onClick={onClickSetSectionsFinalData}
-                            disabled={invalidTableCheck}
-                        >
-                            STEP2 : SAVE
-                        </Button>
-                        <SectionDivider />
-                        <div
-                            style={{
-                                paddingBlock: '1rem',
-                                marginBottom: '100px',
-                                float: 'right',
-                            }}
-                        >
-                            <Button
-                                kind="tertiary"
-                                renderIcon={ArrowRight32}
-                                disabled={!validSecondStep}
-                                as={NavLink}
-                                to={validSecondStep ? `/workspace/${workspace}/model/section` : ''}
-                            >
-                                NEXT
-                            </Button>
-                        </div>
-                    </>
-                </SettingViewFit>
-            </SettingWrap>
-        </FlexWrap>
+                                <InputDivider />
+                                {divided !== sectionData.length && (
+                                    <div style={{ width: '100%', color: '#fa4d56' }}>
+                                        Please, Click the STEP1 SAVE Button
+                                    </div>
+                                )}
+                                {invalidTableCheck && (
+                                    <div style={{ width: '100%', color: '#fa4d56' }}>
+                                        Invalid Value Exist. Check input value.
+                                    </div>
+                                )}
+                                <InputDivider />
+                                <Button
+                                    kind="primary"
+                                    renderIcon={Save32}
+                                    onClick={onClickSetSectionsFinalData}
+                                    disabled={invalidTableCheck}
+                                >
+                                    STEP2 : SAVE
+                                </Button>
+                                <SectionDivider />
+                                <div
+                                    style={{
+                                        paddingBlock: '1rem',
+                                        marginBottom: '100px',
+                                        float: 'right',
+                                    }}
+                                >
+                                    <Button
+                                        kind="tertiary"
+                                        renderIcon={ArrowRight32}
+                                        disabled={!validSecondStep}
+                                        as={NavLink}
+                                        to={
+                                            validSecondStep
+                                                ? `/workspace/${workspace}/model/section`
+                                                : ''
+                                        }
+                                    >
+                                        NEXT
+                                    </Button>
+                                </div>
+                            </>
+                        </SettingViewFit>
+                    </SettingWrap>
+                </FlexWrap>
+            )}
+        </>
     )
 }
 

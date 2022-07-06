@@ -224,7 +224,7 @@ const Frame = () => {
 
             for (var i = 0; i < divided; i++) {
                 /* Init Value */
-                var eachSectionHeight = Math.round(maxHeight / divided)
+                var eachSectionHeight = Math.round((maxHeight - initData.offset) / divided)
                 var eachPartHeight =
                     eachSectionHeight - 2 * (defaultFlangeHeight + defaultNeckHeight)
                 var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2

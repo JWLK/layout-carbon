@@ -527,7 +527,7 @@ const Frame = () => {
             //     }
             // }
 
-            if (divided == 1 || divided === dividedBefore) {
+            if (divided === 1 || dividedBefore === 1) {
                 for (var i = 0; i < divided; i++) {
                     /* Init Value */
                     var eachHeight = Math.round(totalHeight / divided)
@@ -576,7 +576,7 @@ const Frame = () => {
                     }
                 }
             } else if (divided > dividedBefore) {
-                partArray = rawData.partsData[currentSectionIndex].parts
+                // partArray = rawData.partsData[currentSectionIndex].parts
                 for (var j = 0; j < divided; j++) {
                     if (j < dividedBefore) {
                         partArray[j] = rawData.partsData[currentSectionIndex].parts[j]
@@ -587,6 +587,8 @@ const Frame = () => {
                 }
             } else if (divided < dividedBefore) {
                 partArray = rawData.partsData[currentSectionIndex].parts.splice(0, divided)
+            } else {
+                partArray = rawData.partsData[currentSectionIndex].parts
             }
 
             rawData.partsData[currentSectionIndex].divided = divided
@@ -601,8 +603,8 @@ const Frame = () => {
 
             //한번에 업데이터
             mutate()
-            console.log(dividedBefore)
-            console.log(divided)
+            console.log('dividedBefore', dividedBefore)
+            console.log('divided', divided)
             setDividedBefore(divided)
         },
         [
@@ -742,6 +744,7 @@ const Frame = () => {
             setPartsData(TD.partsData)
             //Section & Parts
             setDivided(TD.partsData[currentSectionIndex].divided)
+            setDividedBefore(TD.partsData[currentSectionIndex].divided)
             setTotalThickness(TD.sectionSubData[currentSectionIndex].thickness)
 
             //SectorsData

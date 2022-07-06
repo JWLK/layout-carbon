@@ -129,25 +129,20 @@ const Frame = () => {
     const [totalHeight, setTotalHeight] = useState(0)
     const [maxHeight, setMaxHeight] = useState(0)
     const [divided, setDivided] = useState(1)
+    const [dividedBefore, setDividedBefore] = useState(1) // part divided
 
-    const onChangeTopUpperOutDia = useCallback(
-        (e) => {
-            setTopUpperOutDia(e.value)
-            initData.topUpperOutDia = e.value
-            rawData.initial = initData
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
-        },
-        [keyRawData, rawData, initData],
-    )
-    const onChangeBottomLowerOutDia = useCallback(
-        (e) => {
-            setBottomLowerOutDia(e.value)
-            initData.bottomLowerOutDia = e.value
-            rawData.initial = initData
-            localStorage.setItem(keyRawData, JSON.stringify(rawData))
-        },
-        [keyRawData, rawData, initData],
-    )
+    const onChangeTopUpperOutDia = useCallback((e) => {
+        setTopUpperOutDia(e.value)
+        // initData.topUpperOutDia = e.value
+        // rawData.initial = initData
+        // localStorage.setItem(keyRawData, JSON.stringify(rawData))
+    }, [])
+    const onChangeBottomLowerOutDia = useCallback((e) => {
+        setBottomLowerOutDia(e.value)
+        // initData.bottomLowerOutDia = e.value
+        // rawData.initial = initData
+        // localStorage.setItem(keyRawData, JSON.stringify(rawData))
+    }, [])
     const onChangeTotalHeight = useCallback(
         (e) => {
             const valueNumber = parseInt(
@@ -354,12 +349,167 @@ const Frame = () => {
                     sectors: [InitSector],
                 }
             }
+            // if (divided === 1 || dividedBefore === 1) {
+            //     for (var i = 0; i < divided; i++) {
+            //         /* Init Value */
+            //         var eachSectionHeight = Math.round(maxHeight / divided)
+            //         var eachPartHeight =
+            //             eachSectionHeight - 2 * (defaultFlangeHeight + defaultNeckHeight)
+            //         var triBottom = Math.abs(topUpperOutDia - bottomLowerOutDia) / 2
+            //         var eachHypo =
+            //             Math.sqrt(Math.pow(triBottom, 2) + Math.pow(maxHeight, 2)) / divided
+            //         var radian = Math.PI / 2 - Math.atan(maxHeight / triBottom)
 
+            //         // console.log('eachHeight', eachHeight)
+            //         // console.log('triBottom', triBottom)
+            //         // console.log('eachHypo', eachHypo)
+            //         // console.log('angle', (180 / Math.PI) * angle)
+
+            //         /* Calc Secion & Parts Value */
+            //         var sectionWidthTop = Math.round(
+            //             topUpperOutDia + eachHypo * i * Math.sin(radian) * 2,
+            //         )
+            //         var sectionWidthBottom = Math.round(
+            //             topUpperOutDia + eachHypo * (i + 1) * Math.sin(radian) * 2,
+            //         )
+            //         // console.log(
+            //         //     `sectionWidthTop : ${sectionWidthTop} / sectionWidthBottom : ${sectionWidthBottom}`,
+            //         // )
+
+            //         //Inser Reverse
+            //         sectionsObject[divided - 1 - i] = {
+            //             index: i,
+            //             section: {
+            //                 top: sectionWidthTop,
+            //                 bottom: sectionWidthBottom,
+            //                 height: eachSectionHeight,
+            //             },
+            //             tapered: true,
+            //             thickness: 50,
+            //             weight: 0,
+            //         }
+
+            //         partsObject[divided - 1 - i] = {
+            //             index: i,
+            //             parts: [
+            //                 {
+            //                     index: 0,
+            //                     part: {
+            //                         top: sectionWidthTop,
+            //                         bottom: sectionWidthBottom,
+            //                         height: eachPartHeight,
+            //                     },
+            //                     thickness: 50,
+            //                     weight: 0,
+            //                 },
+            //             ],
+            //             divided: 1,
+            //         }
+
+            //         /* Calc Flange Value */
+            //         flangesObject[divided - 1 - i] = {
+            //             index: i,
+            //             flanges: [
+            //                 {
+            //                     index: 0,
+            //                     flange: {
+            //                         outDia: sectionWidthBottom,
+            //                         inDia: sectionWidthBottom - 2 * 400, //= outDia - 2 * flangeWidth
+            //                         flangeWidth: 400,
+            //                         flangeHeight: defaultFlangeHeight,
+            //                         neckWidth: 50,
+            //                         neckHeight: defaultNeckHeight,
+            //                         minScrewWidth: 80,
+            //                         pcDia: sectionWidthBottom - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+            //                         param_a:
+            //                             (sectionWidthBottom -
+            //                                 2 * 50 -
+            //                                 2 * 80 -
+            //                                 (sectionWidthBottom - 2 * 400)) /
+            //                             2,
+            //                         // param_a =  (pcDia - inDia) / 2
+            //                         param_b:
+            //                             (sectionWidthBottom -
+            //                                 50 -
+            //                                 (sectionWidthBottom - 2 * 50 - 2 * 80)) /
+            //                             2,
+            //                         // param_b = (outDia - neckWidth - pcDia) / 2
+            //                         screwWidth: 64,
+            //                         screwNumberOf: 150,
+            //                     },
+            //                     weight: 0,
+            //                     flangeWeight: 0,
+            //                     partWeight: 0,
+            //                 },
+            //                 {
+            //                     index: 1,
+            //                     flange: {
+            //                         outDia: sectionWidthTop,
+            //                         inDia: sectionWidthTop - 2 * 400, //= outDia - 2 * flangeWidth
+            //                         flangeWidth: 400,
+            //                         flangeHeight: defaultFlangeHeight,
+            //                         neckWidth: 50,
+            //                         neckHeight: defaultNeckHeight,
+            //                         minScrewWidth: 80,
+            //                         pcDia: sectionWidthTop - 2 * 50 - 2 * 80, // = outDia - 2 * neckWidth - 2 * minScrewWidth
+            //                         param_a:
+            //                             (sectionWidthTop -
+            //                                 2 * 50 -
+            //                                 2 * 80 -
+            //                                 (sectionWidthTop - 2 * 400)) /
+            //                             2,
+            //                         // param_a =  (pcDia - inDia) / 2
+            //                         param_b:
+            //                             (sectionWidthTop -
+            //                                 50 -
+            //                                 (sectionWidthTop - 2 * 50 - 2 * 80)) /
+            //                             2,
+            //                         // param_b = (outDia - neckWidth - pcDia) / 2
+            //                         screwWidth: 64,
+            //                         screwNumberOf: 150,
+            //                     },
+            //                     weight: 0,
+            //                     flangeWeight: 0,
+            //                     partWeight: 0,
+            //                 },
+            //             ],
+            //         }
+
+            //         sectorsObject[divided - 1 - i] = {
+            //             index: i,
+            //             sectors: [InitSector],
+            //         }
+            //     }
+            // } else if (divided > dividedBefore) {
+            //     for (var j = 0; j < divided; j++) {
+            //         if (j < dividedBefore) {
+            //             sectionsObject[j] = rawData.sectionData[j]
+            //             partsObject[j] = rawData.partsData[j]
+            //             sectorsObject[j] = rawData.sectorsData[j]
+            //             flangesObject[j] = rawData.flangesData[j]
+            //         } else {
+            //             sectionsObject[j] = rawData.sectionData[dividedBefore - 1]
+            //             partsObject[j] = rawData.partsData[dividedBefore - 1]
+            //             sectorsObject[j] = rawData.sectorsData[dividedBefore - 1]
+            //             flangesObject[j] = rawData.flangesData[dividedBefore - 1]
+            //         }
+            //     }
+            // } else if (divided < dividedBefore) {
+            //     sectionsObject = rawData.sectionData.splice(0, divided)
+            //     partsObject = rawData.partsData.splice(0, divided)
+            //     sectorsObject = rawData.sectorsData.splice(0, divided)
+            //     flangesObject = rawData.flangesData.splice(0, divided)
+            // } else {
+            //     sectionsObject = rawData.sectionData
+            //     partsObject = rawData.partsData
+            //     sectorsObject = rawData.sectorsData
+            //     flangesObject = rawData.flangesData
+            // }
             initData.totalHeight = maxHeight
             initData.divided = divided
             rawData.initial = initData
-            rawData.sectionData = sectionsObject
-            rawData.sectionSubData = sectionsObject
+            rawData.sectionData = updateSectionsTaperedSync(sectionsObject)
+            rawData.sectionSubData = updateSectionsTaperedSync(sectionsObject)
             rawData.partsData = partsObject
             rawData.sectorsData = sectorsObject
             rawData.flangesData = flangesObject
@@ -373,8 +523,11 @@ const Frame = () => {
             mutate()
             setValidFirstStep(true)
             setValidSecondStep(false)
+            console.log('dividedBefore', dividedBefore)
+            console.log('divided', divided)
+            setDividedBefore(divided)
         },
-        [divided, initData, rawData, keyRawData, maxHeight, topUpperOutDia, bottomLowerOutDia],
+        [divided, initData, maxHeight, rawData, keyRawData, topUpperOutDia, bottomLowerOutDia],
     )
 
     /* STEP 1 */
@@ -526,7 +679,32 @@ const Frame = () => {
                                     TWFlanges[i].flanges[1].flange.neckHeight),
                         },
                         thickness: TWParts[i].parts[0].thickness,
-                        weight: 0,
+                        weight: Math.abs(
+                            ((Math.pow(sections[i].section.top, 2) -
+                                Math.pow(
+                                    sections[i].section.top - 2 * TWParts[i].parts[0].thickness,
+                                    2,
+                                ) +
+                                Math.pow(sections[i].section.bottom, 2) -
+                                Math.pow(
+                                    sections[i].section.bottom - 2 * TWParts[i].parts[0].thickness,
+                                    2,
+                                ) +
+                                sections[i].section.top * sections[i].section.bottom -
+                                (sections[i].section.top - 2 * TWParts[i].parts[0].thickness) *
+                                    (sections[i].section.bottom -
+                                        2 * TWParts[i].parts[0].thickness)) *
+                                Math.PI *
+                                (sections[i].section.height -
+                                    (TWFlanges[i].flanges[0].flange.flangeHeight +
+                                        TWFlanges[i].flanges[0].flange.neckHeight) -
+                                    (TWFlanges[i].flanges[1].flange.flangeHeight +
+                                        TWFlanges[i].flanges[1].flange.neckHeight)) *
+                                1000 *
+                                7.85 *
+                                Math.pow(10, -6)) /
+                                12,
+                        ),
                     },
                 ],
                 divided: TWParts[i].divided,
@@ -544,6 +722,88 @@ const Frame = () => {
             // TWFlanges[i].flanges[1].flange.outDia = sections[i].section.top
             // TWFlanges[i].flanges[1].flange.inDia =
             //     sections[i].section.top - 2 * TWFlanges[i].flanges[1].flange.flangeWidth
+
+            var flangeWithNeckOutsideMassBottom = Math.abs(
+                ((Math.pow(sectionData[i].section.bottom, 2) -
+                    Math.pow(
+                        sectionData[i].section.bottom -
+                            2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                        2,
+                    ) +
+                    Math.pow(sectionData[i].section.bottom, 2) -
+                    Math.pow(
+                        sectionData[i].section.bottom -
+                            2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                        2,
+                    ) +
+                    sectionData[i].section.bottom * sectionData[i].section.bottom -
+                    (sectionData[i].section.bottom - 2 * TWFlanges[i].flanges[0].flange.neckWidth) *
+                        (sectionData[i].section.bottom -
+                            2 * TWFlanges[i].flanges[0].flange.neckWidth)) *
+                    Math.PI *
+                    (TWFlanges[i].flanges[0].flange.flangeHeight +
+                        TWFlanges[i].flanges[0].flange.neckHeight) *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    12,
+            )
+            var flangeBodyInnerMassBottom = Math.abs(
+                ((Math.pow(
+                    sectionData[i].section.bottom - 2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                    2,
+                ) -
+                    Math.pow(
+                        sectionData[i].section.bottom -
+                            2 * TWFlanges[i].flanges[0].flange.flangeWidth,
+                        2,
+                    )) *
+                    Math.PI *
+                    TWFlanges[i].flanges[0].flange.flangeHeight *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    4,
+            )
+            var flangeWithNeckOutsideMassTop = Math.abs(
+                ((Math.pow(sectionData[i].section.top, 2) -
+                    Math.pow(
+                        sectionData[i].section.top - 2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                        2,
+                    ) +
+                    Math.pow(sectionData[i].section.top, 2) -
+                    Math.pow(
+                        sectionData[i].section.top - 2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                        2,
+                    ) +
+                    sectionData[i].section.top * sectionData[i].section.top -
+                    (sectionData[i].section.top - 2 * TWFlanges[i].flanges[0].flange.neckWidth) *
+                        (sectionData[i].section.top -
+                            2 * TWFlanges[i].flanges[0].flange.neckWidth)) *
+                    Math.PI *
+                    (TWFlanges[i].flanges[0].flange.flangeHeight +
+                        TWFlanges[i].flanges[0].flange.neckHeight) *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    12,
+            )
+            var flangeBodyInnerMassTop = Math.abs(
+                ((Math.pow(
+                    sectionData[i].section.top - 2 * TWFlanges[i].flanges[0].flange.neckWidth,
+                    2,
+                ) -
+                    Math.pow(
+                        sectionData[i].section.top - 2 * TWFlanges[i].flanges[0].flange.flangeWidth,
+                        2,
+                    )) *
+                    Math.PI *
+                    TWFlanges[i].flanges[0].flange.flangeHeight *
+                    1000 *
+                    7.85 *
+                    Math.pow(10, -6)) /
+                    4,
+            )
             TWFlanges[i].flanges = [
                 {
                     index: 0,
@@ -578,9 +838,9 @@ const Frame = () => {
                         screwWidth: TWFlanges[i].flanges[0].flange.screwWidth,
                         screwNumberOf: TWFlanges[i].flanges[0].flange.screwNumberOf,
                     },
-                    weight: 0,
-                    flangeWeight: 0,
-                    partWeight: 0,
+                    weight: flangeWithNeckOutsideMassBottom + flangeBodyInnerMassBottom,
+                    flangeWeight: flangeBodyInnerMassBottom,
+                    partWeight: flangeWithNeckOutsideMassBottom,
                 },
                 {
                     index: 1,
@@ -615,9 +875,9 @@ const Frame = () => {
                         screwWidth: TWFlanges[i].flanges[1].flange.screwWidth,
                         screwNumberOf: TWFlanges[i].flanges[1].flange.screwNumberOf,
                     },
-                    weight: 0,
-                    flangeWeight: 0,
-                    partWeight: 0,
+                    weight: flangeWithNeckOutsideMassTop + flangeBodyInnerMassTop,
+                    flangeWeight: flangeBodyInnerMassTop,
+                    partWeight: flangeWithNeckOutsideMassTop,
                 },
             ]
         }
@@ -720,6 +980,7 @@ const Frame = () => {
             setTopUpperOutDia(TD.initial.topUpperOutDia)
             setBottomLowerOutDia(TD.initial.bottomLowerOutDia)
             setDivided(TD.initial.divided)
+            setDividedBefore(TD.initial.divided)
             //SectionData
             setSectionData(TD.sectionData)
             setSectionSubData(TD.sectionSubData)

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 
-const backUrl = 'http://localhost:3095'
+const backUrl = 'http://evonus.org:3095'
 // const backUrl = process.env.NODE_ENV === 'production' ? 'https://sleact.nodebird.com' : 'http://localhost:3095';
 
 const sockets: { [key: string]: Socket } = {}

@@ -91,6 +91,14 @@ const SideMenuLeft: FC<Props> = ({ show }) => {
                         >
                             0X.Natural Frequency
                         </SideNavLink>
+                        <SideNavLink<NavLinkProps>
+                            element={NavLink}
+                            renderIcon={DotMark32}
+                            large
+                            to={`/workspace/${workspace}/model/exload`}
+                        >
+                            0X.Extreme Load
+                        </SideNavLink>
                         <SideNavDivider />
                         <SideNavLink<NavLinkProps>
                             element={NavLink}

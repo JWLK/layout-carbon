@@ -129,3 +129,16 @@ export interface TWFrequency {
     index: number
     frequency: ObjFrequency
 }
+
+export interface ObjExtreme {
+    fx: number
+    fy: number
+    fz: number
+    height: number
+    index: number
+    mx: number
+    mxy: number
+    my: number
+    mz: number
+    sf: number
+}

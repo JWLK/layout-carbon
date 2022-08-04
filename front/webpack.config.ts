@@ -83,6 +83,7 @@ const config: Configuration = {
         publicPath: '/dist/',
     },
     devServer: {
+        allowedHosts: ['evonus.org'],
         historyApiFallback: true,
         port: 3090,
         devMiddleware: { publicPath: '/dist/' },

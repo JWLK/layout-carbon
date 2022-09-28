@@ -370,7 +370,7 @@ export const sampleMode_00: TWRawData = {
                         bottom: 6945.769050958392,
                         height: 2900,
                     },
-                    thickness: 35,
+                    thickness: 25,
                     weight: 17281671.152206477,
                 },
                 {
@@ -380,7 +380,7 @@ export const sampleMode_00: TWRawData = {
                         bottom: 6932.21131369799,
                         height: 2900,
                     },
-                    thickness: 35,
+                    thickness: 25,
                     weight: 17247734.204048295,
                 },
                 {

@@ -198,245 +198,738 @@ const ExLoad = () => {
         setOriginalDataCheck(true)
         // console.log(fileLoadData)
 
-        let rebuildArray = [] as any[]
-        let rebuildPartLenghtSum = 0
-        let partHeightArrayNoOffset = partHeightArray.shift()
-        if (TD !== null && TD !== undefined) {
-            // console.log('TD', TD.partsData)
-            const partList = TD.partsData.map((partsArray, sectionNumber) => {
-                let rebuildPart = [] as any[]
-                let sectionIndex = sectionNumber + 1
-                const partRebuild = partsArray.parts.map((partsElement, partIndex) => {
-                    let returnData = null
+        if (originalDataCheck === false) {
+            let rebuildArray = [] as any[]
+            let rebuildPartLenghtSum = 0
+            let partHeightArrayNoOffset = partHeightArray.shift()
+            if (TD !== null && TD !== undefined) {
+                // console.log('TD', TD.partsData)
+                const partList = TD.partsData.map((partsArray, sectionNumber) => {
+                    let rebuildPart = [] as any[]
+                    let sectionIndex = sectionNumber + 1
+                    const partRebuild = partsArray.parts.map((partsElement, partIndex) => {
+                        let returnData = null
 
-                    if (partsArray.parts.length === 1) {
-                        returnData = [
-                            {
+                        if (partsArray.parts.length === 1) {
+                            returnData = [
+                                {
+                                    id: rebuildPartLenghtSum + 0,
+                                    section: sectionIndex,
+                                    heightSum: partHeightArray[rebuildPartLenghtSum + 0],
+                                    height:
+                                        (TD.flangesData[sectionNumber].flanges[0].flange
+                                            .flangeHeight +
+                                            TD.flangesData[sectionNumber].flanges[0].flange
+                                                .neckHeight) /
+                                        1000,
+                                    part: 0,
+                                    thickness:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth,
+                                    topOutside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                    btmOutside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                    topInside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth *
+                                            2,
+                                    btmInside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth *
+                                            2,
+                                    weightFlange:
+                                        TD.flangesData[sectionNumber].flanges[0].flangeWeight /
+                                        1000,
+                                    crossAreaUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6),
+
+                                    crossAreaLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6),
+
+                                    sectionModulusUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9),
+                                    sectionModulusLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9),
+                                },
+                                {
+                                    id: rebuildPartLenghtSum + partIndex + 1,
+                                    section: sectionIndex,
+                                    heightSum:
+                                        partHeightArray[rebuildPartLenghtSum + partIndex + 1],
+                                    height: partsElement.part.height / 1000,
+                                    part: partIndex + 1,
+                                    thickness: partsElement.thickness,
+                                    topOutside: partsElement.part.top,
+                                    btmOutside: partsElement.part.bottom,
+                                    topInside: partsElement.part.top - partsElement.thickness * 2,
+                                    btmInside:
+                                        partsElement.part.bottom - partsElement.thickness * 2,
+                                    weightFlange: 0,
+                                    crossAreaUpper:
+                                        (((Math.pow(partsElement.part.top, 2) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    crossAreaLower:
+                                        (((Math.pow(partsElement.part.bottom, 2) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    sectionModulusUpper:
+                                        (((Math.pow(partsElement.part.top, 4) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.top)) *
+                                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                    sectionModulusLower:
+                                        (((Math.pow(partsElement.part.bottom, 4) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.bottom)) *
+                                        Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                                },
+                                {
+                                    id: rebuildPartLenghtSum + partIndex + 2,
+                                    section: sectionIndex,
+                                    heightSum:
+                                        partHeightArray[rebuildPartLenghtSum + partIndex + 2],
+                                    height:
+                                        (TD.flangesData[sectionNumber].flanges[1].flange
+                                            .flangeHeight +
+                                            TD.flangesData[sectionNumber].flanges[1].flange
+                                                .neckHeight) /
+                                        1000,
+                                    part: TD.partsData[sectionNumber]?.parts.length + 1,
+                                    thickness:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth,
+                                    topOutside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                    btmOutside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                    topInside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth *
+                                            2,
+                                    btmInside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth *
+                                            2,
+                                    weightFlange:
+                                        TD.flangesData[sectionNumber].flanges[1].flangeWeight /
+                                        1000,
+
+                                    crossAreaUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    crossAreaLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    sectionModulusUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                    sectionModulusLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                                },
+                            ]
+                        } else if (partsArray.parts.length - 1 > 0 && partIndex === 0) {
+                            returnData = [
+                                {
+                                    id: rebuildPartLenghtSum + 0,
+                                    section: sectionIndex,
+                                    heightSum: partHeightArray[rebuildPartLenghtSum + 0],
+                                    height:
+                                        (TD.flangesData[sectionNumber].flanges[0].flange
+                                            .flangeHeight +
+                                            TD.flangesData[sectionNumber].flanges[0].flange
+                                                .neckHeight) /
+                                        1000,
+                                    part: 0,
+                                    thickness:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth,
+                                    topOutside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                    btmOutside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                    topInside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth *
+                                            2,
+                                    btmInside:
+                                        TD.flangesData[sectionNumber].flanges[0].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[0].flange.neckWidth *
+                                            2,
+                                    weightFlange:
+                                        TD.flangesData[sectionNumber].flanges[0].flangeWeight /
+                                        1000,
+
+                                    crossAreaUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6),
+
+                                    crossAreaLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6),
+
+                                    sectionModulusUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9),
+                                    sectionModulusLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[0].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[0].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[0].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9),
+                                },
+                                {
+                                    id: rebuildPartLenghtSum + partIndex + 1,
+                                    section: sectionIndex,
+                                    heightSum:
+                                        partHeightArray[rebuildPartLenghtSum + partIndex + 1],
+                                    height: partsElement.part.height / 1000,
+                                    part: partIndex + 1,
+                                    thickness: partsElement.thickness,
+                                    topOutside: partsElement.part.top,
+                                    btmOutside: partsElement.part.bottom,
+                                    topInside: partsElement.part.top - partsElement.thickness * 2,
+                                    btmInside:
+                                        partsElement.part.bottom - partsElement.thickness * 2,
+                                    weightFlange: 0,
+
+                                    crossAreaUpper:
+                                        (((Math.pow(partsElement.part.top, 2) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    crossAreaLower:
+                                        (((Math.pow(partsElement.part.bottom, 2) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    sectionModulusUpper:
+                                        (((Math.pow(partsElement.part.top, 4) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.top)) *
+                                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                    sectionModulusLower:
+                                        (((Math.pow(partsElement.part.bottom, 4) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.bottom)) *
+                                        Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                                },
+                            ]
+                        } else if (
+                            partsArray.parts.length - 1 > 0 &&
+                            partIndex === partsArray.parts.length - 1
+                        ) {
+                            returnData = [
+                                {
+                                    id: rebuildPartLenghtSum + 0,
+                                    section: sectionIndex,
+                                    heightSum: partHeightArray[rebuildPartLenghtSum + 0],
+                                    height: partsElement.part.height / 1000,
+                                    part: partIndex + 1,
+                                    thickness: partsElement.thickness,
+                                    topOutside: partsElement.part.top,
+                                    btmOutside: partsElement.part.bottom,
+                                    topInside: partsElement.part.top - partsElement.thickness * 2,
+                                    btmInside:
+                                        partsElement.part.bottom - partsElement.thickness * 2,
+                                    weightFlange: 0,
+
+                                    crossAreaUpper:
+                                        (((Math.pow(partsElement.part.top, 2) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    crossAreaLower:
+                                        (((Math.pow(partsElement.part.bottom, 2) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    sectionModulusUpper:
+                                        (((Math.pow(partsElement.part.top, 4) -
+                                            Math.pow(
+                                                partsElement.part.top - partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.top)) *
+                                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                    sectionModulusLower:
+                                        (((Math.pow(partsElement.part.bottom, 4) -
+                                            Math.pow(
+                                                partsElement.part.bottom -
+                                                    partsElement.thickness * 2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 * partsElement.part.bottom)) *
+                                        Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                                },
+                                {
+                                    id: rebuildPartLenghtSum + 1,
+                                    section: sectionIndex,
+                                    heightSum: partHeightArray[rebuildPartLenghtSum + 1],
+                                    height:
+                                        (TD.flangesData[sectionNumber].flanges[1].flange
+                                            .flangeHeight +
+                                            TD.flangesData[sectionNumber].flanges[1].flange
+                                                .neckHeight) /
+                                        1000,
+                                    part: TD.partsData[sectionNumber]?.parts.length + 1,
+                                    thickness:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth,
+                                    topOutside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                    btmOutside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                    topInside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth *
+                                            2,
+                                    btmInside:
+                                        TD.flangesData[sectionNumber].flanges[1].flange.outDia -
+                                        TD.flangesData[sectionNumber].flanges[1].flange.neckWidth *
+                                            2,
+                                    weightFlange:
+                                        TD.flangesData[sectionNumber].flanges[1].flangeWeight /
+                                        1000,
+
+                                    crossAreaUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    crossAreaLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            2,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                2,
+                                            )) *
+                                            Math.PI) /
+                                            4) *
+                                        Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                    sectionModulusUpper:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                    sectionModulusLower:
+                                        (((Math.pow(
+                                            TD.flangesData[sectionNumber].flanges[1].flange.outDia,
+                                            4,
+                                        ) -
+                                            Math.pow(
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia -
+                                                    TD.flangesData[sectionNumber].flanges[1].flange
+                                                        .neckWidth *
+                                                        2,
+                                                4,
+                                            )) *
+                                            Math.PI) /
+                                            (32 *
+                                                TD.flangesData[sectionNumber].flanges[1].flange
+                                                    .outDia)) *
+                                        Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                                },
+                            ]
+                        } else {
+                            returnData = {
                                 id: rebuildPartLenghtSum + 0,
                                 section: sectionIndex,
                                 heightSum: partHeightArray[rebuildPartLenghtSum + 0],
-                                height:
-                                    (TD.flangesData[sectionNumber].flanges[0].flange.flangeHeight +
-                                        TD.flangesData[sectionNumber].flanges[0].flange
-                                            .neckHeight) /
-                                    1000,
-                                part: 0,
-                                topOutside: TD.flangesData[sectionNumber].flanges[0].flange.outDia,
-                                btmOutside: TD.flangesData[sectionNumber].flanges[0].flange.outDia,
-                                topInside:
-                                    TD.flangesData[sectionNumber].flanges[0].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[0].flange.neckWidth * 2,
-                                btmInside:
-                                    TD.flangesData[sectionNumber].flanges[0].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[0].flange.neckWidth * 2,
-                                weightFlange:
-                                    TD.flangesData[sectionNumber].flanges[0].flangeWeight / 1000,
-                            },
-                            {
-                                id: rebuildPartLenghtSum + partIndex + 1,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + partIndex + 1],
                                 height: partsElement.part.height / 1000,
                                 part: partIndex + 1,
+                                thickness: partsElement.thickness,
                                 topOutside: partsElement.part.top,
                                 btmOutside: partsElement.part.bottom,
                                 topInside: partsElement.part.top - partsElement.thickness * 2,
                                 btmInside: partsElement.part.bottom - partsElement.thickness * 2,
                                 weightFlange: 0,
-                            },
-                            {
-                                id: rebuildPartLenghtSum + partIndex + 2,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + partIndex + 2],
-                                height:
-                                    (TD.flangesData[sectionNumber].flanges[1].flange.flangeHeight +
-                                        TD.flangesData[sectionNumber].flanges[1].flange
-                                            .neckHeight) /
-                                    1000,
-                                part: TD.partsData[sectionNumber]?.parts.length + 1,
-                                topOutside: TD.flangesData[sectionNumber].flanges[1].flange.outDia,
-                                btmOutside: TD.flangesData[sectionNumber].flanges[1].flange.outDia,
-                                topInside:
-                                    TD.flangesData[sectionNumber].flanges[1].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[1].flange.neckWidth * 2,
-                                btmInside:
-                                    TD.flangesData[sectionNumber].flanges[1].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[1].flange.neckWidth * 2,
-                                weightFlange:
-                                    TD.flangesData[sectionNumber].flanges[1].flangeWeight / 1000,
-                            },
-                        ]
-                    } else if (partsArray.parts.length - 1 > 0 && partIndex === 0) {
-                        returnData = [
-                            {
-                                id: rebuildPartLenghtSum + 0,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + 0],
-                                height:
-                                    (TD.flangesData[sectionNumber].flanges[0].flange.flangeHeight +
-                                        TD.flangesData[sectionNumber].flanges[0].flange
-                                            .neckHeight) /
-                                    1000,
-                                part: 0,
-                                topOutside: TD.flangesData[sectionNumber].flanges[0].flange.outDia,
-                                btmOutside: TD.flangesData[sectionNumber].flanges[0].flange.outDia,
-                                topInside:
-                                    TD.flangesData[sectionNumber].flanges[0].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[0].flange.neckWidth * 2,
-                                btmInside:
-                                    TD.flangesData[sectionNumber].flanges[0].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[0].flange.neckWidth * 2,
-                                weightFlange:
-                                    TD.flangesData[sectionNumber].flanges[0].flangeWeight / 1000,
-                            },
-                            {
-                                id: rebuildPartLenghtSum + partIndex + 1,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + partIndex + 1],
-                                height: partsElement.part.height / 1000,
-                                part: partIndex + 1,
-                                topOutside: partsElement.part.top,
-                                btmOutside: partsElement.part.bottom,
-                                topInside: partsElement.part.top - partsElement.thickness * 2,
-                                btmInside: partsElement.part.bottom - partsElement.thickness * 2,
-                                weightFlange: 0,
-                            },
-                        ]
-                    } else if (
-                        partsArray.parts.length - 1 > 0 &&
-                        partIndex === partsArray.parts.length - 1
-                    ) {
-                        returnData = [
-                            {
-                                id: rebuildPartLenghtSum + 0,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + 0],
-                                height: partsElement.part.height / 1000,
-                                part: partIndex + 1,
-                                topOutside: partsElement.part.top,
-                                btmOutside: partsElement.part.bottom,
-                                topInside: partsElement.part.top - partsElement.thickness * 2,
-                                btmInside: partsElement.part.bottom - partsElement.thickness * 2,
-                                weightFlange: 0,
-                            },
-                            {
-                                id: rebuildPartLenghtSum + 1,
-                                section: sectionIndex,
-                                heightSum: partHeightArray[rebuildPartLenghtSum + 1],
-                                height:
-                                    (TD.flangesData[sectionNumber].flanges[1].flange.flangeHeight +
-                                        TD.flangesData[sectionNumber].flanges[1].flange
-                                            .neckHeight) /
-                                    1000,
-                                part: TD.partsData[sectionNumber]?.parts.length + 1,
-                                topOutside: TD.flangesData[sectionNumber].flanges[1].flange.outDia,
-                                btmOutside: TD.flangesData[sectionNumber].flanges[1].flange.outDia,
-                                topInside:
-                                    TD.flangesData[sectionNumber].flanges[1].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[1].flange.neckWidth * 2,
-                                btmInside:
-                                    TD.flangesData[sectionNumber].flanges[1].flange.outDia -
-                                    TD.flangesData[sectionNumber].flanges[1].flange.neckWidth * 2,
-                                weightFlange:
-                                    TD.flangesData[sectionNumber].flanges[1].flangeWeight / 1000,
-                            },
-                        ]
-                    } else {
-                        returnData = {
-                            id: rebuildPartLenghtSum + 0,
-                            section: sectionIndex,
-                            heightSum: partHeightArray[rebuildPartLenghtSum + 0],
-                            height: partsElement.part.height / 1000,
-                            part: partIndex + 1,
-                            topOutside: partsElement.part.top,
-                            btmOutside: partsElement.part.bottom,
-                            topInside: partsElement.part.top - partsElement.thickness * 2,
-                            btmInside: partsElement.part.bottom - partsElement.thickness * 2,
-                            weightFlange: 0,
+
+                                crossAreaUpper:
+                                    (((Math.pow(partsElement.part.top, 2) -
+                                        Math.pow(
+                                            partsElement.part.top - partsElement.thickness * 2,
+                                            2,
+                                        )) *
+                                        Math.PI) /
+                                        4) *
+                                    Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                crossAreaLower:
+                                    (((Math.pow(partsElement.part.bottom, 2) -
+                                        Math.pow(
+                                            partsElement.part.bottom - partsElement.thickness * 2,
+                                            2,
+                                        )) *
+                                        Math.PI) /
+                                        4) *
+                                    Math.pow(10, -6), // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                                sectionModulusUpper:
+                                    (((Math.pow(partsElement.part.top, 4) -
+                                        Math.pow(
+                                            partsElement.part.top - partsElement.thickness * 2,
+                                            4,
+                                        )) *
+                                        Math.PI) /
+                                        (32 * partsElement.part.top)) *
+                                    Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                                sectionModulusLower:
+                                    (((Math.pow(partsElement.part.bottom, 4) -
+                                        Math.pow(
+                                            partsElement.part.bottom - partsElement.thickness * 2,
+                                            4,
+                                        )) *
+                                        Math.PI) /
+                                        (32 * partsElement.part.bottom)) *
+                                    Math.pow(10, -9), // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                            }
                         }
-                    }
 
-                    if (Array.isArray(returnData)) {
-                        // console.log(...returnData)
-                        rebuildPart.push(...returnData)
-                        rebuildPartLenghtSum += returnData.length
-                    } else {
-                        // console.log(returnData)
-                        rebuildPart.push(returnData)
-                        rebuildPartLenghtSum += 1
-                    }
-                    // console.log('rebuildPartLenghtSum', rebuildPartLenghtSum)
+                        if (Array.isArray(returnData)) {
+                            // console.log(...returnData)
+                            rebuildPart.push(...returnData)
+                            rebuildPartLenghtSum += returnData.length
+                        } else {
+                            // console.log(returnData)
+                            rebuildPart.push(returnData)
+                            rebuildPartLenghtSum += 1
+                        }
+                        // console.log('rebuildPartLenghtSum', rebuildPartLenghtSum)
+                    })
+                    rebuildArray.push(...rebuildPart)
                 })
-                rebuildArray.push(...rebuildPart)
-            })
-            rebuildArray.unshift({
-                id: -1,
-                section: 0,
-                height: TD.initial.offset / 1000,
-                heightSum: TD.initial.offset / 1000,
-                part: 0,
-                topOutside: rebuildArray[0].topOutside,
-                btmOutside: null,
-                topInside: rebuildArray[0].topInside,
-                btmInside: null,
-                weightFlange: 0,
-            })
-        }
+                rebuildArray.unshift({
+                    id: -1,
+                    section: 0,
+                    height: TD.initial.offset / 1000,
+                    heightSum: TD.initial.offset / 1000,
+                    part: 0,
+                    thickness: 0,
+                    topOutside: rebuildArray[0].topOutside,
+                    btmOutside: null,
+                    topInside: rebuildArray[0].topInside,
+                    btmInside: null,
+                    weightFlange: 0,
 
-        setRebuildExistData(rebuildArray)
-        // console.log('rebuildArray', rebuildArray)
-        // setRebuildExistData(rebuildArray)
-        /* Load = > interpolation */
-        const interpolCalcData = partHeightArray.map((partHeight, index) => {
-            let interpolItem = {}
-            fileLoadData.reduce((prev, next) => {
-                // console.log('prev', prev.height)
-                // console.log('next', next.height)
-                if (partHeight >= prev.height && partHeight <= next.height) {
-                    interpolItem = {
-                        index: index,
-                        height: partHeight,
-                        mxy:
-                            prev.mxy +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.mxy - prev.mxy),
-                        mx:
-                            prev.mx +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.mx - prev.mx),
-                        my:
-                            prev.my +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.my - prev.my),
-                        mz:
-                            prev.mz +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.mz - prev.mz),
-                        fx:
-                            prev.fx +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.fx - prev.fx),
-                        fy:
-                            prev.fy +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.fy - prev.fy),
-                        fz:
-                            prev.fz +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.fz - prev.fz),
-                        sf:
-                            prev.sf +
-                            ((partHeight - prev.height) / (next.height - prev.height)) *
-                                (next.sf - prev.sf),
+                    crossAreaUpper:
+                        (((Math.pow(rebuildArray[0].topOutside, 2) -
+                            Math.pow(rebuildArray[0].topInside, 2)) *
+                            Math.PI) /
+                            4) *
+                        Math.pow(10, -6), // (Math.pow( _UpperOutsideDiameter, 2) -  Math.pow( _UpperInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                    crossAreaLower: null, // (Math.pow( _LowerOutsideDiameter, 2) -  Math.pow( _LowerInsideDiameter, 2))* Math.PI / 4 * Math.pow(10,-6)
+                    sectionModulusUpper:
+                        (((Math.pow(rebuildArray[0].topOutside, 4) -
+                            Math.pow(rebuildArray[0].topInside, 4)) *
+                            Math.PI) /
+                            (32 * rebuildArray[0].topOutside)) *
+                        Math.pow(10, -9), // (Math.pow(_UpperOutsideDiameter, 4) - Math.pow(_UpperInsideDiameter, 4)) * Math.PI / (32 * _UpperOutsideDiameter) * Math.pow(10, -9)
+                    sectionModulusLower: null, // (Math.pow(_LowerOutsideDiameter, 4) - Math.pow(_LowerInsideDiameter, 4)) * Math.PI / (32 * _LowerOutsideDiameter) * Math.pow(10, -9)
+                })
+            }
+
+            setRebuildExistData(rebuildArray)
+            // console.log('rebuildArray', rebuildArray)
+            // setRebuildExistData(rebuildArray)
+            /* Load = > interpolation */
+            const interpolCalcData = partHeightArray.map((partHeight, index) => {
+                let interpolItem = {}
+                fileLoadData.reduce((prev, next) => {
+                    // console.log('prev', prev.height)
+                    // console.log('next', next.height)
+                    if (partHeight >= prev.height && partHeight <= next.height) {
+                        interpolItem = {
+                            index: index,
+                            height: partHeight,
+                            mxy:
+                                prev.mxy +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.mxy - prev.mxy),
+                            mx:
+                                prev.mx +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.mx - prev.mx),
+                            my:
+                                prev.my +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.my - prev.my),
+                            mz:
+                                prev.mz +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.mz - prev.mz),
+                            fx:
+                                prev.fx +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.fx - prev.fx),
+                            fy:
+                                prev.fy +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.fy - prev.fy),
+                            fz:
+                                prev.fz +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.fz - prev.fz),
+                            sf:
+                                prev.sf +
+                                ((partHeight - prev.height) / (next.height - prev.height)) *
+                                    (next.sf - prev.sf),
+                        }
+                        // console.log('chose', [partHeight, prev, next, interpolItem])
                     }
-                    // console.log('chose', [partHeight, prev, next, interpolItem])
-                }
-                return next
+                    return next
+                })
+                return interpolItem
             })
-            return interpolItem
-        })
-        // console.log('interpolCalcData', interpolCalcData)
-        setInteropolationData(interpolCalcData)
+            interpolCalcData.unshift(fileLoadData[0])
+            // console.log('interpolCalcData', interpolCalcData)
+            setInteropolationData(interpolCalcData)
+        }
     }
 
     //Addional Moment Colun
@@ -453,7 +946,7 @@ const ExLoad = () => {
         h_dt_cg: number
         moment_addition: number
     }
-    const [exMomentArray, setExMommentArray] = useState([] as ExternalMomentUnit[])
+    const [exMomentArray, setExMomentArray] = useState([] as ExternalMomentUnit[])
 
     const onClickInterpolationSettingComplete = () => {
         const newBuildData = rebuildExistData.map((part, index) => {
@@ -569,7 +1062,191 @@ const ExLoad = () => {
             return v
         })
         console.log('Final ExMoment', finalNewBuildData)
-        setExMommentArray(finalNewBuildData)
+        setExMomentArray(finalNewBuildData)
+    }
+
+    //SF  Colun
+    interface SafetyFactorUnit {
+        sigma_mxy: number
+        sigma_fz: number
+        sigma_max: number
+        t_mz: number
+        t_fxy: number
+        t_max: number
+        s_max: number
+        r_d: number
+        scf: number
+        sf_upr: number
+    }
+
+    const [sfUpperArray, setSFUpperArray] = useState([] as (SafetyFactorUnit | null)[])
+    const [sfLowerArray, setSFLowerArray] = useState([] as (SafetyFactorUnit | null)[])
+
+    const findMeterialValue = (value: number) => {
+        let result = 0
+        if (value > 0 && value <= 16) {
+            result = 322.73
+        } else if (value > 16 && value <= 40) {
+            result = 313.64
+        } else if (value > 40 && value <= 63) {
+            result = 304.55
+        } else if (value > 63 && value <= 80) {
+            result = 295.45
+        } else if (value > 80 && value <= 100) {
+            result = 286.36
+        } else if (value > 100 && value <= 150) {
+            result = 268.18
+        } else if (value > 150 && value <= 200) {
+            result = 259.09
+        }
+        return result
+    }
+
+    const findSCF = (cur: number, nxt: number) => {
+        let result = 0
+
+        // console.log('findSCF', cur, nxt)
+        result =
+            1 +
+            (6 * (0.5 * (Math.max(cur, nxt) - Math.min(cur, nxt)))) /
+                (Math.min(cur, nxt) * (1 + Math.pow(Math.max(cur, nxt) / Math.min(cur, nxt), 2.5)))
+
+        return result
+    }
+
+    const onClickExternalMomentSettingCheckComplete = () => {
+        console.log('onClickExternalMomentSettingCheckComplete')
+
+        const sfUpperArray: (SafetyFactorUnit | null)[] = rebuildExistData.map(
+            (rebuild, rIndex) => {
+                let sfUnit = {} as SafetyFactorUnit
+                if (rIndex == 0) {
+                    return null
+                }
+                if (rIndex > 0 && rIndex <= rebuildExistData.length) {
+                    // console.log('interpolationData[rIndex].mxy', interpolationData[rIndex - 1].mxy)
+                    // console.log(
+                    //     'exMomentArray[rIndex].moment_addition',
+                    //     exMomentArray[rIndex - 1].moment_addition,
+                    // )
+                    // console.log(
+                    //     'final.Mxy',
+                    //     rIndex,
+                    //     rebuild.sectionModulusUpper,
+                    //     interpolationData[rIndex].mxy + exMomentArray[rIndex].moment_addition,
+                    // )
+                    sfUnit.sigma_mxy =
+                        ((interpolationData[rIndex].mxy + exMomentArray[rIndex].moment_addition) /
+                            rebuild.sectionModulusUpper) *
+                        Math.pow(10, -3)
+                    sfUnit.sigma_fz =
+                        (interpolationData[rIndex].fz / rebuild.crossAreaUpper) * Math.pow(10, -3)
+                    sfUnit.sigma_max = Math.abs(sfUnit.sigma_mxy) + Math.abs(sfUnit.sigma_fz)
+                    sfUnit.t_mz = Math.abs(
+                        (interpolationData[rIndex].mz / (2 * rebuild.sectionModulusUpper)) *
+                            Math.pow(10, -3),
+                    )
+                    sfUnit.t_fxy = Math.abs(
+                        (Math.sqrt(
+                            Math.pow(interpolationData[rIndex].fx, 2) +
+                                Math.pow(interpolationData[rIndex].fy, 2),
+                        ) /
+                            rebuild.crossAreaUpper) *
+                            Math.pow(10, -3),
+                    )
+                    sfUnit.t_max = sfUnit.t_mz + sfUnit.t_fxy
+                    sfUnit.s_max = Math.sqrt(
+                        Math.pow(sfUnit.sigma_max, 2) + 3 * Math.pow(sfUnit.t_max, 2),
+                    )
+                    sfUnit.r_d = findMeterialValue(rebuild.thickness)
+
+                    // console.log(rIndex, rebuildExistData[rIndex + 1] == undefined)
+                    sfUnit.scf = findSCF(
+                        rebuildExistData[rIndex].thickness,
+                        rebuildExistData[rIndex + 1] !== undefined
+                            ? rebuildExistData[rIndex + 1].thickness
+                            : rebuildExistData[rIndex].thickness,
+                    )
+                    sfUnit.sf_upr = sfUnit.r_d / (sfUnit.scf * sfUnit.s_max)
+
+                    // console.log(
+                    //     'sfUnit',
+                    //     sfUnit.sigma_mxy,
+                    //     sfUnit.sigma_fz,
+                    //     sfUnit.sigma_max,
+                    //     sfUnit.t_mz,
+                    //     sfUnit.t_fxy,
+                    //     sfUnit.t_max,
+                    //     sfUnit.s_max,
+                    //     sfUnit.r_d,
+                    //     sfUnit.scf,
+                    //     sfUnit.sf_upr,
+                    // )
+                }
+                return sfUnit
+
+                // console.log('rebuild.sectionModulusUpper', rebuild.sectionModulusUpper)
+                // sfUnit.sigma_mxy =
+                //     (interpolationData[rIndex].mxy / rebuild.sectionModulusUpper) * Math.pow(10, -3)
+                // console.log('sfUnit.sigma_mxy', sfUnit.sigma_mxy)
+            },
+        )
+        const sfLowerArray: (SafetyFactorUnit | null)[] = rebuildExistData.map(
+            (rebuild, rIndex) => {
+                let sfUnit = {} as SafetyFactorUnit
+                if (rIndex == 0) {
+                    return null
+                }
+                if (rIndex > 0 && rIndex <= rebuildExistData.length) {
+                    sfUnit.sigma_mxy =
+                        ((interpolationData[rIndex - 1].mxy +
+                            exMomentArray[rIndex - 1].moment_addition) /
+                            rebuild.sectionModulusLower) *
+                        Math.pow(10, -3)
+                    sfUnit.sigma_fz =
+                        (interpolationData[rIndex - 1].fz / rebuild.crossAreaLower) *
+                        Math.pow(10, -3)
+                    sfUnit.sigma_max = Math.abs(sfUnit.sigma_mxy) + Math.abs(sfUnit.sigma_fz)
+                    sfUnit.t_mz = Math.abs(
+                        (interpolationData[rIndex - 1].mz / (2 * rebuild.sectionModulusLower)) *
+                            Math.pow(10, -3),
+                    )
+                    sfUnit.t_fxy = Math.abs(
+                        (Math.sqrt(
+                            Math.pow(interpolationData[rIndex - 1].fx, 2) +
+                                Math.pow(interpolationData[rIndex - 1].fy, 2),
+                        ) /
+                            rebuild.crossAreaLower) *
+                            Math.pow(10, -3),
+                    )
+                    sfUnit.t_max = sfUnit.t_mz + sfUnit.t_fxy
+                    sfUnit.s_max = Math.sqrt(
+                        Math.pow(sfUnit.sigma_max, 2) + 3 * Math.pow(sfUnit.t_max, 2),
+                    )
+                    sfUnit.r_d = findMeterialValue(rebuild.thickness)
+
+                    // console.log(rIndex, rebuildExistData[rIndex + 1] == undefined)
+                    sfUnit.scf = findSCF(
+                        rebuildExistData[rIndex - 1] == undefined
+                            ? rebuildExistData[rIndex]
+                            : rebuildExistData[rIndex - 1].thickness,
+                        rebuildExistData[rIndex + 1] !== undefined
+                            ? rebuildExistData[rIndex + 1].thickness
+                            : rebuildExistData[rIndex - 1].thickness,
+                    )
+                    sfUnit.sf_upr = sfUnit.r_d / (sfUnit.scf * sfUnit.s_max)
+                }
+                return sfUnit
+            },
+        )
+        sfUpperArray.shift()
+        sfLowerArray.shift()
+        console.log('sfUpperArray', sfUpperArray)
+        console.log('sfLowerArray', sfLowerArray)
+        setSFUpperArray(sfUpperArray)
+        setSFLowerArray(sfLowerArray)
+
+        // console.log('sfUpperArray', sfUpperArray.sigma_mxy)
     }
 
     useEffect(() => {
@@ -603,6 +1280,36 @@ const ExLoad = () => {
         'h_dt_cg',
         'moment_addition',
     ] as String[]
+
+    /*Table Parameter*/
+    const SafetyFactorUpperHeader = [
+        'Index',
+        'sigma_mxy_upr',
+        'sigma_fz_upr',
+        'sigma_max_upr',
+        't_mz_upr',
+        't_fxy_upr',
+        't_max_upr',
+        's_max_upr',
+        'r_d',
+        'scf',
+        'sf_upr',
+    ] as String[]
+
+    const SafetyFactorLowerHeader = [
+        'Index',
+        'sigma_mxy_lwr',
+        'sigma_fz_lwr',
+        'sigma_max_lwr',
+        't_mz_lwr',
+        't_fxy_lwr',
+        't_max_lwr',
+        's_max_lwr',
+        'r_d',
+        'scf',
+        'sf_lwr',
+    ] as String[]
+
     return (
         <>
             <PageTypeWide>
@@ -645,6 +1352,8 @@ const ExLoad = () => {
                         />
                         <InputDivider />
                         <h3>2. Data conversion</h3>
+
+                        {/* 1. Interoploation Original Line */}
                         <Row>
                             <Column sm={2} md={6} lg={10}>
                                 <Accordion align="start">
@@ -713,6 +1422,8 @@ const ExLoad = () => {
                                 )}
                             </Column>
                         </Row>
+
+                        {/* 2. Interoploation Rebuild Line */}
                         <InputDivider />
                         {interpolationData.length > 0 && (
                             <Row>
@@ -792,6 +1503,7 @@ const ExLoad = () => {
                             </Row>
                         )}
 
+                        {/* 3. External Moment Calc Line */}
                         <InputDivider />
                         {exMomentArray.length > 0 && (
                             <Row>
@@ -874,12 +1586,205 @@ const ExLoad = () => {
                                             kind="tertiary"
                                             renderIcon={Fade32}
                                             disabled={!originalDataCheck}
-                                            onClick={() => onClickInterpolationSettingComplete()}
+                                            onClick={() =>
+                                                onClickExternalMomentSettingCheckComplete()
+                                            }
                                         >
-                                            Interpolation setting complete.
+                                            External Moment Check Complete
                                         </Button>
                                     )}
                                 </Column>
+                            </Row>
+                        )}
+
+                        <InputDivider />
+
+                        {/* 4. Safety Factor Line */}
+                        {sfUpperArray.length > 0 && sfUpperArray !== null && (
+                            <Row>
+                                <Column sm={2} md={6} lg={10}>
+                                    <Accordion align="start">
+                                        <AccordionItem title={`Safety Factor Upper Result`}>
+                                            {sfUpperArray.length && (
+                                                <Table size="sm">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            {SafetyFactorUpperHeader.map(
+                                                                (v, index) => {
+                                                                    return (
+                                                                        <TableHeader
+                                                                            key={`safeyty-factor-upper-header-convert-${index}`}
+                                                                        >
+                                                                            <div
+                                                                                style={{
+                                                                                    color: '#fff',
+                                                                                    marginLeft:
+                                                                                        '0px',
+                                                                                }}
+                                                                            >
+                                                                                {v}
+                                                                            </div>
+                                                                        </TableHeader>
+                                                                    )
+                                                                },
+                                                            )}
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {sfUpperArray.map((v, index) => {
+                                                            if (v !== null)
+                                                                return (
+                                                                    <TableRow
+                                                                        key={`safety-factor-upper-${index}`}
+                                                                    >
+                                                                        <TableCell>
+                                                                            {index + 1}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_mxy}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_fz}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_mz}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_fxy}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.s_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.r_d}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.scf}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sf_upr}
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            )}
+                                        </AccordionItem>
+                                    </Accordion>
+                                </Column>
+                                {/* <Column sm={2} md={2} lg={2}>
+                                    {interpolationData.length > 0 && (
+                                        <Button
+                                            kind="tertiary"
+                                            renderIcon={Fade32}
+                                            disabled={!originalDataCheck}
+                                            onClick={() => onClickInterpolationSettingComplete()}
+                                        >
+                                            Safety Factor Upper setting Check Complete
+                                        </Button>
+                                    )}
+                                </Column> */}
+                            </Row>
+                        )}
+                        {/* 5. Safety Factor Line */}
+                        {sfLowerArray.length > 0 && sfLowerArray !== null && (
+                            <Row>
+                                <Column sm={2} md={6} lg={10}>
+                                    <Accordion align="start">
+                                        <AccordionItem title={`Safety Factor Lower Result`}>
+                                            {sfLowerArray.length && (
+                                                <Table size="sm">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            {SafetyFactorLowerHeader.map(
+                                                                (v, index) => {
+                                                                    return (
+                                                                        <TableHeader
+                                                                            key={`safeyty-factor-lower-header-convert-${index}`}
+                                                                        >
+                                                                            <div
+                                                                                style={{
+                                                                                    color: '#fff',
+                                                                                    marginLeft:
+                                                                                        '0px',
+                                                                                }}
+                                                                            >
+                                                                                {v}
+                                                                            </div>
+                                                                        </TableHeader>
+                                                                    )
+                                                                },
+                                                            )}
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {sfLowerArray.map((v, index) => {
+                                                            if (v !== null)
+                                                                return (
+                                                                    <TableRow
+                                                                        key={`safety-factor-upper-${index}`}
+                                                                    >
+                                                                        <TableCell>
+                                                                            {index + 1}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_mxy}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_fz}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sigma_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_mz}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_fxy}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.t_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.s_max}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.r_d}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.scf}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {v.sf_upr}
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            )}
+                                        </AccordionItem>
+                                    </Accordion>
+                                </Column>
+                                {/* <Column sm={2} md={2} lg={2}>
+                                    {interpolationData.length > 0 && (
+                                        <Button
+                                            kind="tertiary"
+                                            renderIcon={Fade32}
+                                            disabled={!originalDataCheck}
+                                            onClick={() => onClickInterpolationSettingComplete()}
+                                        >
+                                            Safety Factor Upper setting Check Complete
+                                        </Button>
+                                    )}
+                                </Column> */}
                             </Row>
                         )}
                     </Section>

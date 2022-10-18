@@ -1194,53 +1194,86 @@ const ExLoad = () => {
         const sfLowerArray: (SafetyFactorUnit | null)[] = rebuildExistData.map(
             (rebuild, rIndex) => {
                 let sfUnit = {} as SafetyFactorUnit
-                if (rIndex == 0) {
-                    return null
-                }
-                if (rIndex > 0 && rIndex <= rebuildExistData.length) {
+
+                if (rIndex >= 0 && rIndex < rebuildExistData.length - 1) {
+                    // console.log('interpolationData[rIndex].mxy', interpolationData[rIndex - 1].mxy)
+                    // console.log(
+                    //     'exMomentArray[rIndex].moment_addition',
+                    //     exMomentArray[rIndex - 1].moment_addition,
+                    // )
+                    // console.log(
+                    //     'final.Mxy',
+                    //     rIndex,
+                    //     rebuildExistData[rIndex + 1].sectionModulusLower,
+                    //     interpolationData[rIndex].mxy + exMomentArray[rIndex].moment_addition,
+                    // )
                     sfUnit.sigma_mxy =
-                        ((interpolationData[rIndex - 1].mxy +
-                            exMomentArray[rIndex - 1].moment_addition) /
-                            rebuild.sectionModulusLower) *
+                        ((interpolationData[rIndex].mxy + exMomentArray[rIndex].moment_addition) /
+                            rebuildExistData[rIndex + 1].sectionModulusLower) *
                         Math.pow(10, -3)
                     sfUnit.sigma_fz =
-                        (interpolationData[rIndex - 1].fz / rebuild.crossAreaLower) *
+                        (interpolationData[rIndex].fz /
+                            rebuildExistData[rIndex + 1].crossAreaLower) *
                         Math.pow(10, -3)
                     sfUnit.sigma_max = Math.abs(sfUnit.sigma_mxy) + Math.abs(sfUnit.sigma_fz)
                     sfUnit.t_mz = Math.abs(
-                        (interpolationData[rIndex - 1].mz / (2 * rebuild.sectionModulusLower)) *
+                        (interpolationData[rIndex].mz /
+                            (2 * rebuildExistData[rIndex + 1].sectionModulusLower)) *
                             Math.pow(10, -3),
                     )
                     sfUnit.t_fxy = Math.abs(
                         (Math.sqrt(
-                            Math.pow(interpolationData[rIndex - 1].fx, 2) +
-                                Math.pow(interpolationData[rIndex - 1].fy, 2),
+                            Math.pow(interpolationData[rIndex].fx, 2) +
+                                Math.pow(interpolationData[rIndex].fy, 2),
                         ) /
-                            rebuild.crossAreaLower) *
+                            rebuildExistData[rIndex + 1].crossAreaLower) *
                             Math.pow(10, -3),
                     )
                     sfUnit.t_max = sfUnit.t_mz + sfUnit.t_fxy
                     sfUnit.s_max = Math.sqrt(
                         Math.pow(sfUnit.sigma_max, 2) + 3 * Math.pow(sfUnit.t_max, 2),
                     )
-                    sfUnit.r_d = findMeterialValue(rebuild.thickness)
+                    sfUnit.r_d =
+                        rIndex == 0
+                            ? findMeterialValue(rebuildExistData[1].thickness)
+                            : findMeterialValue(rebuildExistData[rIndex + 1].thickness)
 
                     // console.log(rIndex, rebuildExistData[rIndex + 1] == undefined)
-                    sfUnit.scf = findSCF(
-                        rebuildExistData[rIndex - 1] == undefined
-                            ? rebuildExistData[rIndex]
-                            : rebuildExistData[rIndex - 1].thickness,
-                        rebuildExistData[rIndex + 1] !== undefined
-                            ? rebuildExistData[rIndex + 1].thickness
-                            : rebuildExistData[rIndex - 1].thickness,
-                    )
+                    sfUnit.scf =
+                        rIndex == 0
+                            ? 1
+                            : findSCF(
+                                  rebuildExistData[rIndex].thickness,
+                                  rebuildExistData[rIndex + 1] !== undefined
+                                      ? rebuildExistData[rIndex + 1].thickness
+                                      : rebuildExistData[rIndex].thickness,
+                              )
                     sfUnit.sf_upr = sfUnit.r_d / (sfUnit.scf * sfUnit.s_max)
+
+                    // console.log(
+                    //     'sfUnit',
+                    //     sfUnit.sigma_mxy,
+                    //     sfUnit.sigma_fz,
+                    //     sfUnit.sigma_max,
+                    //     sfUnit.t_mz,
+                    //     sfUnit.t_fxy,
+                    //     sfUnit.t_max,
+                    //     sfUnit.s_max,
+                    //     sfUnit.r_d,
+                    //     sfUnit.scf,
+                    //     sfUnit.sf_upr,
+                    // )
                 }
                 return sfUnit
+
+                // console.log('rebuild.sectionModulusUpper', rebuild.sectionModulusUpper)
+                // sfUnit.sigma_mxy =
+                //     (interpolationData[rIndex].mxy / rebuild.sectionModulusUpper) * Math.pow(10, -3)
+                // console.log('sfUnit.sigma_mxy', sfUnit.sigma_mxy)
             },
         )
         sfUpperArray.shift()
-        sfLowerArray.shift()
+        // sfLowerArray.shift()
         console.log('sfUpperArray', sfUpperArray)
         console.log('sfLowerArray', sfLowerArray)
         setSFUpperArray(sfUpperArray)
